@@ -30,6 +30,255 @@ namespace ManiFest.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("Name", "CountryId")
+                        .IsUnique();
+
+                    b.ToTable("Cities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CountryId = 1,
+                            Name = "Sarajevo"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CountryId = 1,
+                            Name = "Banja Luka"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CountryId = 1,
+                            Name = "Tuzla"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CountryId = 1,
+                            Name = "Zenica"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CountryId = 1,
+                            Name = "Mostar"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CountryId = 1,
+                            Name = "Bijeljina"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CountryId = 1,
+                            Name = "Prijedor"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CountryId = 1,
+                            Name = "Brčko"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CountryId = 1,
+                            Name = "Doboj"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CountryId = 1,
+                            Name = "Zvornik"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CountryId = 2,
+                            Name = "Zagreb"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CountryId = 2,
+                            Name = "Split"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CountryId = 2,
+                            Name = "Rijeka"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CountryId = 3,
+                            Name = "Beograd"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CountryId = 3,
+                            Name = "Novi Sad"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CountryId = 3,
+                            Name = "Niš"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CountryId = 4,
+                            Name = "Podgorica"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CountryId = 4,
+                            Name = "Budva"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CountryId = 4,
+                            Name = "Kotor"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CountryId = 5,
+                            Name = "Skopje"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CountryId = 5,
+                            Name = "Bitola"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CountryId = 5,
+                            Name = "Ohrid"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CountryId = 6,
+                            Name = "Paris"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CountryId = 6,
+                            Name = "Cannes"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CountryId = 6,
+                            Name = "Nice"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CountryId = 7,
+                            Name = "Berlin"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CountryId = 7,
+                            Name = "Munich"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            CountryId = 7,
+                            Name = "Hamburg"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CountryId = 8,
+                            Name = "Rome"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            CountryId = 8,
+                            Name = "Venice"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            CountryId = 8,
+                            Name = "Milan"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            CountryId = 9,
+                            Name = "Madrid"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            CountryId = 9,
+                            Name = "Barcelona"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            CountryId = 9,
+                            Name = "San Sebastian"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            CountryId = 10,
+                            Name = "London"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            CountryId = 10,
+                            Name = "Edinburgh"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            CountryId = 10,
+                            Name = "Manchester"
+                        });
+                });
+
+            modelBuilder.Entity("ManiFest.Services.Database.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -39,58 +288,58 @@ namespace ManiFest.Services.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Cities");
+                    b.ToTable("Countries");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Name = "Sarajevo"
+                            Name = "Bosnia and Herzegovina"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Banja Luka"
+                            Name = "Croatia"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Tuzla"
+                            Name = "Serbia"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Zenica"
+                            Name = "Montenegro"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Mostar"
+                            Name = "North Macedonia"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "Bijeljina"
+                            Name = "France"
                         },
                         new
                         {
                             Id = 7,
-                            Name = "Prijedor"
+                            Name = "Germany"
                         },
                         new
                         {
                             Id = 8,
-                            Name = "Brčko"
+                            Name = "Italy"
                         },
                         new
                         {
                             Id = 9,
-                            Name = "Doboj"
+                            Name = "Spain"
                         },
                         new
                         {
                             Id = 10,
-                            Name = "Zvornik"
+                            Name = "United Kingdom"
                         });
                 });
 
@@ -252,7 +501,7 @@ namespace ManiFest.Services.Migrations
                         new
                         {
                             Id = 1,
-                            CityId = 5,
+                            CityId = 1,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "test.receiver@gmail.com",
                             FirstName = "Denis",
@@ -369,6 +618,17 @@ namespace ManiFest.Services.Migrations
                             RoleId = 2,
                             UserId = 4
                         });
+                });
+
+            modelBuilder.Entity("ManiFest.Services.Database.City", b =>
+                {
+                    b.HasOne("ManiFest.Services.Database.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("ManiFest.Services.Database.User", b =>

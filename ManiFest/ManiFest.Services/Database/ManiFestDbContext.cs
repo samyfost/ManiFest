@@ -13,6 +13,7 @@ namespace ManiFest.Services.Database
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Gender> Genders { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<Country> Countries { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -59,10 +60,21 @@ namespace ManiFest.Services.Database
                 .HasIndex(g => g.Name)
                 .IsUnique();
 
-            // Configure City entity
-            modelBuilder.Entity<City>()
+            // Configure Country entity
+            modelBuilder.Entity<Country>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
+
+            // Configure City entity
+            modelBuilder.Entity<City>()
+                .HasIndex(c => new { c.Name, c.CountryId })
+                .IsUnique();
+
+            modelBuilder.Entity<City>()
+                .HasOne(c => c.Country)
+                .WithMany()
+                .HasForeignKey(c => c.CountryId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Gender)

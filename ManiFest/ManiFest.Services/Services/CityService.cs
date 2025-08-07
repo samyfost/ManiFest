@@ -24,22 +24,37 @@ namespace ManiFest.Services.Services
                 query = query.Where(x => x.Name.Contains(search.Name));
             }
 
-            return query;
+            if (search.CountryId.HasValue)
+            {
+                query = query.Where(x => x.CountryId == search.CountryId.Value);
+            }
+
+            return query.Include(x => x.Country);
         }
 
         protected override async Task BeforeInsert(City entity, CityUpsertRequest request)
         {
-            if (await _context.Cities.AnyAsync(c => c.Name == request.Name))
+            if (await _context.Cities.AnyAsync(c => c.Name == request.Name && c.CountryId == request.CountryId))
             {
-                throw new InvalidOperationException("A city with this name already exists.");
+                throw new InvalidOperationException("A city with this name already exists in this country.");
+            }
+
+            if (!await _context.Countries.AnyAsync(c => c.Id == request.CountryId))
+            {
+                throw new InvalidOperationException("The specified country does not exist.");
             }
         }
 
         protected override async Task BeforeUpdate(City entity, CityUpsertRequest request)
         {
-            if (await _context.Cities.AnyAsync(c => c.Name == request.Name && c.Id != entity.Id))
+            if (await _context.Cities.AnyAsync(c => c.Name == request.Name && c.CountryId == request.CountryId && c.Id != entity.Id))
             {
-                throw new InvalidOperationException("A city with this name already exists.");
+                throw new InvalidOperationException("A city with this name already exists in this country.");
+            }
+
+            if (!await _context.Countries.AnyAsync(c => c.Id == request.CountryId))
+            {
+                throw new InvalidOperationException("The specified country does not exist.");
             }
         }
     }

@@ -36,6 +36,20 @@ namespace ManiFest.Services.Database
                 }
             );
 
+            // Seed Countries
+            modelBuilder.Entity<Country>().HasData(
+                new Country { Id = 1, Name = "Bosnia and Herzegovina" },
+                new Country { Id = 2, Name = "Croatia" },
+                new Country { Id = 3, Name = "Serbia" },
+                new Country { Id = 4, Name = "Montenegro" },
+                new Country { Id = 5, Name = "North Macedonia" },
+                new Country { Id = 6, Name = "France" },
+                new Country { Id = 7, Name = "Germany" },
+                new Country { Id = 8, Name = "Italy" },
+                new Country { Id = 9, Name = "Spain" },
+                new Country { Id = 10, Name = "United Kingdom" }
+            );
+
             // Seed Users
             modelBuilder.Entity<User>().HasData(
                 new User 
@@ -51,7 +65,7 @@ namespace ManiFest.Services.Database
                     CreatedAt = fixedDate,
                     PhoneNumber = DefaultPhoneNumber,
                     GenderId = 1, // Male
-                    CityId = 5, // Sarajevo
+                    CityId = 1, // Sarajevo
                     Picture = ImageConversion.ConvertImageToByteArray("Assets", "denis.png")
                 },
                 new User 
@@ -120,16 +134,62 @@ namespace ManiFest.Services.Database
 
             // Seed Cities
             modelBuilder.Entity<City>().HasData(
-                new City { Id = 1, Name = "Sarajevo" },
-                new City { Id = 2, Name = "Banja Luka" },
-                new City { Id = 3, Name = "Tuzla" },
-                new City { Id = 4, Name = "Zenica" },
-                new City { Id = 5, Name = "Mostar" },
-                new City { Id = 6, Name = "Bijeljina" },
-                new City { Id = 7, Name = "Prijedor" },
-                new City { Id = 8, Name = "Brčko" },
-                new City { Id = 9, Name = "Doboj" },
-                new City { Id = 10, Name = "Zvornik" }
+                // Bosnia and Herzegovina
+                new City { Id = 1, Name = "Sarajevo", CountryId = 1 },
+                new City { Id = 2, Name = "Banja Luka", CountryId = 1 },
+                new City { Id = 3, Name = "Tuzla", CountryId = 1 },
+                new City { Id = 4, Name = "Zenica", CountryId = 1 },
+                new City { Id = 5, Name = "Mostar", CountryId = 1 },
+                new City { Id = 6, Name = "Bijeljina", CountryId = 1 },
+                new City { Id = 7, Name = "Prijedor", CountryId = 1 },
+                new City { Id = 8, Name = "Brčko", CountryId = 1 },
+                new City { Id = 9, Name = "Doboj", CountryId = 1 },
+                new City { Id = 10, Name = "Zvornik", CountryId = 1 },
+                
+                // Croatia
+                new City { Id = 11, Name = "Zagreb", CountryId = 2 },
+                new City { Id = 12, Name = "Split", CountryId = 2 },
+                new City { Id = 13, Name = "Rijeka", CountryId = 2 },
+                
+                // Serbia
+                new City { Id = 14, Name = "Beograd", CountryId = 3 },
+                new City { Id = 15, Name = "Novi Sad", CountryId = 3 },
+                new City { Id = 16, Name = "Niš", CountryId = 3 },
+                
+                // Montenegro
+                new City { Id = 17, Name = "Podgorica", CountryId = 4 },
+                new City { Id = 18, Name = "Budva", CountryId = 4 },
+                new City { Id = 19, Name = "Kotor", CountryId = 4 },
+                
+                // North Macedonia
+                new City { Id = 20, Name = "Skopje", CountryId = 5 },
+                new City { Id = 21, Name = "Bitola", CountryId = 5 },
+                new City { Id = 22, Name = "Ohrid", CountryId = 5 },
+                
+                // France - Famous for Cannes Film Festival, Nice Jazz Festival, etc.
+                new City { Id = 23, Name = "Paris", CountryId = 6 },
+                new City { Id = 24, Name = "Cannes", CountryId = 6 },
+                new City { Id = 25, Name = "Nice", CountryId = 6 },
+                
+                // Germany - Famous for Berlinale, Rock am Ring, etc.
+                new City { Id = 26, Name = "Berlin", CountryId = 7 },
+                new City { Id = 27, Name = "Munich", CountryId = 7 },
+                new City { Id = 28, Name = "Hamburg", CountryId = 7 },
+                
+                // Italy - Famous for Venice Film Festival, Sanremo Music Festival, etc.
+                new City { Id = 29, Name = "Rome", CountryId = 8 },
+                new City { Id = 30, Name = "Venice", CountryId = 8 },
+                new City { Id = 31, Name = "Milan", CountryId = 8 },
+                
+                // Spain - Famous for San Sebastian Film Festival, Primavera Sound, etc.
+                new City { Id = 32, Name = "Madrid", CountryId = 9 },
+                new City { Id = 33, Name = "Barcelona", CountryId = 9 },
+                new City { Id = 34, Name = "San Sebastian", CountryId = 9 },
+                
+                // United Kingdom - Famous for Glastonbury, Edinburgh Festival, etc.
+                new City { Id = 35, Name = "London", CountryId = 10 },
+                new City { Id = 36, Name = "Edinburgh", CountryId = 10 },
+                new City { Id = 37, Name = "Manchester", CountryId = 10 }
             );
         }
     }
