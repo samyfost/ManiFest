@@ -1,0 +1,61 @@
+# CursorRules for ManiFest Backend Entity Automation
+
+## Entity Addition Workflow
+
+When you add a new entity (e.g., `Festival`), Cursor should automate the following steps:
+
+### 1. Entity Class
+- Create `ManiFest.Services/Database/Festival.cs` (or your entity name) with properties as specified.
+- Use `[Key]`, `[Required]`, `[MaxLength]`, and navigation properties as needed, following the style of `Category.cs` or `User.cs`.
+
+### 2. DbContext Registration
+- Add a `DbSet<Festival> Festivals { get; set; }` to `ManiFestDbContext.cs`.
+- Add any unique indexes or relationships in `OnModelCreating` as appropriate.
+
+### 3. Data Seeding
+- Add initial seed data for the entity in `DataSeeder.cs` in the `SeedData` method, following the pattern for other entities.
+
+### 4. Request Model
+- Create `ManiFest.Model/Requests/FestivalUpsertRequest.cs` with validation attributes, matching the entity's properties (except keys, navigation, and computed fields).
+
+### 5. Response Model
+- Create `ManiFest.Model/Responses/FestivalResponse.cs` with all fields to be returned to the client, including navigation property names if needed.
+
+### 6. SearchObject
+- Create `ManiFest.Model/SearchObjects/FestivalSearchObject.cs` inheriting from `BaseSearchObject`, with filter properties for the entity.
+
+### 7. Service & Interface
+- Create `ManiFest.Services/Services/FestivalService.cs` inheriting from `BaseCRUDService<FestivalResponse, FestivalSearchObject, Festival, FestivalUpsertRequest, FestivalUpsertRequest>` and implementing `IFestivalService`.
+- Create `ManiFest.Services/Interfaces/IFestivalService.cs` inheriting from `ICRUDService<FestivalResponse, FestivalSearchObject, FestivalUpsertRequest, FestivalUpsertRequest>`.
+- Implement any custom logic in `ApplyFilter`, `BeforeInsert`, `BeforeUpdate` as needed.
+
+### 8. Controller
+- Create `ManiFest.WebAPI/Controllers/FestivalController.cs` inheriting from `BaseCRUDController<FestivalResponse, FestivalSearchObject, FestivalUpsertRequest, FestivalUpsertRequest>` and inject `IFestivalService`.
+
+### 9. Dependency Injection
+- Register the service in `ManiFest.WebAPI/Program.cs`:
+  `builder.Services.AddTransient<IFestivalService, FestivalService>();`
+
+### 10. Generics & Structure
+- Ensure all generics and file structures match the existing logic for CRUD entities (see Category, Subcategory, etc.).
+- Use the same naming conventions: `EntityUpsertRequest`, `EntityResponse`, `EntitySearchObject`, `IEntityService`, `EntityService`, `EntityController`.
+
+### 11. Best Practices
+- Use validation attributes on request models.
+- Use navigation properties and foreign keys for relationships.
+- Seed only minimal demo data.
+- Add unique indexes in `OnModelCreating` if needed.
+- Use `Include` in `ApplyFilter` for navigation properties.
+- Use `BaseCRUDService` for standard CRUD, override only for custom logic.
+- Keep controllers thin, delegate logic to services.
+
+### 12. Extensibility
+- For non-CRUD or special logic, extend the service and interface as needed.
+- For many-to-many or complex relationships, follow the `UserRole` pattern.
+- For authentication or special endpoints, see `UsersController` and `UserService`.
+
+---
+
+# Example: To add a new entity `Festival`, specify its properties, and Cursor will:
+# - Create all files and registrations as above, following the structure and generics logic.
+# - You only need to specify the entity name and its properties.
