@@ -191,6 +191,29 @@ namespace ManiFest.Services.Database
                 new City { Id = 36, Name = "Edinburgh", CountryId = 10 },
                 new City { Id = 37, Name = "Manchester", CountryId = 10 }
             );
+ 
+            // Seed Categories
+            modelBuilder.Entity<Category>().HasData(
+                new Category { Id = 1, Name = "Music", Description = "Music festivals and events", CreatedAt = fixedDate, IsActive = true },
+                new Category { Id = 2, Name = "Film", Description = "Film festivals and screenings", CreatedAt = fixedDate, IsActive = true },
+                new Category { Id = 3, Name = "Gaming", Description = "Gaming and esports festivals", CreatedAt = fixedDate, IsActive = true }
+            );
+
+            // Seed Subcategories
+            modelBuilder.Entity<Subcategory>().HasData(
+                // Music subcategories
+                new Subcategory { Id = 1, Name = "Jazz", Description = "Jazz music festivals", CategoryId = 1, CreatedAt = fixedDate, IsActive = true },
+                new Subcategory { Id = 2, Name = "Rock", Description = "Rock music festivals", CategoryId = 1, CreatedAt = fixedDate, IsActive = true },
+                new Subcategory { Id = 3, Name = "Classical", Description = "Classical music festivals", CategoryId = 1, CreatedAt = fixedDate, IsActive = true },
+                // Film subcategories
+                new Subcategory { Id = 4, Name = "Feature", Description = "Feature film festivals", CategoryId = 2, CreatedAt = fixedDate, IsActive = true },
+                new Subcategory { Id = 5, Name = "Short", Description = "Short film festivals", CategoryId = 2, CreatedAt = fixedDate, IsActive = true },
+                new Subcategory { Id = 6, Name = "Documentary", Description = "Documentary film festivals", CategoryId = 2, CreatedAt = fixedDate, IsActive = true },
+                // Gaming subcategories
+                new Subcategory { Id = 7, Name = "Esports", Description = "Esports tournaments and festivals", CategoryId = 3, CreatedAt = fixedDate, IsActive = true },
+                new Subcategory { Id = 8, Name = "Indie", Description = "Indie game festivals", CategoryId = 3, CreatedAt = fixedDate, IsActive = true },
+                new Subcategory { Id = 9, Name = "Retro", Description = "Retro gaming festivals", CategoryId = 3, CreatedAt = fixedDate, IsActive = true }
+            );
         }
     }
 } 

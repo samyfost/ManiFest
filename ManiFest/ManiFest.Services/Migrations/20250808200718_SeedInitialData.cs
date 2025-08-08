@@ -14,6 +14,22 @@ namespace ManiFest.Services.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Countries",
                 columns: table => new
                 {
@@ -53,6 +69,29 @@ namespace ManiFest.Services.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subcategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subcategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Subcategories_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -137,6 +176,16 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "CreatedAt", "Description", "IsActive", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Music festivals and events", true, "Music" },
+                    { 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Film festivals and screenings", true, "Film" },
+                    { 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Gaming and esports festivals", true, "Gaming" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Countries",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -216,6 +265,22 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Subcategories",
+                columns: new[] { "Id", "CategoryId", "CreatedAt", "Description", "IsActive", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Jazz music festivals", true, "Jazz" },
+                    { 2, 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Rock music festivals", true, "Rock" },
+                    { 3, 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Classical music festivals", true, "Classical" },
+                    { 4, 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Feature film festivals", true, "Feature" },
+                    { 5, 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Short film festivals", true, "Short" },
+                    { 6, 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Documentary film festivals", true, "Documentary" },
+                    { 7, 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Esports tournaments and festivals", true, "Esports" },
+                    { 8, 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Indie game festivals", true, "Indie" },
+                    { 9, 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Retro gaming festivals", true, "Retro" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CityId", "CreatedAt", "Email", "FirstName", "GenderId", "IsActive", "LastLoginAt", "LastName", "PasswordHash", "PasswordSalt", "PhoneNumber", "Picture", "Username" },
                 values: new object[,]
@@ -236,6 +301,12 @@ namespace ManiFest.Services.Migrations
                     { 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 2, 3 },
                     { 4, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 2, 4 }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_Name",
+                table: "Categories",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cities_CountryId",
@@ -264,6 +335,17 @@ namespace ManiFest.Services.Migrations
                 name: "IX_Roles_Name",
                 table: "Roles",
                 column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subcategories_CategoryId",
+                table: "Subcategories",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subcategories_Name_CategoryId",
+                table: "Subcategories",
+                columns: new[] { "Name", "CategoryId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -304,7 +386,13 @@ namespace ManiFest.Services.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Subcategories");
+
+            migrationBuilder.DropTable(
                 name: "UserRoles");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Roles");

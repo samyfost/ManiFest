@@ -14,6 +14,8 @@ namespace ManiFest.Services.Database
         public DbSet<Gender> Genders { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Subcategory> Subcategories { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -87,6 +89,22 @@ namespace ManiFest.Services.Database
                 .WithMany()
                 .HasForeignKey(u => u.CityId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure Category entity
+            modelBuilder.Entity<Category>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+            // Configure Subcategory entity
+            modelBuilder.Entity<Subcategory>()
+                .HasIndex(s => new { s.Name, s.CategoryId })
+                .IsUnique();
+
+            modelBuilder.Entity<Subcategory>()
+                .HasOne(s => s.Category)
+                .WithMany(c => c.Subcategories)
+                .HasForeignKey(s => s.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Seed initial data
             modelBuilder.SeedData();

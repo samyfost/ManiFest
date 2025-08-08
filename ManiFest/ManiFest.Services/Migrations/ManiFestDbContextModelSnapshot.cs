@@ -22,6 +22,64 @@ namespace ManiFest.Services.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ManiFest.Services.Database.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Music festivals and events",
+                            IsActive = true,
+                            Name = "Music"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Film festivals and screenings",
+                            IsActive = true,
+                            Name = "Film"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Gaming and esports festivals",
+                            IsActive = true,
+                            Name = "Gaming"
+                        });
+                });
+
             modelBuilder.Entity("ManiFest.Services.Database.City", b =>
                 {
                     b.Property<int>("Id")
@@ -425,6 +483,126 @@ namespace ManiFest.Services.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ManiFest.Services.Database.Subcategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("Name", "CategoryId")
+                        .IsUnique();
+
+                    b.ToTable("Subcategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Jazz music festivals",
+                            IsActive = true,
+                            Name = "Jazz"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Rock music festivals",
+                            IsActive = true,
+                            Name = "Rock"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Classical music festivals",
+                            IsActive = true,
+                            Name = "Classical"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Feature film festivals",
+                            IsActive = true,
+                            Name = "Feature"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Short film festivals",
+                            IsActive = true,
+                            Name = "Short"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Documentary film festivals",
+                            IsActive = true,
+                            Name = "Documentary"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Esports tournaments and festivals",
+                            IsActive = true,
+                            Name = "Esports"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Indie game festivals",
+                            IsActive = true,
+                            Name = "Indie"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Retro gaming festivals",
+                            IsActive = true,
+                            Name = "Retro"
+                        });
+                });
+
             modelBuilder.Entity("ManiFest.Services.Database.User", b =>
                 {
                     b.Property<int>("Id")
@@ -631,6 +809,17 @@ namespace ManiFest.Services.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("ManiFest.Services.Database.Subcategory", b =>
+                {
+                    b.HasOne("ManiFest.Services.Database.Category", "Category")
+                        .WithMany("Subcategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("ManiFest.Services.Database.User", b =>
                 {
                     b.HasOne("ManiFest.Services.Database.City", "City")
@@ -667,6 +856,11 @@ namespace ManiFest.Services.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ManiFest.Services.Database.Category", b =>
+                {
+                    b.Navigation("Subcategories");
                 });
 
             modelBuilder.Entity("ManiFest.Services.Database.Role", b =>

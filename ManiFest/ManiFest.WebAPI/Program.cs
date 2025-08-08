@@ -18,6 +18,8 @@ builder.Services.AddTransient<IRoleService, RoleService>();
 builder.Services.AddTransient<IGenderService, GenderService>();
 builder.Services.AddTransient<ICityService, CityService>();
 builder.Services.AddTransient<ICountryService, CountryService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ISubcategoryService, SubcategoryService>();
 
 
 // Configure database
