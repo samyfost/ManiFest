@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/city.dart';
@@ -9,7 +8,6 @@ import 'package:manifest_desktop/utils/custom_data_table.dart';
 import 'package:manifest_desktop/utils/custom_pagination.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
-
 
 class CityListScreen extends StatefulWidget {
   const CityListScreen({super.key});
@@ -68,7 +66,12 @@ class _CityListScreenState extends State<CityListScreen> {
     return MasterScreen(
       title: "Cities",
       child: Center(
-        child: Column(children: [_buildSearch(), _buildResultView()]),
+        child: Column(
+          children: [
+            _buildSearch(),
+            Expanded(child: _buildResultView()),
+          ],
+        ),
       ),
     );
   }
@@ -113,64 +116,68 @@ class _CityListScreenState extends State<CityListScreen> {
     final int totalPages = (totalCount / _pageSize).ceil();
     final bool isFirstPage = _currentPage == 0;
     final bool isLastPage = _currentPage >= totalPages - 1 || totalPages == 0;
-    return Column(
-      children: [
-        CustomDataTableCard(
-          width: 600,
-          height: 450,
-          columns: [
-            DataColumn(
-              label: Text(
-                "Name",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          CustomDataTableCard(
+            width: 600,
+            height: 425,
+            columns: [
+              DataColumn(
+                label: Text(
+                  "Name",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
               ),
-            ),
-          ],
-          rows: isEmpty
-              ? []
-              : cities!.items!
-                    .map(
-                      (e) => DataRow(
-                        onSelectChanged: (value) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CityDetailsScreen(city: e),
+            ],
+            rows: isEmpty
+                ? []
+                : cities!.items!
+                      .map(
+                        (e) => DataRow(
+                          onSelectChanged: (value) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    CityDetailsScreen(city: e),
+                              ),
+                            );
+                          },
+                          cells: [
+                            DataCell(
+                              Text(e.name, style: TextStyle(fontSize: 15)),
                             ),
-                          );
-                        },
-                        cells: [
-                          DataCell(
-                            Text(e.name, style: TextStyle(fontSize: 15)),
-                          ),
-                        ],
-                      ),
-                    )
-                    .toList(),
-          emptyIcon: Icons.location_city,
-          emptyText: "No cities found.",
-          emptySubtext: "Try adjusting your search or add a new city.",
-        ),
-        SizedBox(height: 10),
-        CustomPagination(
-          currentPage: _currentPage,
-          totalPages: totalPages,
-          onPrevious: isFirstPage
-              ? null
-              : () => _performSearch(page: _currentPage - 1),
-          onNext: isLastPage
-              ? null
-              : () => _performSearch(page: _currentPage + 1),
-          showPageSizeSelector: true,
-          pageSize: _pageSize,
-          pageSizeOptions: _pageSizeOptions,
-          onPageSizeChanged: (newSize) {
-            if (newSize != null && newSize != _pageSize) {
-              _performSearch(page: 0, pageSize: newSize);
-            }
-          },
-        ),
-      ],
+                          ],
+                        ),
+                      )
+                      .toList(),
+            emptyIcon: Icons.location_city,
+            emptyText: "No cities found.",
+            emptySubtext: "Try adjusting your search or add a new city.",
+          ),
+          SizedBox(height: 10),
+          CustomPagination(
+            currentPage: _currentPage,
+            totalPages: totalPages,
+            onPrevious: isFirstPage
+                ? null
+                : () => _performSearch(page: _currentPage - 1),
+            onNext: isLastPage
+                ? null
+                : () => _performSearch(page: _currentPage + 1),
+            showPageSizeSelector: true,
+            pageSize: _pageSize,
+            pageSizeOptions: _pageSizeOptions,
+            onPageSizeChanged: (newSize) {
+              if (newSize != null && newSize != _pageSize) {
+                _performSearch(page: 0, pageSize: newSize);
+              }
+            },
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 }
