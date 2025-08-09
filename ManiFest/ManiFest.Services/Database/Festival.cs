@@ -37,5 +37,8 @@ namespace ManiFest.Services.Database
 
         public int OrganizerId { get; set; }
         public Organizer Organizer { get; set; } = null!;
+
+        // Navigation property for assets/images
+        public System.Collections.Generic.ICollection<Asset> Assets { get; set; } = new System.Collections.Generic.List<Asset>();
     }
 }

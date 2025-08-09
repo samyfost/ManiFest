@@ -18,6 +18,7 @@ namespace ManiFest.Services.Database
         public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<Organizer> Organizers { get; set; }
         public DbSet<Festival> Festivals { get; set; }
+        public DbSet<Asset> Assets { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -131,6 +132,13 @@ namespace ManiFest.Services.Database
                 .WithMany(o => o.Festivals)
                 .HasForeignKey(f => f.OrganizerId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure Asset entity
+            modelBuilder.Entity<Asset>()
+                .HasOne(a => a.Festival)
+                .WithMany(f => f.Assets)
+                .HasForeignKey(a => a.FestivalId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Seed initial data
             modelBuilder.SeedData();

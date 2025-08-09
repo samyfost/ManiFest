@@ -22,6 +22,7 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ISubcategoryService, SubcategoryService>();
 builder.Services.AddTransient<IOrganizerService, OrganizerService>();
 builder.Services.AddTransient<IFestivalService, FestivalService>();
+builder.Services.AddTransient<IAssetService, AssetService>();
 
 
 // Configure database

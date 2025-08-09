@@ -45,7 +45,7 @@ namespace ManiFest.Services.Database
                 new Country { Id = 5, Name = "North Macedonia" },
                 new Country { Id = 6, Name = "France" },
                 new Country { Id = 7, Name = "Germany" },
-                new Country { Id = 8, Name = "Italy" },
+                new Country { Id = 8, Name = "United States" },
                 new Country { Id = 9, Name = "Spain" },
                 new Country { Id = 10, Name = "United Kingdom" }
             );
@@ -176,10 +176,10 @@ namespace ManiFest.Services.Database
                 new City { Id = 27, Name = "Munich", CountryId = 7 },
                 new City { Id = 28, Name = "Hamburg", CountryId = 7 },
                 
-                // Italy - Famous for Venice Film Festival, Sanremo Music Festival, etc.
-                new City { Id = 29, Name = "Rome", CountryId = 8 },
-                new City { Id = 30, Name = "Venice", CountryId = 8 },
-                new City { Id = 31, Name = "Milan", CountryId = 8 },
+                // United States (replacing Italy)
+                new City { Id = 29, Name = "Los Angeles", CountryId = 8 },
+                new City { Id = 30, Name = "New York", CountryId = 8 },
+                new City { Id = 31, Name = "Chicago", CountryId = 8 },
                 
                 // Spain - Famous for San Sebastian Film Festival, Primavera Sound, etc.
                 new City { Id = 32, Name = "Madrid", CountryId = 9 },
@@ -189,7 +189,11 @@ namespace ManiFest.Services.Database
                 // United Kingdom - Famous for Glastonbury, Edinburgh Festival, etc.
                 new City { Id = 35, Name = "London", CountryId = 10 },
                 new City { Id = 36, Name = "Edinburgh", CountryId = 10 },
-                new City { Id = 37, Name = "Manchester", CountryId = 10 }
+                new City { Id = 37, Name = "Manchester", CountryId = 10 },
+
+                // Additional cities for new festivals
+                new City { Id = 38, Name = "Park City", CountryId = 8 },
+                new City { Id = 39, Name = "Cologne", CountryId = 7 }
             );
  
             // Seed Categories
@@ -218,13 +222,53 @@ namespace ManiFest.Services.Database
             // Seed Organizers
             modelBuilder.Entity<Organizer>().HasData(
                 new Organizer { Id = 1, Name = "Global Events Ltd.", ContactInfo = "contact@globalevents.com", CreatedAt = fixedDate, IsActive = true },
-                new Organizer { Id = 2, Name = "Festival Makers", ContactInfo = "+123456789", CreatedAt = fixedDate, IsActive = true }
+                new Organizer { Id = 2, Name = "Festival Makers", ContactInfo = "+123456789", CreatedAt = fixedDate, IsActive = true },
+                new Organizer { Id = 3, Name = "Cannes Organizing Committee", ContactInfo = "info@cannesfestival.com", CreatedAt = fixedDate, IsActive = true },
+                new Organizer { Id = 4, Name = "Sundance Institute", ContactInfo = "info@sundance.org", CreatedAt = fixedDate, IsActive = true },
+                new Organizer { Id = 5, Name = "Entertainment Software Association (ESA)", ContactInfo = "info@theesa.com", CreatedAt = fixedDate, IsActive = true },
+                new Organizer { Id = 6, Name = "Riot Games", ContactInfo = "events@riotgames.com", CreatedAt = fixedDate, IsActive = true }
             );
 
-            // Seed Festivals
+            // Seed Festivals (2 music, 2 film, 2 gaming) with real coordinates
             modelBuilder.Entity<Festival>().HasData(
-                new Festival { Id = 1, Title = "Sarajevo Jazz Nights", StartDate = new DateTime(2025, 6, 1, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 6, 5, 0, 0, 0, DateTimeKind.Utc), BasePrice = 49.99m, Location = "43.8563,18.4131", CreatedAt = fixedDate, IsActive = true, CityId = 1, SubcategoryId = 1, OrganizerId = 1 },
-                new Festival { Id = 2, Title = "Mostar Rock Fest", StartDate = new DateTime(2025, 7, 10, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 7, 12, 0, 0, 0, DateTimeKind.Utc), BasePrice = 39.50m, Location = "43.3438,17.8078", CreatedAt = fixedDate, IsActive = true, CityId = 5, SubcategoryId = 2, OrganizerId = 2 }
+                // Music
+                new Festival { Id = 1, Title = "Sarajevo Jazz Nights", StartDate = new DateTime(2025, 6, 1, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 6, 5, 0, 0, 0, DateTimeKind.Utc), BasePrice = 49.99m, Location = "43.8563,18.4131", CreatedAt = fixedDate, IsActive = true, CityId = 1, SubcategoryId = 1, OrganizerId = 1 }, // Sarajevo
+                new Festival { Id = 2, Title = "Mostar Rock Fest", StartDate = new DateTime(2025, 7, 10, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 7, 12, 0, 0, 0, DateTimeKind.Utc), BasePrice = 39.50m, Location = "43.3438,17.8078", CreatedAt = fixedDate, IsActive = true, CityId = 5, SubcategoryId = 2, OrganizerId = 2 }, // Mostar
+
+                // Film
+                new Festival { Id = 3, Title = "Cannes Film Festival", StartDate = new DateTime(2025, 5, 14, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 5, 25, 0, 0, 0, DateTimeKind.Utc), BasePrice = 99.00m, Location = "43.552847,7.017369", CreatedAt = fixedDate, IsActive = true, CityId = 24, SubcategoryId = 4, OrganizerId = 3 }, // Cannes, France
+                new Festival { Id = 4, Title = "Sundance Film Festival", StartDate = new DateTime(2025, 1, 23, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 2, 2, 0, 0, 0, DateTimeKind.Utc), BasePrice = 79.00m, Location = "40.6461,-111.4980", CreatedAt = fixedDate, IsActive = true, CityId = 38, SubcategoryId = 4, OrganizerId = 4 }, // Park City, Utah, USA
+
+                // Gaming
+                new Festival { Id = 5, Title = "E3 (Electronic Entertainment Expo)", StartDate = new DateTime(2025, 6, 10, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 6, 12, 0, 0, 0, DateTimeKind.Utc), BasePrice = 59.00m, Location = "34.0522,-118.2437", CreatedAt = fixedDate, IsActive = true, CityId = 29, SubcategoryId = 8, OrganizerId = 5 }, // Los Angeles, USA
+                new Festival { Id = 6, Title = "LEC Finals", StartDate = new DateTime(2025, 8, 30, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 8, 31, 0, 0, 0, DateTimeKind.Utc), BasePrice = 45.00m, Location = "50.9375,6.9603", CreatedAt = fixedDate, IsActive = true, CityId = 39, SubcategoryId = 7, OrganizerId = 6 } // Cologne, Germany
+            );
+
+            // Seed Assets (two images per festival)
+            modelBuilder.Entity<Asset>().HasData(
+                // Sarajevo Jazz Nights
+                new Asset { Id = 1, FileName = "Jazz1.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "Jazz1.png"), CreatedAt = fixedDate, FestivalId = 1 },
+                new Asset { Id = 2, FileName = "Jazz2.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "Jazz2.png"), CreatedAt = fixedDate, FestivalId = 1 },
+
+                // Mostar Rock Fest
+                new Asset { Id = 3, FileName = "Rock1.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "Rock1.png"), CreatedAt = fixedDate, FestivalId = 2 },
+                new Asset { Id = 4, FileName = "Rock2.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "Rock2.png"), CreatedAt = fixedDate, FestivalId = 2 },
+
+                // Cannes Film Festival
+                new Asset { Id = 5, FileName = "Cannes1.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "Cannes1.png"), CreatedAt = fixedDate, FestivalId = 3 },
+                new Asset { Id = 6, FileName = "Cannes2.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "Cannes2.png"), CreatedAt = fixedDate, FestivalId = 3 },
+
+                // Sundance Film Festival
+                new Asset { Id = 7, FileName = "Sundance1.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "Sundance1.png"), CreatedAt = fixedDate, FestivalId = 4 },
+                new Asset { Id = 8, FileName = "Sundance2.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "Sundance2.png"), CreatedAt = fixedDate, FestivalId = 4 },
+
+                // E3
+                new Asset { Id = 9, FileName = "E3_1.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "E3_1.png"), CreatedAt = fixedDate, FestivalId = 5 },
+                new Asset { Id = 10, FileName = "E3_2.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "E3_2.png"), CreatedAt = fixedDate, FestivalId = 5 },
+
+                // LEC Finals
+                new Asset { Id = 11, FileName = "LEC1.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "LEC1.png"), CreatedAt = fixedDate, FestivalId = 6 },
+                new Asset { Id = 12, FileName = "LEC2.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "LEC2.png"), CreatedAt = fixedDate, FestivalId = 6 }
             );
         }
     }
