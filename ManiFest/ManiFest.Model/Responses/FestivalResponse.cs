@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ManiFest.Model.Responses
 {
@@ -20,5 +21,7 @@ namespace ManiFest.Model.Responses
 
         public int OrganizerId { get; set; }
         public string OrganizerName { get; set; } = string.Empty;
+
+        public List<AssetResponse> Assets { get; set; } = new List<AssetResponse>();
     }
 }

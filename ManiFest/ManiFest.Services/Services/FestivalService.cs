@@ -51,7 +51,23 @@ namespace ManiFest.Services.Services
             return query
                 .Include(f => f.City)
                 .Include(f => f.Subcategory)
-                .Include(f => f.Organizer);
+                .Include(f => f.Organizer)
+                .Include(f => f.Assets);
+        }
+
+        public override async Task<FestivalResponse?> GetByIdAsync(int id)
+        {
+            var entity = await _context.Festivals
+                .Include(f => f.City)
+                .Include(f => f.Subcategory)
+                .Include(f => f.Organizer)
+                .Include(f => f.Assets)
+                .FirstOrDefaultAsync(f => f.Id == id);
+
+            if (entity == null)
+                return null;
+
+            return MapToResponse(entity);
         }
 
         protected override async Task BeforeInsert(Festival entity, FestivalUpsertRequest request)
