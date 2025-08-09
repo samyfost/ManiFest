@@ -5,7 +5,7 @@ import 'package:manifest_desktop/model/search_result.dart';
 import 'package:manifest_desktop/providers/city_provider.dart';
 import 'package:manifest_desktop/screens/city_details_screen.dart';
 import 'package:manifest_desktop/utils/custom_data_table.dart';
-import 'package:manifest_desktop/utils/custom_pagination.dart';
+import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
 
@@ -121,7 +121,7 @@ class _CityListScreenState extends State<CityListScreen> {
         children: [
           CustomDataTableCard(
             width: 600,
-            height: 425,
+            height: 424,
             columns: [
               DataColumn(
                 label: Text(
@@ -156,8 +156,8 @@ class _CityListScreenState extends State<CityListScreen> {
             emptyText: "No cities found.",
             emptySubtext: "Try adjusting your search or add a new city.",
           ),
-          SizedBox(height: 10),
-          CustomPagination(
+          
+          BasePagination(
             currentPage: _currentPage,
             totalPages: totalPages,
             onPrevious: isFirstPage
@@ -175,7 +175,7 @@ class _CityListScreenState extends State<CityListScreen> {
               }
             },
           ),
-          const SizedBox(height: 8),
+        
         ],
       ),
     );
