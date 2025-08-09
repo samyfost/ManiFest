@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManiFest.Services.Migrations
 {
     [DbContext(typeof(ManiFestDbContext))]
-    [Migration("20250808200718_SeedInitialData")]
+    [Migration("20250809002044_SeedInitialData")]
     partial class SeedInitialData
     {
         /// <inheritdoc />
@@ -404,6 +404,88 @@ namespace ManiFest.Services.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ManiFest.Services.Database.Festival", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("BasePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("OrganizerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SubcategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("OrganizerId");
+
+                    b.HasIndex("SubcategoryId");
+
+                    b.ToTable("Festivals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BasePrice = 49.99m,
+                            CityId = 1,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 6, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            Location = "43.8563,18.4131",
+                            OrganizerId = 1,
+                            StartDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SubcategoryId = 1,
+                            Title = "Sarajevo Jazz Nights"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BasePrice = 39.50m,
+                            CityId = 5,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 7, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            Location = "43.3438,17.8078",
+                            OrganizerId = 2,
+                            StartDate = new DateTime(2025, 7, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SubcategoryId = 2,
+                            Title = "Mostar Rock Fest"
+                        });
+                });
+
             modelBuilder.Entity("ManiFest.Services.Database.Gender", b =>
                 {
                     b.Property<int>("Id")
@@ -433,6 +515,55 @@ namespace ManiFest.Services.Migrations
                         {
                             Id = 2,
                             Name = "Female"
+                        });
+                });
+
+            modelBuilder.Entity("ManiFest.Services.Database.Organizer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContactInfo")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Organizers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ContactInfo = "contact@globalevents.com",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            Name = "Global Events Ltd."
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ContactInfo = "+123456789",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            Name = "Festival Makers"
                         });
                 });
 
@@ -812,6 +943,33 @@ namespace ManiFest.Services.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("ManiFest.Services.Database.Festival", b =>
+                {
+                    b.HasOne("ManiFest.Services.Database.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ManiFest.Services.Database.Organizer", "Organizer")
+                        .WithMany("Festivals")
+                        .HasForeignKey("OrganizerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ManiFest.Services.Database.Subcategory", "Subcategory")
+                        .WithMany()
+                        .HasForeignKey("SubcategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("Organizer");
+
+                    b.Navigation("Subcategory");
+                });
+
             modelBuilder.Entity("ManiFest.Services.Database.Subcategory", b =>
                 {
                     b.HasOne("ManiFest.Services.Database.Category", "Category")
@@ -864,6 +1022,11 @@ namespace ManiFest.Services.Migrations
             modelBuilder.Entity("ManiFest.Services.Database.Category", b =>
                 {
                     b.Navigation("Subcategories");
+                });
+
+            modelBuilder.Entity("ManiFest.Services.Database.Organizer", b =>
+                {
+                    b.Navigation("Festivals");
                 });
 
             modelBuilder.Entity("ManiFest.Services.Database.Role", b =>

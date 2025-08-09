@@ -20,6 +20,8 @@ builder.Services.AddTransient<ICityService, CityService>();
 builder.Services.AddTransient<ICountryService, CountryService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ISubcategoryService, SubcategoryService>();
+builder.Services.AddTransient<IOrganizerService, OrganizerService>();
+builder.Services.AddTransient<IFestivalService, FestivalService>();
 
 
 // Configure database

@@ -56,6 +56,22 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Organizers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ContactInfo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Organizers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
@@ -110,6 +126,43 @@ namespace ManiFest.Services.Migrations
                         name: "FK_Cities_Countries_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Countries",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Festivals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CityId = table.Column<int>(type: "int", nullable: false),
+                    SubcategoryId = table.Column<int>(type: "int", nullable: false),
+                    OrganizerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Festivals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Festivals_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Festivals_Organizers_OrganizerId",
+                        column: x => x.OrganizerId,
+                        principalTable: "Organizers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Festivals_Subcategories_SubcategoryId",
+                        column: x => x.SubcategoryId,
+                        principalTable: "Subcategories",
                         principalColumn: "Id");
                 });
 
@@ -212,6 +265,15 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Organizers",
+                columns: new[] { "Id", "ContactInfo", "CreatedAt", "IsActive", "Name" },
+                values: new object[,]
+                {
+                    { 1, "contact@globalevents.com", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), true, "Global Events Ltd." },
+                    { 2, "+123456789", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), true, "Festival Makers" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreatedAt", "Description", "IsActive", "Name" },
                 values: new object[,]
@@ -281,6 +343,15 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Festivals",
+                columns: new[] { "Id", "BasePrice", "CityId", "CreatedAt", "EndDate", "IsActive", "Location", "OrganizerId", "StartDate", "SubcategoryId", "Title" },
+                values: new object[,]
+                {
+                    { 1, 49.99m, 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 6, 5, 0, 0, 0, 0, DateTimeKind.Utc), true, "43.8563,18.4131", 1, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Sarajevo Jazz Nights" },
+                    { 2, 39.50m, 5, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 7, 12, 0, 0, 0, 0, DateTimeKind.Utc), true, "43.3438,17.8078", 2, new DateTime(2025, 7, 10, 0, 0, 0, 0, DateTimeKind.Utc), 2, "Mostar Rock Fest" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CityId", "CreatedAt", "Email", "FirstName", "GenderId", "IsActive", "LastLoginAt", "LastName", "PasswordHash", "PasswordSalt", "PhoneNumber", "Picture", "Username" },
                 values: new object[,]
@@ -326,8 +397,29 @@ namespace ManiFest.Services.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Festivals_CityId",
+                table: "Festivals",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Festivals_OrganizerId",
+                table: "Festivals",
+                column: "OrganizerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Festivals_SubcategoryId",
+                table: "Festivals",
+                column: "SubcategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Genders_Name",
                 table: "Genders",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Organizers_Name",
+                table: "Organizers",
                 column: "Name",
                 unique: true);
 
@@ -386,19 +478,25 @@ namespace ManiFest.Services.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Subcategories");
+                name: "Festivals");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Organizers");
+
+            migrationBuilder.DropTable(
+                name: "Subcategories");
 
             migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Cities");

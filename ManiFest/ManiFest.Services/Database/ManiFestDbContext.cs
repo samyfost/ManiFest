@@ -16,6 +16,8 @@ namespace ManiFest.Services.Database
         public DbSet<Country> Countries { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Subcategory> Subcategories { get; set; }
+        public DbSet<Organizer> Organizers { get; set; }
+        public DbSet<Festival> Festivals { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -105,6 +107,30 @@ namespace ManiFest.Services.Database
                 .WithMany(c => c.Subcategories)
                 .HasForeignKey(s => s.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure Organizer entity
+            modelBuilder.Entity<Organizer>()
+                .HasIndex(o => o.Name)
+                .IsUnique();
+
+            // Configure Festival entity
+            modelBuilder.Entity<Festival>()
+                .HasOne(f => f.City)
+                .WithMany()
+                .HasForeignKey(f => f.CityId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Festival>()
+                .HasOne(f => f.Subcategory)
+                .WithMany()
+                .HasForeignKey(f => f.SubcategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Festival>()
+                .HasOne(f => f.Organizer)
+                .WithMany(o => o.Festivals)
+                .HasForeignKey(f => f.OrganizerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Seed initial data
             modelBuilder.SeedData();

@@ -214,6 +214,18 @@ namespace ManiFest.Services.Database
                 new Subcategory { Id = 8, Name = "Indie", Description = "Indie game festivals", CategoryId = 3, CreatedAt = fixedDate, IsActive = true },
                 new Subcategory { Id = 9, Name = "Retro", Description = "Retro gaming festivals", CategoryId = 3, CreatedAt = fixedDate, IsActive = true }
             );
+
+            // Seed Organizers
+            modelBuilder.Entity<Organizer>().HasData(
+                new Organizer { Id = 1, Name = "Global Events Ltd.", ContactInfo = "contact@globalevents.com", CreatedAt = fixedDate, IsActive = true },
+                new Organizer { Id = 2, Name = "Festival Makers", ContactInfo = "+123456789", CreatedAt = fixedDate, IsActive = true }
+            );
+
+            // Seed Festivals
+            modelBuilder.Entity<Festival>().HasData(
+                new Festival { Id = 1, Title = "Sarajevo Jazz Nights", StartDate = new DateTime(2025, 6, 1, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 6, 5, 0, 0, 0, DateTimeKind.Utc), BasePrice = 49.99m, Location = "43.8563,18.4131", CreatedAt = fixedDate, IsActive = true, CityId = 1, SubcategoryId = 1, OrganizerId = 1 },
+                new Festival { Id = 2, Title = "Mostar Rock Fest", StartDate = new DateTime(2025, 7, 10, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 7, 12, 0, 0, 0, DateTimeKind.Utc), BasePrice = 39.50m, Location = "43.3438,17.8078", CreatedAt = fixedDate, IsActive = true, CityId = 5, SubcategoryId = 2, OrganizerId = 2 }
+            );
         }
     }
 } 
