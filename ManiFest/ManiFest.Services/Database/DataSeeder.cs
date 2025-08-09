@@ -9,7 +9,7 @@ namespace ManiFest.Services.Database
         private const string DefaultPhoneNumber = "+387 00 000 000";
         
         private const string TestMailSender = "test.sender@gmail.com";
-        private const string TestMailReceiver = "test.receiver@gmail.com";
+        private const string TestMailReceiver = "calltaxi.receiver@gmail.com";
 
         public static void SeedData(this ModelBuilder modelBuilder)
         {
@@ -229,19 +229,23 @@ namespace ManiFest.Services.Database
                 new Organizer { Id = 6, Name = "Riot Games", ContactInfo = "events@riotgames.com", CreatedAt = fixedDate, IsActive = true }
             );
 
-            // Seed Festivals (2 music, 2 film, 2 gaming) with real coordinates
+            // Use static future dates for festivals (set to dates well into the future for long-term testing validity)
+            // These dates are set to be in 2025/2026 to ensure they remain future dates for testing
+            var baseStartDate = new DateTime(2025, 9, 1, 0, 0, 0, DateTimeKind.Utc);
+            
+            // Seed Festivals (2 music, 2 film, 2 gaming) with real coordinates and future dates
             modelBuilder.Entity<Festival>().HasData(
                 // Music
-                new Festival { Id = 1, Title = "Sarajevo Jazz Nights", StartDate = new DateTime(2025, 6, 1, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 6, 5, 0, 0, 0, DateTimeKind.Utc), BasePrice = 49.99m, Location = "43.8563,18.4131", CreatedAt = fixedDate, IsActive = true, CityId = 1, SubcategoryId = 1, OrganizerId = 1 }, // Sarajevo
-                new Festival { Id = 2, Title = "Mostar Rock Fest", StartDate = new DateTime(2025, 7, 10, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 7, 12, 0, 0, 0, DateTimeKind.Utc), BasePrice = 39.50m, Location = "43.3438,17.8078", CreatedAt = fixedDate, IsActive = true, CityId = 5, SubcategoryId = 2, OrganizerId = 2 }, // Mostar
+                new Festival { Id = 1, Title = "Sarajevo Jazz Nights", StartDate = baseStartDate.AddDays(15), EndDate = baseStartDate.AddDays(19), BasePrice = 49.99m, Location = "43.8563,18.4131", CreatedAt = fixedDate, IsActive = true, CityId = 1, SubcategoryId = 1, OrganizerId = 1 }, // Sarajevo - June 16-20, 2025
+                new Festival { Id = 2, Title = "Mostar Rock Fest", StartDate = baseStartDate.AddDays(40), EndDate = baseStartDate.AddDays(42), BasePrice = 39.50m, Location = "43.3438,17.8078", CreatedAt = fixedDate, IsActive = true, CityId = 5, SubcategoryId = 2, OrganizerId = 2 }, // Mostar - July 11-13, 2025
 
                 // Film
-                new Festival { Id = 3, Title = "Cannes Film Festival", StartDate = new DateTime(2025, 5, 14, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 5, 25, 0, 0, 0, DateTimeKind.Utc), BasePrice = 99.00m, Location = "43.552847,7.017369", CreatedAt = fixedDate, IsActive = true, CityId = 24, SubcategoryId = 4, OrganizerId = 3 }, // Cannes, France
-                new Festival { Id = 4, Title = "Sundance Film Festival", StartDate = new DateTime(2025, 1, 23, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 2, 2, 0, 0, 0, DateTimeKind.Utc), BasePrice = 79.00m, Location = "40.6461,-111.4980", CreatedAt = fixedDate, IsActive = true, CityId = 38, SubcategoryId = 4, OrganizerId = 4 }, // Park City, Utah, USA
+                new Festival { Id = 3, Title = "Cannes Film Festival", StartDate = baseStartDate.AddDays(70), EndDate = baseStartDate.AddDays(81), BasePrice = 99.00m, Location = "43.552847,7.017369", CreatedAt = fixedDate, IsActive = true, CityId = 24, SubcategoryId = 4, OrganizerId = 3 }, // Cannes, France - Aug 10-21, 2025
+                new Festival { Id = 4, Title = "Sundance Film Festival", StartDate = baseStartDate.AddDays(25), EndDate = baseStartDate.AddDays(35), BasePrice = 79.00m, Location = "40.6461,-111.4980", CreatedAt = fixedDate, IsActive = true, CityId = 38, SubcategoryId = 4, OrganizerId = 4 }, // Park City, Utah, USA - June 26 - July 6, 2025
 
                 // Gaming
-                new Festival { Id = 5, Title = "E3 (Electronic Entertainment Expo)", StartDate = new DateTime(2025, 6, 10, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 6, 12, 0, 0, 0, DateTimeKind.Utc), BasePrice = 59.00m, Location = "34.0522,-118.2437", CreatedAt = fixedDate, IsActive = true, CityId = 29, SubcategoryId = 8, OrganizerId = 5 }, // Los Angeles, USA
-                new Festival { Id = 6, Title = "LEC Finals", StartDate = new DateTime(2025, 8, 30, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 8, 31, 0, 0, 0, DateTimeKind.Utc), BasePrice = 45.00m, Location = "50.9375,6.9603", CreatedAt = fixedDate, IsActive = true, CityId = 39, SubcategoryId = 7, OrganizerId = 6 } // Cologne, Germany
+                new Festival { Id = 5, Title = "E3 (Electronic Entertainment Expo)", StartDate = baseStartDate.AddDays(55), EndDate = baseStartDate.AddDays(57), BasePrice = 59.00m, Location = "34.0522,-118.2437", CreatedAt = fixedDate, IsActive = true, CityId = 29, SubcategoryId = 8, OrganizerId = 5 }, // Los Angeles, USA - July 26-28, 2025
+                new Festival { Id = 6, Title = "LEC Finals", StartDate = baseStartDate.AddDays(120), EndDate = baseStartDate.AddDays(122), BasePrice = 45.00m, Location = "50.9375,6.9603", CreatedAt = fixedDate, IsActive = true, CityId = 39, SubcategoryId = 7, OrganizerId = 6 } // Cologne, Germany - Aug 30-31, 2025
             );
 
             // Seed Assets (two images per festival)
@@ -294,14 +298,14 @@ namespace ManiFest.Services.Database
             // Seed Tickets for users 4 and 2 (final price precomputed)
             modelBuilder.Entity<Ticket>().HasData(
                 // User 4
-                new Ticket { Id = 1, FestivalId = 1, UserId = 4, TicketTypeId = 1, FinalPrice = 49.99m, GeneratedCode = "F1-U4-STD", IsRedeemed = true, CreatedAt = fixedDate },
-                new Ticket { Id = 2, FestivalId = 3, UserId = 4, TicketTypeId = 2, FinalPrice = 148.50m, GeneratedCode = "F3-U4-VIP", IsRedeemed = true, CreatedAt = fixedDate },
-                new Ticket { Id = 3, FestivalId = 6, UserId = 4, TicketTypeId = 3, FinalPrice = 36.00m, GeneratedCode = "F6-U4-STU", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 1, FestivalId = 1, UserId = 4, TicketTypeId = 1, FinalPrice = 49.99m, GeneratedCode = "F1D-U4S-STD", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 2, FestivalId = 3, UserId = 4, TicketTypeId = 2, FinalPrice = 148.50m, GeneratedCode = "F3D-T4E-VIP", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 3, FestivalId = 6, UserId = 4, TicketTypeId = 3, FinalPrice = 36.00m, GeneratedCode = "F6D-U4S-STU", IsRedeemed = true, CreatedAt = fixedDate },
 
                 // User 2 (match their reviews on festivals 1, 3, and 6)
-                new Ticket { Id = 4, FestivalId = 1, UserId = 2, TicketTypeId = 1, FinalPrice = 49.99m, GeneratedCode = "F1-U2-STD", IsRedeemed = true, CreatedAt = fixedDate },
-                new Ticket { Id = 5, FestivalId = 3, UserId = 2, TicketTypeId = 2, FinalPrice = 148.50m, GeneratedCode = "F3-U2-VIP", IsRedeemed = true, CreatedAt = fixedDate },
-                new Ticket { Id = 6, FestivalId = 6, UserId = 2, TicketTypeId = 3, FinalPrice = 36.00m, GeneratedCode = "F6-U2-STU", IsRedeemed = true, CreatedAt = fixedDate }
+                new Ticket { Id = 4, FestivalId = 1, UserId = 2, TicketTypeId = 1, FinalPrice = 49.99m, GeneratedCode = "F1D-K2S-STD", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 5, FestivalId = 3, UserId = 2, TicketTypeId = 2, FinalPrice = 148.50m, GeneratedCode = "F3D-U2E-VIP", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 6, FestivalId = 6, UserId = 2, TicketTypeId = 3, FinalPrice = 36.00m, GeneratedCode = "F6D-L2S-STU", IsRedeemed = true, CreatedAt = fixedDate }
             );
         }
     }

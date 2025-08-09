@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManiFest.Services.Migrations
 {
     [DbContext(typeof(ManiFestDbContext))]
-    [Migration("20250809020802_SeedInitialData")]
+    [Migration("20250809195651_SeedInitialData")]
     partial class SeedInitialData
     {
         /// <inheritdoc />
@@ -618,11 +618,11 @@ namespace ManiFest.Services.Migrations
                             BasePrice = 49.99m,
                             CityId = 1,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndDate = new DateTime(2025, 6, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 9, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             Location = "43.8563,18.4131",
                             OrganizerId = 1,
-                            StartDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 9, 16, 0, 0, 0, 0, DateTimeKind.Utc),
                             SubcategoryId = 1,
                             Title = "Sarajevo Jazz Nights"
                         },
@@ -632,11 +632,11 @@ namespace ManiFest.Services.Migrations
                             BasePrice = 39.50m,
                             CityId = 5,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndDate = new DateTime(2025, 7, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 10, 13, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             Location = "43.3438,17.8078",
                             OrganizerId = 2,
-                            StartDate = new DateTime(2025, 7, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 10, 11, 0, 0, 0, 0, DateTimeKind.Utc),
                             SubcategoryId = 2,
                             Title = "Mostar Rock Fest"
                         },
@@ -646,11 +646,11 @@ namespace ManiFest.Services.Migrations
                             BasePrice = 99.00m,
                             CityId = 24,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndDate = new DateTime(2025, 5, 25, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             Location = "43.552847,7.017369",
                             OrganizerId = 3,
-                            StartDate = new DateTime(2025, 5, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 11, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             SubcategoryId = 4,
                             Title = "Cannes Film Festival"
                         },
@@ -660,11 +660,11 @@ namespace ManiFest.Services.Migrations
                             BasePrice = 79.00m,
                             CityId = 38,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndDate = new DateTime(2025, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             Location = "40.6461,-111.4980",
                             OrganizerId = 4,
-                            StartDate = new DateTime(2025, 1, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 9, 26, 0, 0, 0, 0, DateTimeKind.Utc),
                             SubcategoryId = 4,
                             Title = "Sundance Film Festival"
                         },
@@ -674,11 +674,11 @@ namespace ManiFest.Services.Migrations
                             BasePrice = 59.00m,
                             CityId = 29,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndDate = new DateTime(2025, 6, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 10, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             Location = "34.0522,-118.2437",
                             OrganizerId = 5,
-                            StartDate = new DateTime(2025, 6, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 10, 26, 0, 0, 0, 0, DateTimeKind.Utc),
                             SubcategoryId = 8,
                             Title = "E3 (Electronic Entertainment Expo)"
                         },
@@ -688,11 +688,11 @@ namespace ManiFest.Services.Migrations
                             BasePrice = 45.00m,
                             CityId = 39,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndDate = new DateTime(2025, 8, 31, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             Location = "50.9375,6.9603",
                             OrganizerId = 6,
-                            StartDate = new DateTime(2025, 8, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 12, 30, 0, 0, 0, 0, DateTimeKind.Utc),
                             SubcategoryId = 7,
                             Title = "LEC Finals"
                         });
@@ -1129,7 +1129,7 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 1,
                             FinalPrice = 49.99m,
-                            GeneratedCode = "F1-U4-STD",
+                            GeneratedCode = "F1D-U4S-STD",
                             IsRedeemed = true,
                             TicketTypeId = 1,
                             UserId = 4
@@ -1140,7 +1140,7 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 3,
                             FinalPrice = 148.50m,
-                            GeneratedCode = "F3-U4-VIP",
+                            GeneratedCode = "F3D-T4E-VIP",
                             IsRedeemed = true,
                             TicketTypeId = 2,
                             UserId = 4
@@ -1151,7 +1151,7 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 6,
                             FinalPrice = 36.00m,
-                            GeneratedCode = "F6-U4-STU",
+                            GeneratedCode = "F6D-U4S-STU",
                             IsRedeemed = true,
                             TicketTypeId = 3,
                             UserId = 4
@@ -1162,7 +1162,7 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 1,
                             FinalPrice = 49.99m,
-                            GeneratedCode = "F1-U2-STD",
+                            GeneratedCode = "F1D-K2S-STD",
                             IsRedeemed = true,
                             TicketTypeId = 1,
                             UserId = 2
@@ -1173,7 +1173,7 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 3,
                             FinalPrice = 148.50m,
-                            GeneratedCode = "F3-U2-VIP",
+                            GeneratedCode = "F3D-U2E-VIP",
                             IsRedeemed = true,
                             TicketTypeId = 2,
                             UserId = 2
@@ -1184,7 +1184,7 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 6,
                             FinalPrice = 36.00m,
-                            GeneratedCode = "F6-U2-STU",
+                            GeneratedCode = "F6D-L2S-STU",
                             IsRedeemed = true,
                             TicketTypeId = 3,
                             UserId = 2
@@ -1332,7 +1332,7 @@ namespace ManiFest.Services.Migrations
                             Id = 1,
                             CityId = 1,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "test.receiver@gmail.com",
+                            Email = "calltaxi.receiver@gmail.com",
                             FirstName = "Denis",
                             GenderId = 1,
                             IsActive = true,
