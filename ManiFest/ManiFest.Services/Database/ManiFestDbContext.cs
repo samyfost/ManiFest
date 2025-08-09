@@ -20,6 +20,8 @@ namespace ManiFest.Services.Database
         public DbSet<Festival> Festivals { get; set; }
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<TicketType> TicketTypes { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -156,6 +158,33 @@ namespace ManiFest.Services.Database
 
             modelBuilder.Entity<Review>()
                 .HasIndex(r => new { r.FestivalId, r.UserId });
+
+            // Configure Ticket and TicketType
+            modelBuilder.Entity<TicketType>()
+                .HasIndex(tt => tt.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<Ticket>()
+                .HasOne(t => t.Festival)
+                .WithMany()
+                .HasForeignKey(t => t.FestivalId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Ticket>()
+                .HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Ticket>()
+                .HasOne(t => t.TicketType)
+                .WithMany()
+                .HasForeignKey(t => t.TicketTypeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Ticket>()
+                .HasIndex(t => t.GeneratedCode)
+                .IsUnique();
 
             // Seed initial data
             modelBuilder.SeedData();

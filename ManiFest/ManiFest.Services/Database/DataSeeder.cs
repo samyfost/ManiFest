@@ -275,16 +275,33 @@ namespace ManiFest.Services.Database
             modelBuilder.Entity<Review>().HasData(
                 // User 4 reviews every festival
                 new Review { Id = 1, FestivalId = 1, UserId = 4, Rating = 5, Comment = "Amazing jazz performances and great atmosphere!", CreatedAt = fixedDate },
-                new Review { Id = 2, FestivalId = 2, UserId = 4, Rating = 4, Comment = "Solid rock lineup, venue could be better.", CreatedAt = fixedDate },
                 new Review { Id = 3, FestivalId = 3, UserId = 4, Rating = 5, Comment = "World-class premieres at Cannes!", CreatedAt = fixedDate },
-                new Review { Id = 4, FestivalId = 4, UserId = 4, Rating = 4, Comment = "Great indie selection at Sundance.", CreatedAt = fixedDate },
-                new Review { Id = 5, FestivalId = 5, UserId = 4, Rating = 3, Comment = "E3 had fewer booths than expected but still fun.", CreatedAt = fixedDate },
                 new Review { Id = 6, FestivalId = 6, UserId = 4, Rating = 5, Comment = "LEC Finals were electric!", CreatedAt = fixedDate },
 
                 // User 2 reviews a few festivals (not all)
                 new Review { Id = 7, FestivalId = 1, UserId = 2, Rating = 4, Comment = "Loved the outdoor stages.", CreatedAt = fixedDate },
                 new Review { Id = 8, FestivalId = 3, UserId = 2, Rating = 5, Comment = "Cannes never disappoints.", CreatedAt = fixedDate },
                 new Review { Id = 9, FestivalId = 6, UserId = 2, Rating = 4, Comment = "Incredible finals weekend!", CreatedAt = fixedDate }
+            );
+
+            // Seed Ticket Types
+            modelBuilder.Entity<TicketType>().HasData(
+                new TicketType { Id = 1, Name = "Standard", Description = "Standard access", PriceMultiplier = 1.0m, CreatedAt = fixedDate, IsActive = true },
+                new TicketType { Id = 2, Name = "VIP", Description = "VIP access with perks", PriceMultiplier = 1.5m, CreatedAt = fixedDate, IsActive = true },
+                new TicketType { Id = 3, Name = "Student", Description = "Student discount", PriceMultiplier = 0.8m, CreatedAt = fixedDate, IsActive = true }
+            );
+
+            // Seed Tickets for users 4 and 2 (final price precomputed)
+            modelBuilder.Entity<Ticket>().HasData(
+                // User 4
+                new Ticket { Id = 1, FestivalId = 1, UserId = 4, TicketTypeId = 1, FinalPrice = 49.99m, GeneratedCode = "F1-U4-STD", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 2, FestivalId = 3, UserId = 4, TicketTypeId = 2, FinalPrice = 148.50m, GeneratedCode = "F3-U4-VIP", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 3, FestivalId = 6, UserId = 4, TicketTypeId = 3, FinalPrice = 36.00m, GeneratedCode = "F6-U4-STU", IsRedeemed = true, CreatedAt = fixedDate },
+
+                // User 2 (match their reviews on festivals 1, 3, and 6)
+                new Ticket { Id = 4, FestivalId = 1, UserId = 2, TicketTypeId = 1, FinalPrice = 49.99m, GeneratedCode = "F1-U2-STD", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 5, FestivalId = 3, UserId = 2, TicketTypeId = 2, FinalPrice = 148.50m, GeneratedCode = "F3-U2-VIP", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 6, FestivalId = 6, UserId = 2, TicketTypeId = 3, FinalPrice = 36.00m, GeneratedCode = "F6-U2-STU", IsRedeemed = true, CreatedAt = fixedDate }
             );
         }
     }

@@ -88,6 +88,23 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TicketTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    PriceMultiplier = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Subcategories",
                 columns: table => new
                 {
@@ -259,6 +276,42 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tickets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FestivalId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    TicketTypeId = table.Column<int>(type: "int", nullable: false),
+                    FinalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    GeneratedCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsRedeemed = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RedeemedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tickets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tickets_Festivals_FestivalId",
+                        column: x => x.FestivalId,
+                        principalTable: "Festivals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tickets_TicketTypes_TicketTypeId",
+                        column: x => x.TicketTypeId,
+                        principalTable: "TicketTypes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Tickets_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserRoles",
                 columns: table => new
                 {
@@ -341,6 +394,16 @@ namespace ManiFest.Services.Migrations
                 {
                     { 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "System administrator with full access", true, "Administrator" },
                     { 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Regular user role", true, "User" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TicketTypes",
+                columns: new[] { "Id", "CreatedAt", "Description", "IsActive", "Name", "PriceMultiplier" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Standard access", true, "Standard", 1.0m },
+                    { 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "VIP access with perks", true, "VIP", 1.5m },
+                    { 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Student discount", true, "Student", 0.8m }
                 });
 
             migrationBuilder.InsertData(
@@ -454,14 +517,24 @@ namespace ManiFest.Services.Migrations
                 values: new object[,]
                 {
                     { 1, "Amazing jazz performances and great atmosphere!", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, 5, 4 },
-                    { 2, "Solid rock lineup, venue could be better.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, 4, 4 },
                     { 3, "World-class premieres at Cannes!", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, null, 5, 4 },
-                    { 4, "Great indie selection at Sundance.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 4, null, 4, 4 },
-                    { 5, "E3 had fewer booths than expected but still fun.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 5, null, 3, 4 },
                     { 6, "LEC Finals were electric!", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, null, 5, 4 },
                     { 7, "Loved the outdoor stages.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, 4, 2 },
                     { 8, "Cannes never disappoints.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, null, 5, 2 },
                     { 9, "Incredible finals weekend!", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, null, 4, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Tickets",
+                columns: new[] { "Id", "CreatedAt", "FestivalId", "FinalPrice", "GeneratedCode", "IsRedeemed", "RedeemedAt", "TicketTypeId", "UserId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, 49.99m, "F1-U4-STD", true, null, 1, 4 },
+                    { 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, 148.50m, "F3-U4-VIP", true, null, 2, 4 },
+                    { 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, 36.00m, "F6-U4-STU", true, null, 3, 4 },
+                    { 4, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, 49.99m, "F1-U2-STD", true, null, 1, 2 },
+                    { 5, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, 148.50m, "F3-U2-VIP", true, null, 2, 2 },
+                    { 6, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, 36.00m, "F6-U2-STU", true, null, 3, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -563,6 +636,33 @@ namespace ManiFest.Services.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tickets_FestivalId",
+                table: "Tickets",
+                column: "FestivalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_GeneratedCode",
+                table: "Tickets",
+                column: "GeneratedCode",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_TicketTypeId",
+                table: "Tickets",
+                column: "TicketTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_UserId",
+                table: "Tickets",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketTypes_Name",
+                table: "TicketTypes",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
                 table: "UserRoles",
                 column: "RoleId");
@@ -606,10 +706,16 @@ namespace ManiFest.Services.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
+                name: "Tickets");
+
+            migrationBuilder.DropTable(
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
                 name: "Festivals");
+
+            migrationBuilder.DropTable(
+                name: "TicketTypes");
 
             migrationBuilder.DropTable(
                 name: "Roles");

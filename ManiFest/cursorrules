@@ -48,6 +48,7 @@ When you add a new entity (e.g., `Festival`), Cursor should automate the followi
 - Use `Include` in `ApplyFilter` for navigation properties.
 - Use `BaseCRUDService` for standard CRUD, override only for custom logic.
 - Keep controllers thin, delegate logic to services.
+- Use `DateTime.Now` for timestamps (CreatedAt, RedeemedAt, LastLoginAt, etc.) and in seed data; do not use `DateTime.UtcNow`.
 
 ### 12. Extensibility
 - For non-CRUD or special logic, extend the service and interface as needed.

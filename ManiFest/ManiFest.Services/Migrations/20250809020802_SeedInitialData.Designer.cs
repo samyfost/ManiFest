@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManiFest.Services.Migrations
 {
     [DbContext(typeof(ManiFestDbContext))]
-    [Migration("20250809012445_SeedInitialData")]
+    [Migration("20250809020802_SeedInitialData")]
     partial class SeedInitialData
     {
         /// <inheritdoc />
@@ -860,38 +860,11 @@ namespace ManiFest.Services.Migrations
                         },
                         new
                         {
-                            Id = 2,
-                            Comment = "Solid rock lineup, venue could be better.",
-                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            FestivalId = 2,
-                            Rating = 4,
-                            UserId = 4
-                        },
-                        new
-                        {
                             Id = 3,
                             Comment = "World-class premieres at Cannes!",
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 3,
                             Rating = 5,
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Comment = "Great indie selection at Sundance.",
-                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            FestivalId = 4,
-                            Rating = 4,
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Comment = "E3 had fewer booths than expected but still fun.",
-                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            FestivalId = 5,
-                            Rating = 3,
                             UserId = 4
                         },
                         new
@@ -1099,6 +1072,185 @@ namespace ManiFest.Services.Migrations
                             Description = "Retro gaming festivals",
                             IsActive = true,
                             Name = "Retro"
+                        });
+                });
+
+            modelBuilder.Entity("ManiFest.Services.Database.Ticket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FestivalId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("FinalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("GeneratedCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsRedeemed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RedeemedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TicketTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FestivalId");
+
+                    b.HasIndex("GeneratedCode")
+                        .IsUnique();
+
+                    b.HasIndex("TicketTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Tickets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 1,
+                            FinalPrice = 49.99m,
+                            GeneratedCode = "F1-U4-STD",
+                            IsRedeemed = true,
+                            TicketTypeId = 1,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 3,
+                            FinalPrice = 148.50m,
+                            GeneratedCode = "F3-U4-VIP",
+                            IsRedeemed = true,
+                            TicketTypeId = 2,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 6,
+                            FinalPrice = 36.00m,
+                            GeneratedCode = "F6-U4-STU",
+                            IsRedeemed = true,
+                            TicketTypeId = 3,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 1,
+                            FinalPrice = 49.99m,
+                            GeneratedCode = "F1-U2-STD",
+                            IsRedeemed = true,
+                            TicketTypeId = 1,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 3,
+                            FinalPrice = 148.50m,
+                            GeneratedCode = "F3-U2-VIP",
+                            IsRedeemed = true,
+                            TicketTypeId = 2,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 6,
+                            FinalPrice = 36.00m,
+                            GeneratedCode = "F6-U2-STU",
+                            IsRedeemed = true,
+                            TicketTypeId = 3,
+                            UserId = 2
+                        });
+                });
+
+            modelBuilder.Entity("ManiFest.Services.Database.TicketType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("PriceMultiplier")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TicketTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Standard access",
+                            IsActive = true,
+                            Name = "Standard",
+                            PriceMultiplier = 1.0m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "VIP access with perks",
+                            IsActive = true,
+                            Name = "VIP",
+                            PriceMultiplier = 1.5m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Student discount",
+                            IsActive = true,
+                            Name = "Student",
+                            PriceMultiplier = 0.8m
                         });
                 });
 
@@ -1378,6 +1530,33 @@ namespace ManiFest.Services.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("ManiFest.Services.Database.Ticket", b =>
+                {
+                    b.HasOne("ManiFest.Services.Database.Festival", "Festival")
+                        .WithMany()
+                        .HasForeignKey("FestivalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManiFest.Services.Database.TicketType", "TicketType")
+                        .WithMany()
+                        .HasForeignKey("TicketTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ManiFest.Services.Database.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Festival");
+
+                    b.Navigation("TicketType");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ManiFest.Services.Database.User", b =>
