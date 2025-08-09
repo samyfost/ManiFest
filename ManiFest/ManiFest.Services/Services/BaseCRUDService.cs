@@ -32,10 +32,18 @@ namespace ManiFest.Services.Services
             await BeforeInsert(entity, request);
 
             await _context.SaveChangesAsync();
+            
+            await AfterInsert(entity, request);
+            
             return MapToResponse(entity);
         }
 
         protected virtual async Task BeforeInsert(TEntity entity, TInsert request)
+        {
+
+        }
+
+        protected virtual async Task AfterInsert(TEntity entity, TInsert request)
         {
 
         }
@@ -57,10 +65,18 @@ namespace ManiFest.Services.Services
             MapUpdateToEntity(entity, request);
 
             await _context.SaveChangesAsync();
+            
+            await AfterUpdate(entity, request);
+            
             return MapToResponse(entity);
         }
 
         protected virtual async Task BeforeUpdate(TEntity entity, TUpdate request)
+        {
+
+        }
+
+        protected virtual async Task AfterUpdate(TEntity entity, TUpdate request)
         {
 
         }

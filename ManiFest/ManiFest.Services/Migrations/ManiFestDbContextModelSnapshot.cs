@@ -1329,7 +1329,7 @@ namespace ManiFest.Services.Migrations
                             Id = 1,
                             CityId = 1,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "calltaxi.receiver@gmail.com",
+                            Email = "example1@gmail.com",
                             FirstName = "Denis",
                             GenderId = 1,
                             IsActive = true,
@@ -1345,7 +1345,7 @@ namespace ManiFest.Services.Migrations
                             Id = 2,
                             CityId = 5,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "example1@gmail.com",
+                            Email = "calltaxi.receiver@gmail.com",
                             FirstName = "Amel",
                             GenderId = 1,
                             IsActive = true,
@@ -1377,11 +1377,11 @@ namespace ManiFest.Services.Migrations
                             Id = 4,
                             CityId = 1,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "test.sender@gmail.com",
-                            FirstName = "Test",
+                            Email = "lejla.basic@edu.fit.ba",
+                            FirstName = "Lejla",
                             GenderId = 2,
                             IsActive = true,
-                            LastName = "Test",
+                            LastName = "Bašić",
                             PasswordHash = "KUF0Jsocq9AqdwR9JnT2OrAqm5gDj7ecQvNwh6fW/Bs=",
                             PasswordSalt = "c3ZKo0va3tYfnYuNKkHDbQ==",
                             PhoneNumber = "+387 00 000 000",
@@ -1427,14 +1427,14 @@ namespace ManiFest.Services.Migrations
                         {
                             Id = 2,
                             DateAssigned = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            RoleId = 1,
+                            RoleId = 2,
                             UserId = 2
                         },
                         new
                         {
                             Id = 3,
                             DateAssigned = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            RoleId = 2,
+                            RoleId = 1,
                             UserId = 3
                         },
                         new

@@ -63,10 +63,10 @@ namespace ManiFest.Subscriber.Services
                 {
                     using (var bus = RabbitHutch.CreateBus($"host={_host};virtualHost={_virtualhost};username={_username};password={_password}"))
                     {
-                        // Subscribe to vehicle notifications only
-                        bus.PubSub.Subscribe<VehicleNotification>("Vehicle_Notifications", HandleVehicleMessage);
+                        // Subscribe to festival notifications
+                        bus.PubSub.Subscribe<FestivalNotification>("Festival_Notifications", HandleFestivalMessage);
 
-                        _logger.LogInformation("Waiting for vehicle notifications...");
+                        _logger.LogInformation("Waiting for festival notifications...");
                         await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                     }
                 }
@@ -81,30 +81,41 @@ namespace ManiFest.Subscriber.Services
             }
         }
 
-        private async Task HandleVehicleMessage(VehicleNotification notification)
+        private async Task HandleFestivalMessage(FestivalNotification notification)
         {
-            var vehicle = notification.Vehicle;
+            var festival = notification.Festival;
 
-            if (!vehicle.AdminEmails.Any())
+            if (!festival.UserEmails.Any())
             {
-                _logger.LogWarning("No admin emails provided in the notification");
+                _logger.LogWarning("No user emails provided in the festival notification");
                 return;
             }
 
-            var subject = "New Vehicle Pending Review";
-            var message = $"A new vehicle {vehicle.BrandName} {vehicle.Name} is ready to be accepted or rejected.\n" +
-                        $"Please review and take appropriate action.";
+            var subject = $"Festival {festival.NotificationType}: {festival.Title}";
+            var message = $"Dear Festival Enthusiast,\n\n" +
+                        $"We're excited to inform you that a new festival is being organized!\n\n" +
+                        $"Festival Details:\n" +
+                        $"🎉 Title: {festival.Title}\n" +
+                        $"📅 Start Date: {festival.StartDate:dddd, MMMM dd, yyyy}\n" +
+                        $"📅 End Date: {festival.EndDate:dddd, MMMM dd, yyyy}\n" +
+                        $"💰 Base Price: {festival.BasePrice:F2} BAM\n" +
+                        $"📍 Location: {festival.CityName}\n" +
+                        $"🎪 Category: {festival.SubcategoryName}\n" +
+                        $"🏢 Organizer: {festival.OrganizerName}\n\n" +
+                        $"Don't miss out on this amazing event! Get your tickets early.\n\n" +
+                        $"Best regards,\n" +
+                        $"ManiFest Team";
 
-            foreach (var email in vehicle.AdminEmails)
+            foreach (var email in festival.UserEmails)
             {
                 try
                 {
                     await _emailSender.SendEmailAsync(email, subject, message);
-                    _logger.LogInformation($"Notification sent to admin: {email}");
+                    _logger.LogInformation($"Festival notification sent to user: {email}");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Failed to send email to {email}: {ex.Message}");
+                    _logger.LogError($"Failed to send festival email to {email}: {ex.Message}");
                 }
             }
         }

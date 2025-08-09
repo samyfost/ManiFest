@@ -8,7 +8,6 @@ namespace ManiFest.Services.Database
     {
         private const string DefaultPhoneNumber = "+387 00 000 000";
         
-        private const string TestMailSender = "test.sender@gmail.com";
         private const string TestMailReceiver = "calltaxi.receiver@gmail.com";
 
         public static void SeedData(this ModelBuilder modelBuilder)
@@ -57,7 +56,7 @@ namespace ManiFest.Services.Database
                     Id = 1,
                     FirstName = "Denis",
                     LastName = "Mušić",
-                    Email = TestMailReceiver,
+                    Email = "example1@gmail.com",
                     Username = "admin",
                     PasswordHash = "3KbrBi5n9zdQnceWWOK5zaeAwfEjsluyhRQUbNkcgLQ=",
                     PasswordSalt = "6raKZCuEsvnBBxPKHGpRtA==",
@@ -73,7 +72,7 @@ namespace ManiFest.Services.Database
                     Id = 2, 
                     FirstName = "Amel", 
                     LastName = "Musić",
-                    Email = "example1@gmail.com",
+                    Email = TestMailReceiver,
                     Username = "user", 
                     PasswordHash = "kDPVcZaikiII7vXJbMEw6B0xZ245I29ocaxBjLaoAC0=", 
                     PasswordSalt = "O5R9WmM6IPCCMci/BCG/eg==", 
@@ -103,9 +102,9 @@ namespace ManiFest.Services.Database
                 new User 
                 { 
                     Id = 4, 
-                    FirstName = "Test", 
-                    LastName = "Test", 
-                    Email = TestMailSender, 
+                    FirstName = "Lejla", 
+                    LastName = "Bašić", 
+                    Email = "lejla.basic@edu.fit.ba", 
                     Username = "user2", 
                     PasswordHash = "KUF0Jsocq9AqdwR9JnT2OrAqm5gDj7ecQvNwh6fW/Bs=", 
                     PasswordSalt = "c3ZKo0va3tYfnYuNKkHDbQ==", 
@@ -121,8 +120,8 @@ namespace ManiFest.Services.Database
             // Seed UserRoles
             modelBuilder.Entity<UserRole>().HasData(
                 new UserRole { Id = 1, UserId = 1, RoleId = 1, DateAssigned = fixedDate }, 
-                new UserRole { Id = 2, UserId = 2, RoleId = 1, DateAssigned = fixedDate }, 
-                new UserRole { Id = 3, UserId = 3, RoleId = 2, DateAssigned = fixedDate }, 
+                new UserRole { Id = 2, UserId = 2, RoleId = 2, DateAssigned = fixedDate }, 
+                new UserRole { Id = 3, UserId = 3, RoleId = 1, DateAssigned = fixedDate }, 
                 new UserRole { Id = 4, UserId = 4, RoleId = 2, DateAssigned = fixedDate }  
             );
 

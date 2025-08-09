@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyNetQ;
+using ManiFest.Subscriber.Models;
 
 namespace ManiFest.Services.Services
 {
@@ -84,6 +86,12 @@ namespace ManiFest.Services.Services
                 throw new InvalidOperationException("The specified organizer does not exist.");
         }
 
+        protected override async Task AfterInsert(Festival entity, FestivalUpsertRequest request)
+        {
+            await SendFestivalNotification(entity, "Created");
+            await base.AfterInsert(entity, request);
+        }
+
         protected override async Task BeforeUpdate(Festival entity, FestivalUpsertRequest request)
         {
             ValidateDatesAndPrice(request);
@@ -96,6 +104,12 @@ namespace ManiFest.Services.Services
 
             if (!await _context.Set<Organizer>().AnyAsync(o => o.Id == request.OrganizerId))
                 throw new InvalidOperationException("The specified organizer does not exist.");
+        }
+
+        protected override async Task AfterUpdate(Festival entity, FestivalUpsertRequest request)
+        {
+            await SendFestivalNotification(entity, "Updated");
+            await base.AfterUpdate(entity, request);
         }
 
         private static void ValidateDatesAndPrice(FestivalUpsertRequest request)
@@ -116,6 +130,69 @@ namespace ManiFest.Services.Services
         protected override void MapUpdateToEntity(Festival entity, FestivalUpsertRequest request)
         {
             base.MapUpdateToEntity(entity, request);
+        }
+
+        private async Task SendFestivalNotification(Festival entity, string notificationType)
+        {
+            try
+            {
+                // Get all users with role "User" (roleId = 2)
+                var userEmails = await _context.Users
+                    .Where(u => u.UserRoles.Any(ur => ur.RoleId == 2) && u.IsActive)
+                    .Select(u => u.Email)
+                    .ToListAsync();
+
+                if (!userEmails.Any())
+                {
+                    return; // No users to notify
+                }
+
+                // Load related entities for the festival
+                var festivalWithRelations = await _context.Festivals
+                    .Include(f => f.City)
+                    .Include(f => f.Subcategory)
+                    .Include(f => f.Organizer)
+                    .FirstOrDefaultAsync(f => f.Id == entity.Id);
+
+                if (festivalWithRelations == null)
+                    return;
+
+                // RabbitMQ connection configuration
+                var host = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
+                var username = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest";
+                var password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest";
+                var virtualhost = Environment.GetEnvironmentVariable("RABBITMQ_VIRTUALHOST") ?? "/";
+
+                using var bus = RabbitHutch.CreateBus($"host={host};virtualHost={virtualhost};username={username};password={password}");
+
+                // Create festival notification DTO
+                var notificationDto = new FestivalNotificationDto
+                {
+                    Title = festivalWithRelations.Title,
+                    StartDate = festivalWithRelations.StartDate,
+                    EndDate = festivalWithRelations.EndDate,
+                    BasePrice = festivalWithRelations.BasePrice,
+                    Location = festivalWithRelations.Location,
+                    CityName = festivalWithRelations.City?.Name ?? "Unknown",
+                    SubcategoryName = festivalWithRelations.Subcategory?.Name ?? "Unknown",
+                    OrganizerName = festivalWithRelations.Organizer?.Name ?? "Unknown",
+                    NotificationType = notificationType,
+                    UserEmails = userEmails
+                };
+
+                var festivalNotification = new FestivalNotification
+                {
+                    Festival = notificationDto
+                };
+
+                await bus.PubSub.PublishAsync(festivalNotification);
+            }
+            catch (Exception ex)
+            {
+                // Log the error but don't throw to avoid breaking the main operation
+                // You might want to inject ILogger here for proper logging
+                Console.WriteLine($"Failed to send festival notification: {ex.Message}");
+            }
         }
 
         // Use base mapping via Mapster to map entity to response
