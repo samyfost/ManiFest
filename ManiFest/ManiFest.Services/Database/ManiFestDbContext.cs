@@ -19,6 +19,7 @@ namespace ManiFest.Services.Database
         public DbSet<Organizer> Organizers { get; set; }
         public DbSet<Festival> Festivals { get; set; }
         public DbSet<Asset> Assets { get; set; }
+        public DbSet<Review> Reviews { get; set; }
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -139,6 +140,22 @@ namespace ManiFest.Services.Database
                 .WithMany(f => f.Assets)
                 .HasForeignKey(a => a.FestivalId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure Review entity
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Festival)
+                .WithMany()
+                .HasForeignKey(r => r.FestivalId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Review>()
+                .HasIndex(r => new { r.FestivalId, r.UserId });
 
             // Seed initial data
             modelBuilder.SeedData();

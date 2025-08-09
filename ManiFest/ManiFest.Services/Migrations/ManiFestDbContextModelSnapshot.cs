@@ -808,6 +808,127 @@ namespace ManiFest.Services.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ManiFest.Services.Database.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FestivalId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FestivalId1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FestivalId1");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("FestivalId", "UserId");
+
+                    b.ToTable("Reviews");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Comment = "Amazing jazz performances and great atmosphere!",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 1,
+                            Rating = 5,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Comment = "Solid rock lineup, venue could be better.",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 2,
+                            Rating = 4,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Comment = "World-class premieres at Cannes!",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 3,
+                            Rating = 5,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Comment = "Great indie selection at Sundance.",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 4,
+                            Rating = 4,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Comment = "E3 had fewer booths than expected but still fun.",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 5,
+                            Rating = 3,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Comment = "LEC Finals were electric!",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 6,
+                            Rating = 5,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Comment = "Loved the outdoor stages.",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 1,
+                            Rating = 4,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Comment = "Cannes never disappoints.",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 3,
+                            Rating = 5,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Comment = "Incredible finals weekend!",
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FestivalId = 6,
+                            Rating = 4,
+                            UserId = 2
+                        });
+                });
+
             modelBuilder.Entity("ManiFest.Services.Database.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -1222,6 +1343,29 @@ namespace ManiFest.Services.Migrations
                     b.Navigation("Subcategory");
                 });
 
+            modelBuilder.Entity("ManiFest.Services.Database.Review", b =>
+                {
+                    b.HasOne("ManiFest.Services.Database.Festival", "Festival")
+                        .WithMany()
+                        .HasForeignKey("FestivalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManiFest.Services.Database.Festival", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("FestivalId1");
+
+                    b.HasOne("ManiFest.Services.Database.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Festival");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ManiFest.Services.Database.Subcategory", b =>
                 {
                     b.HasOne("ManiFest.Services.Database.Category", "Category")
@@ -1279,6 +1423,8 @@ namespace ManiFest.Services.Migrations
             modelBuilder.Entity("ManiFest.Services.Database.Festival", b =>
                 {
                     b.Navigation("Assets");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("ManiFest.Services.Database.Organizer", b =>

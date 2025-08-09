@@ -225,6 +225,40 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FestivalId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    FestivalId1 = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Festivals_FestivalId",
+                        column: x => x.FestivalId,
+                        principalTable: "Festivals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Festivals_FestivalId1",
+                        column: x => x.FestivalId1,
+                        principalTable: "Festivals",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Reviews_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserRoles",
                 columns: table => new
                 {
@@ -415,6 +449,22 @@ namespace ManiFest.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Reviews",
+                columns: new[] { "Id", "Comment", "CreatedAt", "FestivalId", "FestivalId1", "Rating", "UserId" },
+                values: new object[,]
+                {
+                    { 1, "Amazing jazz performances and great atmosphere!", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, 5, 4 },
+                    { 2, "Solid rock lineup, venue could be better.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, 4, 4 },
+                    { 3, "World-class premieres at Cannes!", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, null, 5, 4 },
+                    { 4, "Great indie selection at Sundance.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 4, null, 4, 4 },
+                    { 5, "E3 had fewer booths than expected but still fun.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 5, null, 3, 4 },
+                    { 6, "LEC Finals were electric!", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, null, 5, 4 },
+                    { 7, "Loved the outdoor stages.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, 4, 2 },
+                    { 8, "Cannes never disappoints.", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, null, 5, 2 },
+                    { 9, "Incredible finals weekend!", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, null, 4, 2 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "Id", "DateAssigned", "RoleId", "UserId" },
                 values: new object[,]
@@ -481,6 +531,21 @@ namespace ManiFest.Services.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reviews_FestivalId_UserId",
+                table: "Reviews",
+                columns: new[] { "FestivalId", "UserId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_FestivalId1",
+                table: "Reviews",
+                column: "FestivalId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_UserId",
+                table: "Reviews",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Roles_Name",
                 table: "Roles",
                 column: "Name",
@@ -536,6 +601,9 @@ namespace ManiFest.Services.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Assets");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");

@@ -270,6 +270,22 @@ namespace ManiFest.Services.Database
                 new Asset { Id = 11, FileName = "LEC1.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "LEC1.png"), CreatedAt = fixedDate, FestivalId = 6 },
                 new Asset { Id = 12, FileName = "LEC2.png", ContentType = "image/png", Base64Content = ImageConversion.ConvertImageToBase64String("Assets", "LEC2.png"), CreatedAt = fixedDate, FestivalId = 6 }
             );
+
+            // Seed Reviews
+            modelBuilder.Entity<Review>().HasData(
+                // User 4 reviews every festival
+                new Review { Id = 1, FestivalId = 1, UserId = 4, Rating = 5, Comment = "Amazing jazz performances and great atmosphere!", CreatedAt = fixedDate },
+                new Review { Id = 2, FestivalId = 2, UserId = 4, Rating = 4, Comment = "Solid rock lineup, venue could be better.", CreatedAt = fixedDate },
+                new Review { Id = 3, FestivalId = 3, UserId = 4, Rating = 5, Comment = "World-class premieres at Cannes!", CreatedAt = fixedDate },
+                new Review { Id = 4, FestivalId = 4, UserId = 4, Rating = 4, Comment = "Great indie selection at Sundance.", CreatedAt = fixedDate },
+                new Review { Id = 5, FestivalId = 5, UserId = 4, Rating = 3, Comment = "E3 had fewer booths than expected but still fun.", CreatedAt = fixedDate },
+                new Review { Id = 6, FestivalId = 6, UserId = 4, Rating = 5, Comment = "LEC Finals were electric!", CreatedAt = fixedDate },
+
+                // User 2 reviews a few festivals (not all)
+                new Review { Id = 7, FestivalId = 1, UserId = 2, Rating = 4, Comment = "Loved the outdoor stages.", CreatedAt = fixedDate },
+                new Review { Id = 8, FestivalId = 3, UserId = 2, Rating = 5, Comment = "Cannes never disappoints.", CreatedAt = fixedDate },
+                new Review { Id = 9, FestivalId = 6, UserId = 2, Rating = 4, Comment = "Incredible finals weekend!", CreatedAt = fixedDate }
+            );
         }
     }
 } 

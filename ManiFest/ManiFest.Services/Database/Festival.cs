@@ -40,5 +40,6 @@ namespace ManiFest.Services.Database
 
         // Navigation property for assets/images
         public System.Collections.Generic.ICollection<Asset> Assets { get; set; } = new System.Collections.Generic.List<Asset>();
+        public System.Collections.Generic.ICollection<Review> Reviews { get; set; } = new System.Collections.Generic.List<Review>();
     }
 }
