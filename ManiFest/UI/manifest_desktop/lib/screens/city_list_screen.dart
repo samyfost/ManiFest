@@ -4,7 +4,7 @@ import 'package:manifest_desktop/model/city.dart';
 import 'package:manifest_desktop/model/search_result.dart';
 import 'package:manifest_desktop/providers/city_provider.dart';
 import 'package:manifest_desktop/screens/city_details_screen.dart';
-import 'package:manifest_desktop/utils/custom_data_table.dart';
+import 'package:manifest_desktop/utils/base_table.dart';
 import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +23,7 @@ class _CityListScreenState extends State<CityListScreen> {
 
   SearchResult<City>? cities;
   int _currentPage = 0;
-  int _pageSize = 7;
+  int _pageSize = 5;
   final List<int> _pageSizeOptions = [5, 7, 10, 20, 50];
 
   // Search for cities with ENTER key, not only when button is clicked
@@ -119,7 +119,9 @@ class _CityListScreenState extends State<CityListScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          CustomDataTableCard(
+          BaseTable(
+            icon: Icons.location_city_outlined,
+            title: "Cities",
             width: 600,
             height: 424,
             columns: [
@@ -156,7 +158,7 @@ class _CityListScreenState extends State<CityListScreen> {
             emptyText: "No cities found.",
             emptySubtext: "Try adjusting your search or add a new city.",
           ),
-          
+          SizedBox(height: 30),
           BasePagination(
             currentPage: _currentPage,
             totalPages: totalPages,
@@ -175,7 +177,6 @@ class _CityListScreenState extends State<CityListScreen> {
               }
             },
           ),
-        
         ],
       ),
     );
