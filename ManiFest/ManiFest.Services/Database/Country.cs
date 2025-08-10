@@ -6,5 +6,6 @@ namespace ManiFest.Services.Database
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public byte[]? Flag { get; set; }
     }
 }

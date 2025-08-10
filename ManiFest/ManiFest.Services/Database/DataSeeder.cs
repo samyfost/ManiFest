@@ -35,20 +35,6 @@ namespace ManiFest.Services.Database
                 }
             );
 
-            // Seed Countries
-            modelBuilder.Entity<Country>().HasData(
-                new Country { Id = 1, Name = "Bosnia and Herzegovina" },
-                new Country { Id = 2, Name = "Croatia" },
-                new Country { Id = 3, Name = "Serbia" },
-                new Country { Id = 4, Name = "Montenegro" },
-                new Country { Id = 5, Name = "North Macedonia" },
-                new Country { Id = 6, Name = "France" },
-                new Country { Id = 7, Name = "Germany" },
-                new Country { Id = 8, Name = "United States" },
-                new Country { Id = 9, Name = "Spain" },
-                new Country { Id = 10, Name = "United Kingdom" }
-            );
-
             // Seed Users
             modelBuilder.Entity<User>().HasData(
                 new User 
@@ -143,56 +129,36 @@ namespace ManiFest.Services.Database
                 new City { Id = 7, Name = "Prijedor", CountryId = 1 },
                 new City { Id = 8, Name = "Brčko", CountryId = 1 },
                 new City { Id = 9, Name = "Doboj", CountryId = 1 },
-                new City { Id = 10, Name = "Zvornik", CountryId = 1 },
-                
-                // Croatia
-                new City { Id = 11, Name = "Zagreb", CountryId = 2 },
-                new City { Id = 12, Name = "Split", CountryId = 2 },
-                new City { Id = 13, Name = "Rijeka", CountryId = 2 },
-                
-                // Serbia
-                new City { Id = 14, Name = "Beograd", CountryId = 3 },
-                new City { Id = 15, Name = "Novi Sad", CountryId = 3 },
-                new City { Id = 16, Name = "Niš", CountryId = 3 },
-                
-                // Montenegro
-                new City { Id = 17, Name = "Podgorica", CountryId = 4 },
-                new City { Id = 18, Name = "Budva", CountryId = 4 },
-                new City { Id = 19, Name = "Kotor", CountryId = 4 },
-                
-                // North Macedonia
-                new City { Id = 20, Name = "Skopje", CountryId = 5 },
-                new City { Id = 21, Name = "Bitola", CountryId = 5 },
-                new City { Id = 22, Name = "Ohrid", CountryId = 5 },
+                new City { Id = 10, Name = "Zvornik", CountryId = 1 },               
                 
                 // France - Famous for Cannes Film Festival, Nice Jazz Festival, etc.
-                new City { Id = 23, Name = "Paris", CountryId = 6 },
-                new City { Id = 24, Name = "Cannes", CountryId = 6 },
-                new City { Id = 25, Name = "Nice", CountryId = 6 },
+                new City { Id = 11, Name = "Paris", CountryId = 2 },
+                new City { Id = 12, Name = "Cannes", CountryId = 2 },
+                new City { Id = 13, Name = "Nice", CountryId = 2 },
                 
                 // Germany - Famous for Berlinale, Rock am Ring, etc.
-                new City { Id = 26, Name = "Berlin", CountryId = 7 },
-                new City { Id = 27, Name = "Munich", CountryId = 7 },
-                new City { Id = 28, Name = "Hamburg", CountryId = 7 },
+                new City { Id = 14, Name = "Berlin", CountryId = 3 },
+                new City { Id = 15, Name = "Munich", CountryId = 3 },
+                new City { Id = 16, Name = "Hamburg", CountryId = 3 },
                 
                 // United States (replacing Italy)
-                new City { Id = 29, Name = "Los Angeles", CountryId = 8 },
-                new City { Id = 30, Name = "New York", CountryId = 8 },
-                new City { Id = 31, Name = "Chicago", CountryId = 8 },
+                new City { Id = 17, Name = "Los Angeles", CountryId = 4 },
+                new City { Id = 18, Name = "New York", CountryId = 4 },
+                new City { Id = 19, Name = "Chicago", CountryId = 4 },
                 
                 // Spain - Famous for San Sebastian Film Festival, Primavera Sound, etc.
-                new City { Id = 32, Name = "Madrid", CountryId = 9 },
-                new City { Id = 33, Name = "Barcelona", CountryId = 9 },
-                new City { Id = 34, Name = "San Sebastian", CountryId = 9 },
+                new City { Id = 20, Name = "Madrid", CountryId = 5 },
+                new City { Id = 21, Name = "Barcelona", CountryId = 5 },
+                new City { Id = 22, Name = "San Sebastian", CountryId = 5 },
                 
                 // United Kingdom - Famous for Glastonbury, Edinburgh Festival, etc.
-                new City { Id = 35, Name = "London", CountryId = 10 },
-                new City { Id = 36, Name = "Edinburgh", CountryId = 10 },
-                new City { Id = 37, Name = "Manchester", CountryId = 10 },
+                new City { Id = 23, Name = "London", CountryId = 6 },
+                new City { Id = 24, Name = "Edinburgh", CountryId = 6 },
+                new City { Id = 25, Name = "Manchester", CountryId = 6 },
 
                 // Additional cities for new festivals
-                new City { Id = 38, Name = "Park City", CountryId = 8 },
-                new City { Id = 39, Name = "Cologne", CountryId = 7 }
+                new City { Id = 26, Name = "Park City", CountryId = 4 },
+                new City { Id = 27, Name = "Cologne", CountryId = 3 }
             );
  
             // Seed Categories
@@ -239,12 +205,22 @@ namespace ManiFest.Services.Database
                 new Festival { Id = 2, Title = "Mostar Rock Fest", StartDate = baseStartDate.AddDays(40), EndDate = baseStartDate.AddDays(42), BasePrice = 39.50m, Location = "43.3438,17.8078", CreatedAt = fixedDate, IsActive = true, CityId = 5, SubcategoryId = 2, OrganizerId = 2 }, // Mostar - July 11-13, 2025
 
                 // Film
-                new Festival { Id = 3, Title = "Cannes Film Festival", StartDate = baseStartDate.AddDays(70), EndDate = baseStartDate.AddDays(81), BasePrice = 99.00m, Location = "43.552847,7.017369", CreatedAt = fixedDate, IsActive = true, CityId = 24, SubcategoryId = 4, OrganizerId = 3 }, // Cannes, France - Aug 10-21, 2025
-                new Festival { Id = 4, Title = "Sundance Film Festival", StartDate = baseStartDate.AddDays(25), EndDate = baseStartDate.AddDays(35), BasePrice = 79.00m, Location = "40.6461,-111.4980", CreatedAt = fixedDate, IsActive = true, CityId = 38, SubcategoryId = 4, OrganizerId = 4 }, // Park City, Utah, USA - June 26 - July 6, 2025
+                new Festival { Id = 3, Title = "Cannes Film Festival", StartDate = baseStartDate.AddDays(70), EndDate = baseStartDate.AddDays(81), BasePrice = 99.00m, Location = "43.552847,7.017369", CreatedAt = fixedDate, IsActive = true, CityId = 12, SubcategoryId = 4, OrganizerId = 3 }, // Cannes, France - Aug 10-21, 2025
+                new Festival { Id = 4, Title = "Sundance Film Festival", StartDate = baseStartDate.AddDays(25), EndDate = baseStartDate.AddDays(35), BasePrice = 79.00m, Location = "40.6461,-111.4980", CreatedAt = fixedDate, IsActive = true, CityId = 26, SubcategoryId = 4, OrganizerId = 4 }, // Park City, Utah, USA - June 26 - July 6, 2025
 
                 // Gaming
-                new Festival { Id = 5, Title = "E3 (Electronic Entertainment Expo)", StartDate = baseStartDate.AddDays(55), EndDate = baseStartDate.AddDays(57), BasePrice = 59.00m, Location = "34.0522,-118.2437", CreatedAt = fixedDate, IsActive = true, CityId = 29, SubcategoryId = 8, OrganizerId = 5 }, // Los Angeles, USA - July 26-28, 2025
-                new Festival { Id = 6, Title = "LEC Finals", StartDate = baseStartDate.AddDays(120), EndDate = baseStartDate.AddDays(122), BasePrice = 45.00m, Location = "50.9375,6.9603", CreatedAt = fixedDate, IsActive = true, CityId = 39, SubcategoryId = 7, OrganizerId = 6 } // Cologne, Germany - Aug 30-31, 2025
+                new Festival { Id = 5, Title = "E3 (Electronic Entertainment Expo)", StartDate = baseStartDate.AddDays(55), EndDate = baseStartDate.AddDays(57), BasePrice = 59.00m, Location = "34.0522,-118.2437", CreatedAt = fixedDate, IsActive = true, CityId = 17, SubcategoryId = 8, OrganizerId = 5 }, // Los Angeles, USA - July 26-28, 2025
+                new Festival { Id = 6, Title = "LEC Finals", StartDate = baseStartDate.AddDays(120), EndDate = baseStartDate.AddDays(122), BasePrice = 45.00m, Location = "50.9375,6.9603", CreatedAt = fixedDate, IsActive = true, CityId = 27, SubcategoryId = 7, OrganizerId = 6 } // Cologne, Germany - Aug 30-31, 2025
+            );
+
+            // Seed Countries with flags
+            modelBuilder.Entity<Country>().HasData(
+                new Country { Id = 1, Name = "Bosnia and Herzegovina", Flag = ImageConversion.ConvertImageToByteArray("Assets", "bih.png") },
+                new Country { Id = 2, Name = "France", Flag = ImageConversion.ConvertImageToByteArray("Assets", "fra.png") },
+                new Country { Id = 3, Name = "Spain", Flag = ImageConversion.ConvertImageToByteArray("Assets", "spa.png") },
+                new Country { Id = 4, Name = "United Kingdom", Flag = ImageConversion.ConvertImageToByteArray("Assets", "uk.png") },
+                new Country { Id = 5, Name = "United States", Flag = ImageConversion.ConvertImageToByteArray("Assets", "usa.png") },
+                new Country { Id = 6, Name = "Germany", Flag = ImageConversion.ConvertImageToByteArray("Assets", "ger.png") }
             );
 
             // Seed Assets (two images per festival)

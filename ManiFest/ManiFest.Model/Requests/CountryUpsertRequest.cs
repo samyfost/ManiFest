@@ -7,5 +7,7 @@ namespace ManiFest.Model.Requests
         [Required]
         [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
+        
+        public byte[]? Flag { get; set; }
     }
 }
