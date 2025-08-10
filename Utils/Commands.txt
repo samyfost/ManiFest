@@ -5,3 +5,7 @@ dotnet ef migrations add SeedInitialData --project .\ManiFest.Services --startup
 # Pokretanje migracije
 
 update-database
+
+# Generisanje .g dijela klase
+
+dart run build_runner build
