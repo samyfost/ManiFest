@@ -6,7 +6,10 @@ import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/country.dart';
 import 'package:manifest_desktop/providers/country_provider.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
+import 'package:manifest_desktop/screens/country_list_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 class CountryDetailsScreen extends StatefulWidget {
   final Country? country;
@@ -18,89 +21,37 @@ class CountryDetailsScreen extends StatefulWidget {
 }
 
 class _CountryDetailsScreenState extends State<CountryDetailsScreen> {
+  final formKey = GlobalKey<FormBuilderState>();
+  Map<String, dynamic> _initialValue = {};
   late CountryProvider countryProvider;
-  late TextEditingController nameController;
-  File? selectedImage;
-  String? currentImageBase64;
-  bool isLoading = false;
+  bool isLoading = true;
+  File? _image;
 
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.country?.name ?? '');
-    currentImageBase64 = widget.country?.flag;
+    countryProvider = Provider.of<CountryProvider>(context, listen: false);
+    _initialValue = {
+      "name": widget.country?.name ?? '',
+      "flag": widget.country?.flag,
+    };
+    initFormData();
   }
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    super.dispose();
+  initFormData() async {
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> _pickImage() async {
-    final result = await FilePicker.platform.pickFiles(
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
-      allowMultiple: false,
     );
-
-    if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        selectedImage = File(result.files.first.path!);
-      });
-    }
-  }
-
-  Future<void> _saveCountry() async {
-    if (nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a country name')),
-      );
-      return;
-    }
-
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      countryProvider = context.read<CountryProvider>();
-
-      String? imageBase64;
-      if (selectedImage != null) {
-        final bytes = await selectedImage!.readAsBytes();
-        imageBase64 = base64Encode(bytes);
-      } else {
-        imageBase64 = currentImageBase64;
-      }
-
-      final countryData = {
-        'name': nameController.text.trim(),
-        'flag': imageBase64,
-      };
-
-      if (widget.country != null) {
-        // Update existing country
-        await countryProvider.update(widget.country!.id, countryData);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Country updated successfully')),
-        );
-      } else {
-        // Create new country
-        await countryProvider.insert(countryData);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Country created successfully')),
-        );
-      }
-
-      Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
+    if (result != null && result.files.single.path != null) {
+      _image = File(result.files.single.path!);
+      _initialValue['flag'] = base64Encode(_image!.readAsBytesSync());
+      setState(() {});
     }
   }
 
@@ -108,183 +59,256 @@ class _CountryDetailsScreenState extends State<CountryDetailsScreen> {
   Widget build(BuildContext context) {
     return MasterScreen(
       title: widget.country != null ? "Edit Country" : "Add Country",
-      child: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            width: 500,
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+      showBackButton: true,
+      child: _buildForm(),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(Icons.cancel),
+            label: Text("Cancel"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    Icon(
-                      Icons.flag,
-                      size: 32,
-                      color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              formKey.currentState?.saveAndValidate();
+              if (formKey.currentState?.validate() ?? false) {
+                var request = Map.from(formKey.currentState?.value ?? {});
+                request['flag'] = _initialValue['flag'];
+                try {
+                  if (widget.country == null) {
+                    await countryProvider.insert(request);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Country created successfully'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  } else {
+                    await countryProvider.update(widget.country!.id, request);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Country updated successfully'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  }
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const CountryListScreen(),
                     ),
-                    const SizedBox(width: 16),
-                    Text(
-                      widget.country != null
-                          ? "Edit Country"
-                          : "Add New Country",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                  );
+                } catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Error'),
+                      content: Text(
+                        e.toString().replaceFirst('Exception: ', ''),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }
+            },
+            icon: Icon(Icons.save),
+            label: Text("Save"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildForm() {
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(maxWidth: 500),
+        child: Card(
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: FormBuilder(
+              key: formKey,
+              initialValue: _initialValue,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header with back button
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: Icon(Icons.arrow_back),
+                        tooltip: 'Go back',
+                      ),
+                      SizedBox(width: 8),
+                      Icon(
+                        Icons.flag,
+                        size: 32,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-
-                // Country Name
-                TextField(
-                  decoration: customTextFieldDecoration(
-                    "Country Name",
-                    prefixIcon: Icons.location_on,
-                  ),
-                  controller: nameController,
-                ),
-                const SizedBox(height: 24),
-
-                // Flag Image Section
-                Text(
-                  "Country Flag",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Current/Selected Image Display
-                Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.grey.withOpacity(0.3),
-                      width: 2,
-                    ),
-                  ),
-                  child: (selectedImage != null || currentImageBase64 != null)
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: selectedImage != null
-                              ? Image.file(
-                                  selectedImage!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                )
-                              : currentImageBase64 != null
-                              ? Image.memory(
-                                  base64Decode(currentImageBase64!),
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return _buildImagePlaceholder();
-                                  },
-                                )
-                              : _buildImagePlaceholder(),
-                        )
-                      : _buildImagePlaceholder(),
-                ),
-                const SizedBox(height: 16),
-
-                // Image Selection Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: _pickImage,
-                        icon: const Icon(Icons.photo_library),
-                        label: const Text("Select Image"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                      SizedBox(width: 16),
+                      Text(
+                        widget.country != null
+                            ? "Edit Country"
+                            : "Add New Country",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            selectedImage = null;
-                            currentImageBase64 = null;
-                          });
-                        },
-                        icon: const Icon(Icons.clear),
-                        label: const Text("Clear Image"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
+                    ],
+                  ),
+                  SizedBox(height: 24),
 
-                // Save Button
-                ElevatedButton(
-                  onPressed: isLoading ? null : _saveCountry,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  // Country Name
+                  FormBuilderTextField(
+                    name: "name",
+                    decoration: customTextFieldDecoration(
+                      "Country Name",
+                      prefixIcon: Icons.location_on,
+                    ),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.match(
+                        RegExp(r'^[\p{L} ]+$', unicode: true),
+                        errorText:
+                            'Only letters (including international), and spaces allowed',
+                      ),
+                    ]),
+                  ),
+                  SizedBox(height: 24),
+
+                  // Flag Image Section
+                  Text(
+                    "Country Flag",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
                     ),
                   ),
-                  child: isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                  SizedBox(height: 12),
+
+                  // Current/Selected Image Display
+                  Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child:
+                        _initialValue['flag'] != null &&
+                            (_initialValue['flag'] as String).isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.memory(
+                              base64Decode(_initialValue['flag']),
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              errorBuilder: (context, error, stackTrace) {
+                                return _buildImagePlaceholder();
+                              },
+                            ),
+                          )
+                        : _buildImagePlaceholder(),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Image Selection Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: _pickImage,
+                          icon: const Icon(Icons.photo_library),
+                          label: const Text("Select Image"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                        )
-                      : Text(
-                          widget.country != null
-                              ? "Update Country"
-                              : "Create Country",
-                          style: const TextStyle(fontSize: 16),
                         ),
-                ),
-              ],
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _image = null;
+                              _initialValue['flag'] = null;
+                            });
+                          },
+                          icon: const Icon(Icons.clear),
+                          label: const Text("Clear Image"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 162, 159, 159),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 50),
+
+                  // Save and Cancel Buttons
+                  _buildSaveButton(),
+                ],
+              ),
             ),
           ),
         ),
