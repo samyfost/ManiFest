@@ -8,6 +8,6 @@ namespace ManiFest.Model.Requests
         [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
         
-        public byte[]? Flag { get; set; }
+        public byte[]? Flag { get; set; } // base64 encoded string from API
     }
 }
