@@ -117,49 +117,7 @@ namespace ManiFest.Services.Database
                 new Gender { Id = 2, Name = "Female" }
             );
 
-            // Seed Cities
-            modelBuilder.Entity<City>().HasData(
-                // Bosnia and Herzegovina
-                new City { Id = 1, Name = "Sarajevo", CountryId = 1 },
-                new City { Id = 2, Name = "Banja Luka", CountryId = 1 },
-                new City { Id = 3, Name = "Tuzla", CountryId = 1 },
-                new City { Id = 4, Name = "Zenica", CountryId = 1 },
-                new City { Id = 5, Name = "Mostar", CountryId = 1 },
-                new City { Id = 6, Name = "Bijeljina", CountryId = 1 },
-                new City { Id = 7, Name = "Prijedor", CountryId = 1 },
-                new City { Id = 8, Name = "Brčko", CountryId = 1 },
-                new City { Id = 9, Name = "Doboj", CountryId = 1 },
-                new City { Id = 10, Name = "Zvornik", CountryId = 1 },               
-                
-                // France - Famous for Cannes Film Festival, Nice Jazz Festival, etc.
-                new City { Id = 11, Name = "Paris", CountryId = 2 },
-                new City { Id = 12, Name = "Cannes", CountryId = 2 },
-                new City { Id = 13, Name = "Nice", CountryId = 2 },
-                
-                // Germany - Famous for Berlinale, Rock am Ring, etc.
-                new City { Id = 14, Name = "Berlin", CountryId = 3 },
-                new City { Id = 15, Name = "Munich", CountryId = 3 },
-                new City { Id = 16, Name = "Hamburg", CountryId = 3 },
-                
-                // United States (replacing Italy)
-                new City { Id = 17, Name = "Los Angeles", CountryId = 4 },
-                new City { Id = 18, Name = "New York", CountryId = 4 },
-                new City { Id = 19, Name = "Chicago", CountryId = 4 },
-                
-                // Spain - Famous for San Sebastian Film Festival, Primavera Sound, etc.
-                new City { Id = 20, Name = "Madrid", CountryId = 5 },
-                new City { Id = 21, Name = "Barcelona", CountryId = 5 },
-                new City { Id = 22, Name = "San Sebastian", CountryId = 5 },
-                
-                // United Kingdom - Famous for Glastonbury, Edinburgh Festival, etc.
-                new City { Id = 23, Name = "London", CountryId = 6 },
-                new City { Id = 24, Name = "Edinburgh", CountryId = 6 },
-                new City { Id = 25, Name = "Manchester", CountryId = 6 },
 
-                // Additional cities for new festivals
-                new City { Id = 26, Name = "Park City", CountryId = 4 },
-                new City { Id = 27, Name = "Cologne", CountryId = 3 }
-            );
  
             // Seed Categories
             modelBuilder.Entity<Category>().HasData(
@@ -213,14 +171,56 @@ namespace ManiFest.Services.Database
                 new Festival { Id = 6, Title = "LEC Finals", StartDate = baseStartDate.AddDays(120), EndDate = baseStartDate.AddDays(122), BasePrice = 45.00m, Location = "50.9375,6.9603", CreatedAt = fixedDate, IsActive = true, CityId = 27, SubcategoryId = 7, OrganizerId = 6 } // Cologne, Germany - Aug 30-31, 2025
             );
 
-            // Seed Countries with flags
+            // Country Seeding
             modelBuilder.Entity<Country>().HasData(
                 new Country { Id = 1, Name = "Bosnia and Herzegovina", Flag = ImageConversion.ConvertImageToByteArray("Assets", "bih.png") },
                 new Country { Id = 2, Name = "France", Flag = ImageConversion.ConvertImageToByteArray("Assets", "fra.png") },
-                new Country { Id = 3, Name = "Spain", Flag = ImageConversion.ConvertImageToByteArray("Assets", "spa.png") },
-                new Country { Id = 4, Name = "United Kingdom", Flag = ImageConversion.ConvertImageToByteArray("Assets", "uk.png") },
-                new Country { Id = 5, Name = "United States", Flag = ImageConversion.ConvertImageToByteArray("Assets", "usa.png") },
-                new Country { Id = 6, Name = "Germany", Flag = ImageConversion.ConvertImageToByteArray("Assets", "ger.png") }
+                new Country { Id = 3, Name = "Germany", Flag = ImageConversion.ConvertImageToByteArray("Assets", "ger.png") },
+                new Country { Id = 4, Name = "United States", Flag = ImageConversion.ConvertImageToByteArray("Assets", "usa.png") },
+                new Country { Id = 5, Name = "Spain", Flag = ImageConversion.ConvertImageToByteArray("Assets", "spa.png") },
+                new Country { Id = 6, Name = "United Kingdom", Flag = ImageConversion.ConvertImageToByteArray("Assets", "uk.png") }
+            );
+
+            // City Seeding
+            modelBuilder.Entity<City>().HasData(
+                // Bosnia and Herzegovina
+                new City { Id = 1, Name = "Sarajevo", CountryId = 1 },
+                new City { Id = 2, Name = "Banja Luka", CountryId = 1 },
+                new City { Id = 3, Name = "Tuzla", CountryId = 1 },
+                new City { Id = 4, Name = "Zenica", CountryId = 1 },
+                new City { Id = 5, Name = "Mostar", CountryId = 1 },
+                new City { Id = 6, Name = "Bijeljina", CountryId = 1 },
+                new City { Id = 7, Name = "Prijedor", CountryId = 1 },
+                new City { Id = 8, Name = "Brčko", CountryId = 1 },
+                new City { Id = 9, Name = "Doboj", CountryId = 1 },
+                new City { Id = 10, Name = "Zvornik", CountryId = 1 },
+
+                // France
+                new City { Id = 11, Name = "Paris", CountryId = 2 },
+                new City { Id = 12, Name = "Cannes", CountryId = 2 },
+                new City { Id = 13, Name = "Nice", CountryId = 2 },
+
+                // Germany
+                new City { Id = 14, Name = "Berlin", CountryId = 3 },
+                new City { Id = 15, Name = "Munich", CountryId = 3 },
+                new City { Id = 16, Name = "Hamburg", CountryId = 3 },
+                new City { Id = 27, Name = "Cologne", CountryId = 3 },
+
+                // United States
+                new City { Id = 17, Name = "Los Angeles", CountryId = 4 },
+                new City { Id = 18, Name = "New York", CountryId = 4 },
+                new City { Id = 19, Name = "Chicago", CountryId = 4 },
+                new City { Id = 26, Name = "Park City", CountryId = 4 },
+
+                // Spain
+                new City { Id = 20, Name = "Madrid", CountryId = 5 },
+                new City { Id = 21, Name = "Barcelona", CountryId = 5 },
+                new City { Id = 22, Name = "San Sebastian", CountryId = 5 },
+
+                // United Kingdom
+                new City { Id = 23, Name = "London", CountryId = 6 },
+                new City { Id = 24, Name = "Edinburgh", CountryId = 6 },
+                new City { Id = 25, Name = "Manchester", CountryId = 6 }
             );
 
             // Seed Assets (two images per festival)
