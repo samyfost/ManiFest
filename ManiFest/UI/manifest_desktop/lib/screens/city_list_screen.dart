@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/city.dart';
+import 'package:manifest_desktop/model/country.dart';
 import 'package:manifest_desktop/model/search_result.dart';
 import 'package:manifest_desktop/providers/city_provider.dart';
+import 'package:manifest_desktop/providers/country_provider.dart';
 import 'package:manifest_desktop/screens/city_details_screen.dart';
 import 'package:manifest_desktop/utils/base_table.dart';
 import 'package:manifest_desktop/utils/base_pagination.dart';
@@ -18,8 +20,12 @@ class CityListScreen extends StatefulWidget {
 
 class _CityListScreenState extends State<CityListScreen> {
   late CityProvider cityProvider;
+  late CountryProvider countryProvider;
 
   TextEditingController nameController = TextEditingController();
+  Country? _selectedCountry;
+  bool _isLoadingCountries = true;
+  List<Country> _countries = [];
 
   SearchResult<City>? cities;
   int _currentPage = 0;
@@ -32,6 +38,7 @@ class _CityListScreenState extends State<CityListScreen> {
     final int pageSizeToUse = pageSize ?? _pageSize;
     var filter = {
       "name": nameController.text,
+      "countryId": _selectedCountry?.id,
       "page": pageToFetch,
       "pageSize": pageSizeToUse,
       "includeTotalCount": true, // Ensure backend returns total count
@@ -52,8 +59,94 @@ class _CityListScreenState extends State<CityListScreen> {
     // Delay to ensure context is available for Provider
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       cityProvider = context.read<CityProvider>();
+      countryProvider = context.read<CountryProvider>();
+      await _loadCountries();
       await _performSearch(page: 0);
     });
+  }
+
+  Future<void> _loadCountries() async {
+    try {
+      setState(() {
+        _isLoadingCountries = true;
+      });
+
+      final result = await countryProvider.get();
+      if (result.items != null && result.items!.isNotEmpty) {
+        setState(() {
+          _countries = result.items!;
+          _isLoadingCountries = false;
+        });
+      } else {
+        setState(() {
+          _countries = [];
+          _isLoadingCountries = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _countries = [];
+        _isLoadingCountries = false;
+      });
+    }
+  }
+
+  Widget _buildCountryDropdown() {
+    if (_isLoadingCountries) {
+      return Container(
+        padding: EdgeInsets.all(16),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: 16),
+            Text(
+              "Loading countries...",
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_countries.isEmpty) {
+      return Container(
+        padding: EdgeInsets.all(16),
+        child: Text(
+          "No countries available",
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    return DropdownButtonFormField<Country>(
+      value: _selectedCountry,
+      decoration: customTextFieldDecoration(
+        "All Countries",
+        prefixIcon: Icons.flag,
+      ),
+      items: [
+        // Add "All Countries" option
+        DropdownMenuItem<Country>(value: null, child: Text("All Countries")),
+        // Add country options
+        ..._countries.map((country) {
+          return DropdownMenuItem<Country>(
+            value: country,
+            child: Text(country.name),
+          );
+        }).toList(),
+      ],
+      onChanged: (Country? value) {
+        setState(() {
+          _selectedCountry = value;
+        });
+        // Automatically search when country selection changes
+        _performSearch(page: 0);
+      },
+    );
   }
 
   @override
@@ -92,6 +185,9 @@ class _CityListScreenState extends State<CityListScreen> {
             ),
           ),
           SizedBox(width: 10),
+          // Country dropdown filter
+          SizedBox(width: 350, child: _buildCountryDropdown()),
+          SizedBox(width: 10),
           ElevatedButton(onPressed: _performSearch, child: Text("Search")),
           SizedBox(width: 10),
           ElevatedButton(
@@ -123,7 +219,7 @@ class _CityListScreenState extends State<CityListScreen> {
             icon: Icons.location_city_outlined,
             title: "Cities",
             width: 600,
-            height: 424,
+            height: 450,
             columns: [
               DataColumn(
                 label: Text(
@@ -157,7 +253,10 @@ class _CityListScreenState extends State<CityListScreen> {
                               Text(e.name, style: TextStyle(fontSize: 15)),
                             ),
                             DataCell(
-                              Text(e.countryName, style: TextStyle(fontSize: 15)),
+                              Text(
+                                e.countryName,
+                                style: TextStyle(fontSize: 15),
+                              ),
                             ),
                           ],
                         ),
