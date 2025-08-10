@@ -270,9 +270,25 @@ Widget _modernDrawerTile(
 }) {
   final currentRoute = ModalRoute.of(context)?.settings.name;
   final screenRoute = screen.runtimeType.toString();
-  final isSelected =
-      currentRoute == screenRoute ||
-      (label == 'Cities' && currentRoute == null); // Default selection
+
+  // Get the current screen type from the route
+  bool isSelected = false;
+
+  if (label == 'Cities') {
+    // Cities tile is selected if we're on CityListScreen or CityDetailsScreen
+    isSelected =
+        currentRoute?.contains('City') == true ||
+        currentRoute?.contains('city') == true ||
+        (currentRoute == null &&
+            screen.runtimeType.toString().contains('City'));
+  } else if (label == 'Countries') {
+    // Countries tile is selected if we're on CountryListScreen or CountryDetailsScreen
+    isSelected =
+        currentRoute?.contains('Country') == true ||
+        currentRoute?.contains('country') == true ||
+        (currentRoute == null &&
+            screen.runtimeType.toString().contains('Country'));
+  }
 
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 2),
