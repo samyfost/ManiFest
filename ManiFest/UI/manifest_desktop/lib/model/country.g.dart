@@ -1,19 +1,19 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'city.dart';
+part of 'country.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-City _$CityFromJson(Map<String, dynamic> json) => City(
+Country _$CountryFromJson(Map<String, dynamic> json) => Country(
   id: (json['id'] as num?)?.toInt() ?? 0,
   name: json['name'] as String? ?? '',
-  countryName: json['countryName'] as String? ?? '',
+  flag: json['flag'] as String?,
 );
 
-Map<String, dynamic> _$CityToJson(City instance) => <String, dynamic>{
+Map<String, dynamic> _$CountryToJson(Country instance) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
-  'countryName': instance.countryName,
+  'flag': instance.flag,
 };

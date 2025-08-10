@@ -131,6 +131,12 @@ class _CityListScreenState extends State<CityListScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
+              DataColumn(
+                label: Text(
+                  "Country",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
             ],
             rows: isEmpty
                 ? []
@@ -149,6 +155,9 @@ class _CityListScreenState extends State<CityListScreen> {
                           cells: [
                             DataCell(
                               Text(e.name, style: TextStyle(fontSize: 15)),
+                            ),
+                            DataCell(
+                              Text(e.countryName, style: TextStyle(fontSize: 15)),
                             ),
                           ],
                         ),
