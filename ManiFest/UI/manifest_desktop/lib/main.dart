@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/providers/auth_provider.dart';
 import 'package:manifest_desktop/providers/city_provider.dart';
+import 'package:manifest_desktop/providers/country_provider.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider<CityProvider>(
           create: (context) => CityProvider(),
+        ),
+        ChangeNotifierProvider<CountryProvider>(
+          create: (context) => CountryProvider(),
         ),
       ],
       child: const MyApp(),

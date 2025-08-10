@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/main.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
+import 'package:manifest_desktop/screens/country_list_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({
@@ -138,285 +139,124 @@ class _MasterScreenState extends State<MasterScreen>
                 builder: (context, child) {
                   return Transform.translate(
                     offset: Offset(_slideAnimation!.value * 280, 0),
-                    child: Container(
-                      margin: const EdgeInsets.only(
-                        top: 16,
-                        bottom: 16,
-                        right: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
-                        ),
-                        borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(24),
-                          bottomRight: Radius.circular(24),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF6A1B9A).withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(4, 0),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          // Header section
-                          Container(
-                            padding: const EdgeInsets.all(32),
-                            child: Column(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.3),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.dashboard_rounded,
-                                    size: 32,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'ManiFest',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                                Text(
-                                  'Admin Dashboard',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.8),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Navigation section
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: Column(
-                                children: [
-                                  _modernDrawerTile(
-                                    context,
-                                    icon: Icons.dashboard_outlined,
-                                    activeIcon: Icons.dashboard_rounded,
-                                    label: 'Dashboard',
-                                    screen:
-                                        CityListScreen(), // Replace with dashboard
-                                  ),
-                                  const SizedBox(height: 8),
-                                  _modernDrawerTile(
-                                    context,
-                                    icon: Icons.location_city_outlined,
-                                    activeIcon: Icons.location_city_rounded,
-                                    label: 'Cities',
-                                    screen: CityListScreen(),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  _modernDrawerTile(
-                                    context,
-                                    icon: Icons.festival_outlined,
-                                    activeIcon: Icons.festival,
-                                    label: 'Festivals',
-                                    screen:
-                                        CityListScreen(), // Replace with festivals
-                                  ),
-                                  const SizedBox(height: 8),
-                                  _modernDrawerTile(
-                                    context,
-                                    icon: Icons.people_outline,
-                                    activeIcon: Icons.people_rounded,
-                                    label: 'Users',
-                                    screen:
-                                        CityListScreen(), // Replace with users
-                                  ),
-                                  const SizedBox(height: 8),
-                                  _modernDrawerTile(
-                                    context,
-                                    icon: Icons.analytics_outlined,
-                                    activeIcon: Icons.analytics_rounded,
-                                    label: 'Analytics',
-                                    screen:
-                                        CityListScreen(), // Replace with analytics
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          // Bottom section
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                Divider(
-                                  color: Colors.white.withOpacity(0.2),
-                                  thickness: 1,
-                                ),
-                                const SizedBox(height: 8),
-                                _modernLogoutTile(context),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: _buildDrawerContent(),
                   );
                 },
               )
-            : Container(
-                margin: const EdgeInsets.only(top: 16, bottom: 16, right: 8),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
-                  ),
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(24),
-                    bottomRight: Radius.circular(24),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF6A1B9A).withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: const Offset(4, 0),
+            : _buildDrawerContent(),
+      ),
+      body: Container(margin: const EdgeInsets.all(16), child: widget.child),
+    );
+  }
+
+  Widget _buildDrawerContent() {
+    return Container(
+      margin: const EdgeInsets.only(top: 16, bottom: 16, right: 8),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
+        ),
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6A1B9A).withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(4, 0),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Header section
+          Container(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 2,
                     ),
-                  ],
+                  ),
+                  child: const Icon(
+                    Icons.dashboard_rounded,
+                    size: 32,
+                    color: Colors.white,
+                  ),
                 ),
+                const SizedBox(height: 16),
+                const Text(
+                  'ManiFest',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Text(
+                  'Admin Dashboard',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Navigation section - Scrollable
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Header section
-                    Container(
-                      padding: const EdgeInsets.all(32),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.dashboard_rounded,
-                              size: 32,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'ManiFest',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          Text(
-                            'Admin Dashboard',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.location_city_outlined,
+                      activeIcon: Icons.location_city_rounded,
+                      label: 'Cities',
+                      screen: CityListScreen(),
                     ),
-
-                    // Navigation section
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          children: [
-                            _modernDrawerTile(
-                              context,
-                              icon: Icons.dashboard_outlined,
-                              activeIcon: Icons.dashboard_rounded,
-                              label: 'Dashboard',
-                              screen: CityListScreen(),
-                            ),
-                            const SizedBox(height: 8),
-                            _modernDrawerTile(
-                              context,
-                              icon: Icons.location_city_outlined,
-                              activeIcon: Icons.location_city_rounded,
-                              label: 'Cities',
-                              screen: CityListScreen(),
-                            ),
-                            const SizedBox(height: 8),
-                            _modernDrawerTile(
-                              context,
-                              icon: Icons.festival_outlined,
-                              activeIcon: Icons.festival,
-                              label: 'Festivals',
-                              screen: CityListScreen(),
-                            ),
-                            const SizedBox(height: 8),
-                            _modernDrawerTile(
-                              context,
-                              icon: Icons.people_outline,
-                              activeIcon: Icons.people_rounded,
-                              label: 'Users',
-                              screen: CityListScreen(),
-                            ),
-                            const SizedBox(height: 8),
-                            _modernDrawerTile(
-                              context,
-                              icon: Icons.analytics_outlined,
-                              activeIcon: Icons.analytics_rounded,
-                              label: 'Analytics',
-                              screen: CityListScreen(),
-                            ),
-                          ],
-                        ),
-                      ),
+                    const SizedBox(height: 8),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.flag_outlined,
+                      activeIcon: Icons.flag,
+                      label: 'Countries',
+                      screen: CountryListScreen(),
                     ),
-
-                    // Bottom section
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Divider(
-                            color: Colors.white.withOpacity(0.2),
-                            thickness: 1,
-                          ),
-                          const SizedBox(height: 8),
-                          _modernLogoutTile(context),
-                        ],
-                      ),
-                    ),
+                    // Add more tiles here in the future
                   ],
                 ),
               ),
+            ),
+          ),
+
+          // Bottom section
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Divider(color: Colors.white.withOpacity(0.2), thickness: 1),
+                const SizedBox(height: 8),
+                _modernLogoutTile(context),
+              ],
+            ),
+          ),
+        ],
       ),
-      body: Container(margin: const EdgeInsets.all(16), child: widget.child),
     );
   }
 }
