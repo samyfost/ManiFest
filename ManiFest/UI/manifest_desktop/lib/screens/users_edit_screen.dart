@@ -5,8 +5,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/user.dart';
 import 'package:manifest_desktop/model/city.dart';
+import 'package:manifest_desktop/model/gender.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 import 'package:manifest_desktop/providers/city_provider.dart';
+import 'package:manifest_desktop/providers/gender_provider.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:manifest_desktop/screens/users_list_screen.dart';
 import 'package:provider/provider.dart';
@@ -27,10 +29,14 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
   Map<String, dynamic> _initialValue = {};
   late UserProvider userProvider;
   late CityProvider cityProvider;
+  late GenderProvider genderProvider;
   bool isLoading = true;
   bool _isLoadingCities = true;
+  bool _isLoadingGenders = true;
   List<City> _cities = [];
+  List<Gender> _genders = [];
   City? _selectedCity;
+  Gender? _selectedGender;
   File? _image;
 
   final double leftColumnWidth = 300;
@@ -40,6 +46,7 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
     super.initState();
     userProvider = Provider.of<UserProvider>(context, listen: false);
     cityProvider = Provider.of<CityProvider>(context, listen: false);
+    genderProvider = Provider.of<GenderProvider>(context, listen: false);
     _initialValue = {
       "firstName": widget.user.firstName,
       "lastName": widget.user.lastName,
@@ -51,6 +58,7 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
     };
     initFormData();
     _loadCities();
+    _loadGenders();
   }
 
   initFormData() async {
@@ -95,6 +103,47 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
         );
       } catch (e) {
         _selectedCity = _cities.first;
+      }
+      setState(() {});
+    }
+  }
+
+  Future<void> _loadGenders() async {
+    try {
+      setState(() {
+        _isLoadingGenders = true;
+      });
+
+      final result = await genderProvider.get();
+      if (result.items != null && result.items!.isNotEmpty) {
+        setState(() {
+          _genders = result.items!;
+          _isLoadingGenders = false;
+        });
+        _setDefaultGenderSelection();
+      } else {
+        setState(() {
+          _genders = [];
+          _isLoadingGenders = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _genders = [];
+        _isLoadingGenders = false;
+      });
+    }
+  }
+
+  void _setDefaultGenderSelection() {
+    if (_genders.isNotEmpty) {
+      try {
+        _selectedGender = _genders.firstWhere(
+          (gender) => gender.id == widget.user.genderId,
+          orElse: () => _genders.first,
+        );
+      } catch (e) {
+        _selectedGender = _genders.first;
       }
       setState(() {});
     }
@@ -162,6 +211,57 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
     );
   }
 
+  Widget _buildGenderDropdown() {
+    if (_isLoadingGenders) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        child: const Row(
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: 16),
+            Text("Loading genders...", style: TextStyle(color: Colors.grey)),
+          ],
+        ),
+      );
+    }
+
+    if (_genders.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        child: const Text(
+          "No genders available",
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    return DropdownButtonFormField<Gender>(
+      value: _selectedGender,
+      decoration: customTextFieldDecoration("Gender", prefixIcon: Icons.person),
+      items: _genders.map((gender) {
+        return DropdownMenuItem<Gender>(
+          value: gender,
+          child: Text(gender.name),
+        );
+      }).toList(),
+      onChanged: (Gender? value) {
+        setState(() {
+          _selectedGender = value;
+        });
+      },
+      validator: (value) {
+        if (value == null) {
+          return "Please select a gender";
+        }
+        return null;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MasterScreen(
@@ -198,12 +298,12 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
             onPressed: () async {
               formKey.currentState?.saveAndValidate();
               if (formKey.currentState?.validate() ?? false) {
-                if (_selectedCity == null) {
+                if (_selectedCity == null || _selectedGender == null) {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
                       title: const Text('Validation Error'),
-                      content: const Text('Please select a city'),
+                      content: const Text('Please select both city and gender'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -217,8 +317,7 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
 
                 var request = Map.from(formKey.currentState?.value ?? {});
                 request['cityId'] = _selectedCity!.id;
-                request['genderId'] =
-                    widget.user.genderId; // Keep existing gender
+                request['genderId'] = _selectedGender!.id;
                 request['picture'] = _initialValue['picture'];
 
                 try {
@@ -529,15 +628,7 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
                                   const SizedBox(height: 16),
                                   _buildCityDropdown(),
                                   const SizedBox(height: 16),
-                                  FormBuilderTextField(
-                                    name: "genderName",
-                                    initialValue: widget.user.genderName,
-                                    enabled: false,
-                                    decoration: customTextFieldDecoration(
-                                      "Gender",
-                                      prefixIcon: Icons.person,
-                                    ),
-                                  ),
+                                  _buildGenderDropdown(),
                                   const SizedBox(height: 16),
                                   FormBuilderSwitch(
                                     name: 'isActive',

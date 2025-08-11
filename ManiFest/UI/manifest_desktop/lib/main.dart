@@ -7,6 +7,7 @@ import 'package:manifest_desktop/providers/subcategory_provider.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 import 'package:manifest_desktop/providers/organizer_provider.dart';
 import 'package:manifest_desktop/providers/ticket_type_provider.dart';
+import 'package:manifest_desktop/providers/gender_provider.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +37,9 @@ void main() async {
         ),
         ChangeNotifierProvider<TicketTypeProvider>(
           create: (context) => TicketTypeProvider(),
+        ),
+        ChangeNotifierProvider<GenderProvider>(
+          create: (context) => GenderProvider(),
         ),
       ],
       child: const MyApp(),
