@@ -7,6 +7,7 @@ import 'package:manifest_desktop/screens/country_list_screen.dart';
 import 'package:manifest_desktop/screens/category_list_screen.dart';
 import 'package:manifest_desktop/screens/organizer_list_screen.dart';
 import 'package:manifest_desktop/screens/subcategory_list_screen.dart';
+import 'package:manifest_desktop/screens/ticket_type_list_screen.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -467,6 +468,15 @@ class _MasterScreenState extends State<MasterScreen>
                       label: 'Organizers',
                       screen: OrganizerListScreen(),
                     ),
+                    const SizedBox(height: 8),
+                    // Ticket Types
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.confirmation_number_outlined,
+                      activeIcon: Icons.confirmation_number,
+                      label: 'Ticket Types',
+                      screen: TicketTypeListScreen(),
+                    ),
 
                     // Add more tiles here in the future
                   ],
@@ -524,6 +534,10 @@ Widget _modernDrawerTile(
     isSelected =
         currentRoute == 'OrganizerListScreen' ||
         currentRoute == 'OrganizerDetailsScreen';
+  } else if (label == 'Ticket Types') {
+    isSelected =
+        currentRoute == 'TicketTypeListScreen' ||
+        currentRoute == 'TicketTypeDetailsScreen';
   }
 
   return Container(

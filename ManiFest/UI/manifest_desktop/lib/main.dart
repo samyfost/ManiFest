@@ -6,6 +6,7 @@ import 'package:manifest_desktop/providers/category_provider.dart';
 import 'package:manifest_desktop/providers/subcategory_provider.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 import 'package:manifest_desktop/providers/organizer_provider.dart';
+import 'package:manifest_desktop/providers/ticket_type_provider.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,9 @@ void main() async {
         ),
         ChangeNotifierProvider<OrganizerProvider>(
           create: (context) => OrganizerProvider(),
+        ),
+        ChangeNotifierProvider<TicketTypeProvider>(
+          create: (context) => TicketTypeProvider(),
         ),
       ],
       child: const MyApp(),
