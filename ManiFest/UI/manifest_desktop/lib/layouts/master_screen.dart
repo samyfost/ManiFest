@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:manifest_desktop/main.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/screens/country_list_screen.dart';
 import 'package:manifest_desktop/screens/category_list_screen.dart';
 import 'package:manifest_desktop/screens/subcategory_list_screen.dart';
+import 'package:manifest_desktop/providers/user_provider.dart';
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({
@@ -44,6 +46,203 @@ class _MasterScreenState extends State<MasterScreen>
   void dispose() {
     _animationController?.dispose();
     super.dispose();
+  }
+
+  Widget _buildUserAvatar() {
+    final user = UserProvider.currentUser;
+    final double radius = 20;
+    ImageProvider? imageProvider;
+    if (user?.picture != null && (user!.picture!.isNotEmpty)) {
+      try {
+        final sanitized = user.picture!.replaceAll(
+          RegExp(r'^data:image/[^;]+;base64,'),
+          '',
+        );
+        final bytes = base64Decode(sanitized);
+        imageProvider = MemoryImage(bytes);
+      } catch (_) {
+        imageProvider = null;
+      }
+    }
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: const Color(0xFF6A1B9A),
+      backgroundImage: imageProvider,
+      child: imageProvider == null
+          ? Text(
+              _getUserInitials(user?.firstName, user?.lastName),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          : null,
+    );
+  }
+
+  String _getUserInitials(String? firstName, String? lastName) {
+    final f = (firstName ?? '').trim();
+    final l = (lastName ?? '').trim();
+    if (f.isEmpty && l.isEmpty) return 'U';
+    final a = f.isNotEmpty ? f[0] : '';
+    final b = l.isNotEmpty ? l[0] : '';
+    return (a + b).toUpperCase();
+  }
+
+  void _showProfileOverlay(BuildContext context) {
+    final user = UserProvider.currentUser;
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Profile',
+      barrierColor: Colors.black54.withOpacity(0.2),
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+        return SafeArea(
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: kToolbarHeight + 8,
+                right: 12,
+              ),
+              child: FadeTransition(
+                opacity: curved,
+                child: ScaleTransition(
+                  scale: Tween<double>(begin: 0.9, end: 1.0).animate(curved),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      width: 300,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 48,
+                                  height: 48,
+                                  child: _buildUserAvatar(),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        user != null
+                                            ? '${user.firstName} ${user.lastName}'
+                                            : 'Guest',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF1F2937),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        user?.username ?? '-',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).maybePop(),
+                                  icon: const Icon(
+                                    Icons.close_rounded,
+                                    size: 20,
+                                  ),
+                                  color: Colors.grey[700],
+                                  tooltip: 'Close',
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            const Divider(height: 1),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.email_outlined,
+                                  size: 18,
+                                  color: Color(0xFF6A1B9A),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    user != null
+                                        ? 'Email: ${user.email}'
+                                        : 'Email: -',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF374151),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                          
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_city_outlined,
+                                  size: 18,
+                                  color: Color(0xFF6A1B9A),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    user != null
+                                        ? 'City: ${user.cityName}'
+                                        : 'City: -',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF374151),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -123,10 +322,9 @@ class _MasterScreenState extends State<MasterScreen>
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: const Color(0xFF6A1B9A),
-              child: const Icon(Icons.person, color: Colors.white, size: 20),
+            child: GestureDetector(
+              onTap: () => _showProfileOverlay(context),
+              child: _buildUserAvatar(),
             ),
           ),
         ],
