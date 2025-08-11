@@ -122,7 +122,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
           icon: Icons.flag_outlined,
           title: "Countries",
           width: 600,
-          height: 450,
+          height: 423,
           columns: [
             DataColumn(
               label: Text(

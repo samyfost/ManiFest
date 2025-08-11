@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manifest_desktop/main.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/screens/country_list_screen.dart';
+import 'package:manifest_desktop/screens/category_list_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({
@@ -237,6 +238,14 @@ class _MasterScreenState extends State<MasterScreen>
                       label: 'Countries',
                       screen: CountryListScreen(),
                     ),
+                    const SizedBox(height: 8),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.category_outlined,
+                      activeIcon: Icons.category,
+                      label: 'Categories',
+                      screen: CategoryListScreen(),
+                    ),
                     // Add more tiles here in the future
                   ],
                 ),
@@ -288,6 +297,12 @@ Widget _modernDrawerTile(
         currentRoute?.contains('country') == true ||
         (currentRoute == null &&
             screen.runtimeType.toString().contains('Country'));
+  } else if (label == 'Categories') {
+    isSelected =
+        currentRoute?.contains('Category') == true ||
+        currentRoute?.contains('category') == true ||
+        (currentRoute == null &&
+            screen.runtimeType.toString().contains('Category'));
   }
 
   return Container(

@@ -219,7 +219,7 @@ class _CityListScreenState extends State<CityListScreen> {
             icon: Icons.location_city_outlined,
             title: "Cities",
             width: 600,
-            height: 450,
+            height: 423,
             columns: [
               DataColumn(
                 label: Text(
