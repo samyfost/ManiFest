@@ -96,7 +96,10 @@ class _CountryListScreenState extends State<CountryListScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CountryDetailsScreen()),
+                MaterialPageRoute(
+                  builder: (context) => CountryDetailsScreen(),
+                  settings: const RouteSettings(name: 'CountryDetailsScreen'),
+                ),
               );
             },
             style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
@@ -148,6 +151,9 @@ class _CountryListScreenState extends State<CountryListScreen> {
                             MaterialPageRoute(
                               builder: (context) =>
                                   CountryDetailsScreen(country: e),
+                              settings: const RouteSettings(
+                                name: 'CountryDetailsScreen',
+                              ),
                             ),
                           );
                         },

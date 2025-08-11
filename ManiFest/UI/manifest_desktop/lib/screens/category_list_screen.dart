@@ -73,14 +73,19 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
         children: [
           Expanded(
             child: TextField(
-              decoration:
-                  customTextFieldDecoration('Name', prefixIcon: Icons.search),
+              decoration: customTextFieldDecoration(
+                'Name',
+                prefixIcon: Icons.search,
+              ),
               controller: nameController,
               onSubmitted: (_) => _performSearch(page: 0),
             ),
           ),
           const SizedBox(width: 10),
-          ElevatedButton(onPressed: _performSearch, child: const Text('Search')),
+          ElevatedButton(
+            onPressed: _performSearch,
+            child: const Text('Search'),
+          ),
           const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () {
@@ -88,6 +93,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const CategoryDetailsScreen(),
+                  settings: const RouteSettings(name: 'CategoryDetailsScreen'),
                 ),
               );
             },
@@ -101,7 +107,9 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
 
   Widget _buildResultView() {
     final isEmpty =
-        categories == null || categories!.items == null || categories!.items!.isEmpty;
+        categories == null ||
+        categories!.items == null ||
+        categories!.items!.isEmpty;
     final int totalCount = categories?.totalCount ?? 0;
     final int totalPages = (totalCount / _pageSize).ceil();
     final bool isFirstPage = _currentPage == 0;
@@ -138,28 +146,44 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
             rows: isEmpty
                 ? []
                 : categories!.items!
-                    .map(
-                      (e) => DataRow(
-                        onSelectChanged: (_) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CategoryDetailsScreen(item: e),
+                      .map(
+                        (e) => DataRow(
+                          onSelectChanged: (_) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    CategoryDetailsScreen(item: e),
+                                settings: const RouteSettings(
+                                  name: 'CategoryDetailsScreen',
+                                ),
+                              ),
+                            );
+                          },
+                          cells: [
+                            DataCell(
+                              Text(
+                                e.name,
+                                style: const TextStyle(fontSize: 15),
+                              ),
                             ),
-                          );
-                        },
-                        cells: [
-                          DataCell(Text(e.name, style: const TextStyle(fontSize: 15))),
-                          DataCell(Text(e.description ?? '', style: const TextStyle(fontSize: 15))),
-                          DataCell(Icon(
-                            e.isActive ? Icons.check_circle : Icons.cancel,
-                            color: e.isActive ? Colors.green : Colors.red,
-                            size: 20,
-                          )),
-                        ],
-                      ),
-                    )
-                    .toList(),
+                            DataCell(
+                              Text(
+                                e.description ?? '',
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                            ),
+                            DataCell(
+                              Icon(
+                                e.isActive ? Icons.check_circle : Icons.cancel,
+                                color: e.isActive ? Colors.green : Colors.red,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      .toList(),
             emptyIcon: Icons.category,
             emptyText: 'No categories found.',
             emptySubtext: 'Try adjusting your search or add a new category.',
@@ -188,5 +212,3 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
     );
   }
 }
-
-

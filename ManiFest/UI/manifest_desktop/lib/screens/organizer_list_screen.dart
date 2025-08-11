@@ -1,33 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
-import 'package:manifest_desktop/model/category.dart';
+import 'package:manifest_desktop/model/organizer.dart';
 import 'package:manifest_desktop/model/search_result.dart';
-import 'package:manifest_desktop/model/subcategory.dart';
-import 'package:manifest_desktop/providers/category_provider.dart';
-import 'package:manifest_desktop/providers/subcategory_provider.dart';
-import 'package:manifest_desktop/screens/subcategory_details_screen.dart';
+import 'package:manifest_desktop/providers/organizer_provider.dart';
+import 'package:manifest_desktop/screens/organizer_details_screen.dart';
 import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_table.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
 
-class SubcategoryListScreen extends StatefulWidget {
-  const SubcategoryListScreen({super.key});
+class OrganizerListScreen extends StatefulWidget {
+  const OrganizerListScreen({super.key});
 
   @override
-  State<SubcategoryListScreen> createState() => _SubcategoryListScreenState();
+  State<OrganizerListScreen> createState() => _OrganizerListScreenState();
 }
 
-class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
-  late SubcategoryProvider subcategoryProvider;
-  late CategoryProvider categoryProvider;
+class _OrganizerListScreenState extends State<OrganizerListScreen> {
+  late OrganizerProvider organizerProvider;
 
   final TextEditingController nameController = TextEditingController();
-  Category? _selectedCategory;
-  bool _isLoadingCategories = true;
-  List<Category> _categories = [];
-
-  SearchResult<Subcategory>? subcategories;
+  SearchResult<Organizer>? organizers;
   int _currentPage = 0;
   int _pageSize = 5;
   final List<int> _pageSizeOptions = [5, 7, 10, 20, 50];
@@ -37,14 +30,13 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
     final int pageSizeToUse = pageSize ?? _pageSize;
     final filter = {
       'name': nameController.text,
-      'categoryId': _selectedCategory?.id,
       'page': pageToFetch,
       'pageSize': pageSizeToUse,
       'includeTotalCount': true,
     };
-    final result = await subcategoryProvider.get(filter: filter);
+    final result = await organizerProvider.get(filter: filter);
     setState(() {
-      subcategories = result;
+      organizers = result;
       _currentPage = pageToFetch;
       _pageSize = pageSizeToUse;
     });
@@ -54,82 +46,15 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      subcategoryProvider = context.read<SubcategoryProvider>();
-      categoryProvider = context.read<CategoryProvider>();
-      await _loadCategories();
+      organizerProvider = context.read<OrganizerProvider>();
       await _performSearch(page: 0);
     });
-  }
-
-  Future<void> _loadCategories() async {
-    try {
-      setState(() => _isLoadingCategories = true);
-      final result = await categoryProvider.get();
-      setState(() {
-        _categories = result.items ?? [];
-        _isLoadingCategories = false;
-      });
-    } catch (e) {
-      setState(() {
-        _categories = [];
-        _isLoadingCategories = false;
-      });
-    }
-  }
-
-  Widget _buildCategoryDropdown({bool asFilter = false}) {
-    if (_isLoadingCategories) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        child: const Row(
-          children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-            SizedBox(width: 16),
-            Text('Loading categories...'),
-          ],
-        ),
-      );
-    }
-    if (_categories.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        child: const Text(
-          'No categories available',
-          style: TextStyle(color: Colors.red),
-        ),
-      );
-    }
-    return DropdownButtonFormField<Category>(
-      value: _selectedCategory,
-      decoration: customTextFieldDecoration(
-        asFilter ? 'All Categories' : 'Category',
-        prefixIcon: Icons.category_outlined,
-      ),
-      items: [
-        if (asFilter)
-          DropdownMenuItem<Category>(
-            value: null,
-            child: const Text('All Categories'),
-          ),
-        ..._categories.map(
-          (c) => DropdownMenuItem<Category>(value: c, child: Text(c.name)),
-        ),
-      ],
-      onChanged: (Category? value) {
-        setState(() => _selectedCategory = value);
-        if (asFilter) _performSearch(page: 0);
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreen(
-      title: 'Subcategories',
+      title: 'Organizers',
       child: Center(
         child: Column(
           children: [
@@ -157,8 +82,6 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          SizedBox(width: 350, child: _buildCategoryDropdown(asFilter: true)),
-          const SizedBox(width: 10),
           ElevatedButton(
             onPressed: _performSearch,
             child: const Text('Search'),
@@ -169,15 +92,13 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SubcategoryDetailsScreen(),
-                  settings: const RouteSettings(
-                    name: 'SubcategoryDetailsScreen',
-                  ),
+                  builder: (context) => const OrganizerDetailsScreen(),
+                  settings: const RouteSettings(name: 'OrganizerDetailsScreen'),
                 ),
               );
             },
             style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
-            child: const Text('Add Subcategory'),
+            child: const Text('Add Organizer'),
           ),
         ],
       ),
@@ -186,8 +107,10 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
 
   Widget _buildResultView() {
     final isEmpty =
-        subcategories?.items == null || subcategories!.items!.isEmpty;
-    final int totalCount = subcategories?.totalCount ?? 0;
+        organizers == null ||
+        organizers!.items == null ||
+        organizers!.items!.isEmpty;
+    final int totalCount = organizers?.totalCount ?? 0;
     final int totalPages = (totalCount / _pageSize).ceil();
     final bool isFirstPage = _currentPage == 0;
     final bool isLastPage = _currentPage >= totalPages - 1 || totalPages == 0;
@@ -196,9 +119,9 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
       child: Column(
         children: [
           BaseTable(
-            icon: Icons.category_outlined,
-            title: 'Subcategories',
-            width: 1100,
+            icon: Icons.groups_outlined,
+            title: 'Organizers',
+            width: 1000,
             height: 423,
             columns: const [
               DataColumn(
@@ -209,13 +132,7 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
               ),
               DataColumn(
                 label: Text(
-                  'Category',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              ),
-              DataColumn(
-                label: Text(
-                  'Description',
+                  'Contact',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
@@ -228,7 +145,7 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
             ],
             rows: isEmpty
                 ? []
-                : subcategories!.items!
+                : organizers!.items!
                       .map(
                         (e) => DataRow(
                           onSelectChanged: (_) {
@@ -236,9 +153,9 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    SubcategoryDetailsScreen(item: e),
+                                    OrganizerDetailsScreen(item: e),
                                 settings: const RouteSettings(
-                                  name: 'SubcategoryDetailsScreen',
+                                  name: 'OrganizerDetailsScreen',
                                 ),
                               ),
                             );
@@ -252,13 +169,7 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
                             ),
                             DataCell(
                               Text(
-                                e.categoryName,
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                            ),
-                            DataCell(
-                              Text(
-                                e.description ?? '',
+                                e.contactInfo ?? '',
                                 style: const TextStyle(fontSize: 15),
                               ),
                             ),
@@ -273,9 +184,9 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
                         ),
                       )
                       .toList(),
-            emptyIcon: Icons.category,
-            emptyText: 'No subcategories found.',
-            emptySubtext: 'Try adjusting your search or add a new subcategory.',
+            emptyIcon: Icons.groups_2_outlined,
+            emptyText: 'No organizers found.',
+            emptySubtext: 'Try adjusting your search or add a new organizer.',
           ),
           const SizedBox(height: 30),
           BasePagination(

@@ -2,32 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
-import 'package:manifest_desktop/model/category.dart';
-import 'package:manifest_desktop/providers/category_provider.dart';
-import 'package:manifest_desktop/screens/category_list_screen.dart';
+import 'package:manifest_desktop/model/organizer.dart';
+import 'package:manifest_desktop/providers/organizer_provider.dart';
+import 'package:manifest_desktop/screens/organizer_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
 
-class CategoryDetailsScreen extends StatefulWidget {
-  final Category? item;
-  const CategoryDetailsScreen({super.key, this.item});
+class OrganizerDetailsScreen extends StatefulWidget {
+  final Organizer? item;
+  const OrganizerDetailsScreen({super.key, this.item});
 
   @override
-  State<CategoryDetailsScreen> createState() => _CategoryDetailsScreenState();
+  State<OrganizerDetailsScreen> createState() => _OrganizerDetailsScreenState();
 }
 
-class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
+class _OrganizerDetailsScreenState extends State<OrganizerDetailsScreen> {
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
-  late CategoryProvider categoryProvider;
+  late OrganizerProvider organizerProvider;
   Map<String, dynamic> initialValue = {};
 
   @override
   void initState() {
     super.initState();
-    categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+    organizerProvider = Provider.of<OrganizerProvider>(context, listen: false);
     initialValue = {
       'name': widget.item?.name ?? '',
-      'description': widget.item?.description ?? '',
+      'contactInfo': widget.item?.contactInfo ?? '',
       'isActive': widget.item?.isActive ?? true,
     };
   }
@@ -35,7 +35,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreen(
-      title: widget.item == null ? 'Add Category' : 'Edit Category',
+      title: widget.item == null ? 'Add Organizer' : 'Edit Organizer',
       showBackButton: true,
       child: _buildForm(),
     );
@@ -64,15 +64,15 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                       ),
                       const SizedBox(width: 8),
                       Icon(
-                        Icons.category,
+                        Icons.groups_2_outlined,
                         size: 32,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       const SizedBox(width: 16),
                       Text(
                         widget.item != null
-                            ? 'Edit Category'
-                            : 'Add New Category',
+                            ? 'Edit Organizer'
+                            : 'Add New Organizer',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -86,7 +86,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                   FormBuilderTextField(
                     name: 'name',
                     decoration: customTextFieldDecoration(
-                      'Category Name',
+                      'Organizer Name',
                       prefixIcon: Icons.text_fields,
                     ),
                     validator: FormBuilderValidators.compose([
@@ -96,12 +96,12 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                   const SizedBox(height: 24),
 
                   FormBuilderTextField(
-                    name: 'description',
+                    name: 'contactInfo',
                     decoration: customTextFieldDecoration(
-                      'Description',
-                      prefixIcon: Icons.notes,
+                      'Contact Info',
+                      prefixIcon: Icons.email_outlined,
                     ),
-                    maxLines: 3,
+                    maxLines: 2,
                   ),
                   const SizedBox(height: 24),
 
@@ -117,9 +117,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
+                          onPressed: () => Navigator.of(context).pop(),
                           icon: const Icon(Icons.cancel),
                           label: const Text('Cancel'),
                           style: ElevatedButton.styleFrom(
@@ -143,25 +141,25 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                               );
                               try {
                                 if (widget.item == null) {
-                                  await categoryProvider.insert(request);
+                                  await organizerProvider.insert(request);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
-                                        'Category created successfully',
+                                        'Organizer created successfully',
                                       ),
                                       backgroundColor: Colors.green,
                                       duration: Duration(seconds: 1),
                                     ),
                                   );
                                 } else {
-                                  await categoryProvider.update(
+                                  await organizerProvider.update(
                                     widget.item!.id,
                                     request,
                                   );
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
-                                        'Category updated successfully',
+                                        'Organizer updated successfully',
                                       ),
                                       backgroundColor: Colors.green,
                                       duration: Duration(seconds: 1),
@@ -171,9 +169,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const CategoryListScreen(),
+                                        const OrganizerListScreen(),
                                     settings: const RouteSettings(
-                                      name: 'CategoryListScreen',
+                                      name: 'OrganizerListScreen',
                                     ),
                                   ),
                                 );

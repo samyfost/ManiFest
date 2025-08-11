@@ -194,7 +194,10 @@ class _CityListScreenState extends State<CityListScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CityDetailsScreen()),
+                MaterialPageRoute(
+                  builder: (context) => CityDetailsScreen(),
+                  settings: const RouteSettings(name: 'CityDetailsScreen'),
+                ),
               );
             },
             style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
@@ -245,6 +248,9 @@ class _CityListScreenState extends State<CityListScreen> {
                               MaterialPageRoute(
                                 builder: (context) =>
                                     CityDetailsScreen(city: e),
+                                settings: const RouteSettings(
+                                  name: 'CityDetailsScreen',
+                                ),
                               ),
                             );
                           },

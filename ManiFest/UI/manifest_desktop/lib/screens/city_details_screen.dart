@@ -230,6 +230,7 @@ class _CityDetailsScreenState extends State<CityDetailsScreen> {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => const CityListScreen(),
+                      settings: const RouteSettings(name: 'CityListScreen'),
                     ),
                   );
                 } catch (e) {

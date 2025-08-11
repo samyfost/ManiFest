@@ -116,6 +116,7 @@ class _CountryDetailsScreenState extends State<CountryDetailsScreen> {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => const CountryListScreen(),
+                      settings: const RouteSettings(name: 'CountryListScreen'),
                     ),
                   );
                 } catch (e) {
@@ -292,7 +293,12 @@ class _CountryDetailsScreenState extends State<CountryDetailsScreen> {
                           icon: const Icon(Icons.clear),
                           label: const Text("Clear Image"),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 162, 159, 159),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              162,
+                              159,
+                              159,
+                            ),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(

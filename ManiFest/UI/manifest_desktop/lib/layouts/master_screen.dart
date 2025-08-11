@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/screens/country_list_screen.dart';
 import 'package:manifest_desktop/screens/category_list_screen.dart';
+import 'package:manifest_desktop/screens/organizer_list_screen.dart';
 import 'package:manifest_desktop/screens/subcategory_list_screen.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 
@@ -457,6 +458,16 @@ class _MasterScreenState extends State<MasterScreen>
                       label: 'Subcategories',
                       screen: SubcategoryListScreen(),
                     ),
+                    const SizedBox(height: 8),
+                    // Organizers
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.business, // Business/company style icon
+                      activeIcon: Icons.apartment, // Active state icon
+                      label: 'Organizers',
+                      screen: OrganizerListScreen(),
+                    ),
+
                     // Add more tiles here in the future
                   ],
                 ),
@@ -494,38 +505,25 @@ Widget _modernDrawerTile(
   // Get the current screen type from the route
   bool isSelected = false;
 
-  if (label == 'Cities') {
-    // Matches exactly CityListScreen or CityDetailsScreen
-    isSelected =
-        currentRoute == 'CityListScreen' ||
-        currentRoute == 'CityDetailsScreen' ||
-        (currentRoute == null &&
-            (screen.runtimeType.toString() == 'CityListScreen' ||
-                screen.runtimeType.toString() == 'CityDetailsScreen'));
-  } else if (label == 'Countries') {
-    // Matches exactly CountryListScreen or CountryDetailsScreen
-    isSelected =
-        currentRoute == 'CountryListScreen' ||
-        currentRoute == 'CountryDetailsScreen' ||
-        (currentRoute == null &&
-            (screen.runtimeType.toString() == 'CountryListScreen' ||
-                screen.runtimeType.toString() == 'CountryDetailsScreen'));
-  } else if (label == 'Categories') {
-    // Matches exactly CategoryListScreen or CategoryDetailsScreen
+  if (label == 'Categories') {
     isSelected =
         currentRoute == 'CategoryListScreen' ||
-        currentRoute == 'CategoryDetailsScreen' ||
-        (currentRoute == null &&
-            (screen.runtimeType.toString() == 'CategoryListScreen' ||
-                screen.runtimeType.toString() == 'CategoryDetailsScreen'));
+        currentRoute == 'CategoryDetailsScreen';
+  } else if (label == 'Cities') {
+    isSelected =
+        currentRoute == 'CityListScreen' || currentRoute == 'CityDetailsScreen';
+  } else if (label == 'Countries') {
+    isSelected =
+        currentRoute == 'CountryListScreen' ||
+        currentRoute == 'CountryDetailsScreen';
   } else if (label == 'Subcategories') {
-    // Matches exactly SubcategoryListScreen or SubcategoryDetailsScreen
     isSelected =
         currentRoute == 'SubcategoryListScreen' ||
-        currentRoute == 'SubcategoryDetailsScreen' ||
-        (currentRoute == null &&
-            (screen.runtimeType.toString() == 'SubcategoryListScreen' ||
-                screen.runtimeType.toString() == 'SubcategoryDetailsScreen'));
+        currentRoute == 'SubcategoryDetailsScreen';
+  } else if (label == 'Organizers') {
+    isSelected =
+        currentRoute == 'OrganizerListScreen' ||
+        currentRoute == 'OrganizerDetailsScreen';
   }
 
   return Container(

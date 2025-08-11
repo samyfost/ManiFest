@@ -282,6 +282,9 @@ class _SubcategoryDetailsScreenState extends State<SubcategoryDetailsScreen> {
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         const SubcategoryListScreen(),
+                                    settings: const RouteSettings(
+                                      name: 'SubcategoryListScreen',
+                                    ),
                                   ),
                                 );
                               } catch (e) {
