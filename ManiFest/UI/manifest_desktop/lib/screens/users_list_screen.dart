@@ -4,6 +4,7 @@ import 'package:manifest_desktop/model/user.dart';
 import 'package:manifest_desktop/model/search_result.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 import 'package:manifest_desktop/screens/users_details_screen.dart';
+import 'package:manifest_desktop/screens/users_edit_screen.dart';
 import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_table.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
@@ -275,6 +276,26 @@ class _UsersListScreenState extends State<UsersListScreen> {
                                       color: Colors.blue,
                                     ),
                                     tooltip: 'View Details',
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UsersEditScreen(user: e),
+                                          settings: const RouteSettings(
+                                            name: 'UsersEditScreen',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.edit_outlined,
+                                      color: Colors.orange,
+                                    ),
+                                    tooltip: 'Edit User',
                                   ),
                                 ],
                               ),

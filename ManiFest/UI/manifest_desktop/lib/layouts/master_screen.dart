@@ -551,7 +551,8 @@ Widget _modernDrawerTile(
   } else if (label == 'Users') {
     isSelected =
         currentRoute == 'UsersListScreen' ||
-        currentRoute == 'UsersDetailsScreen';
+        currentRoute == 'UsersDetailsScreen' ||
+        currentRoute == 'UsersEditScreen';
   }
 
   return Container(
