@@ -344,14 +344,28 @@ class _LoginPageState extends State<LoginPage>
       final user = await userProvider.authenticate(username, password);
 
       if (user != null) {
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CityListScreen(),
-              settings: const RouteSettings(name: 'CityListScreen'),
-            ),
-          );
+        // Check if user has admin role (roleId = 1)
+        bool hasAdminRole = user.roles.any((role) => role.id == 1);
+
+        print(
+          "User roles: ${user.roles.map((r) => '${r.name} (ID: ${r.id})').join(', ')}",
+        );
+        print("Has admin role: $hasAdminRole");
+
+        if (hasAdminRole) {
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CityListScreen(),
+                settings: const RouteSettings(name: 'CityListScreen'),
+              ),
+            );
+          }
+        } else {
+          if (mounted) {
+            _showAccessDeniedDialog();
+          }
         }
       } else {
         if (mounted) {
@@ -392,6 +406,58 @@ class _LoginPageState extends State<LoginPage>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFF6A1B9A),
+            ),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAccessDeniedDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.admin_panel_settings, color: Color(0xFFE53E3E)),
+            SizedBox(width: 8),
+            Text("Access Denied"),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "You do not have administrator privileges.",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            SizedBox(height: 12),
+            Text(
+              "This application is restricted to administrators only. Please contact your system administrator if you believe you should have access.",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Clear the form and reset state
+              usernameController.clear();
+              passwordController.clear();
+              // Clear authentication credentials
+              AuthProvider.username = '';
+              AuthProvider.password = '';
+              setState(() {
+                _isLoading = false;
+              });
+            },
             style: TextButton.styleFrom(
               foregroundColor: const Color(0xFF6A1B9A),
             ),

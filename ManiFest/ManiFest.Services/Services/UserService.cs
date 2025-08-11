@@ -220,7 +220,7 @@ namespace ManiFest.Services.Services
             if (request.RoleIds != null)
             {
                 // Remove existing roles
-                _context.UserRoles.RemoveRange(user.UserRoles);
+                //_context.UserRoles.RemoveRange(user.UserRoles);
 
                 // Add new roles
                 foreach (var roleId in request.RoleIds)
@@ -229,7 +229,7 @@ namespace ManiFest.Services.Services
                     {
                         UserId = user.Id,
                         RoleId = roleId,
-                        DateAssigned = DateTime.UtcNow
+                        DateAssigned = DateTime.Now
                     };
                     _context.UserRoles.Add(userRole);
                 }
