@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:manifest_desktop/main.dart';
+import 'package:flutter/services.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/screens/country_list_screen.dart';
 import 'package:manifest_desktop/screens/category_list_screen.dart';
@@ -208,7 +209,7 @@ class _MasterScreenState extends State<MasterScreen>
                               ],
                             ),
                             const SizedBox(height: 8),
-                          
+
                             Row(
                               children: [
                                 const Icon(
@@ -322,9 +323,12 @@ class _MasterScreenState extends State<MasterScreen>
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
-            child: GestureDetector(
-              onTap: () => _showProfileOverlay(context),
-              child: _buildUserAvatar(),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => _showProfileOverlay(context),
+                child: _buildUserAvatar(),
+              ),
             ),
           ),
         ],
