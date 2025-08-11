@@ -53,8 +53,8 @@ class MyApp extends StatelessWidget {
       title: 'ManiFest',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color(0xFF6A1B9A), // Purple
-          primary: Color(0xFF6A1B9A), // Purple
+          seedColor: const Color(0xFF6A1B9A), // Purple
+          primary: const Color(0xFF6A1B9A), // Purple
         ),
         useMaterial3: true,
       ),

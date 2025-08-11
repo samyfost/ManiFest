@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/user.dart';
-import 'package:manifest_desktop/utils/custom_picture_design.dart';
+import 'package:manifest_desktop/utils/base_picture_cover.dart';
 
 class UsersDetailsScreen extends StatelessWidget {
   final User user;
@@ -13,14 +13,17 @@ class UsersDetailsScreen extends StatelessWidget {
     return MasterScreen(
       title: 'User Details',
       showBackButton: true,
-      child: _buildUserDetails(context),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: _buildUserDetails(context),
+      ),
     );
   }
 
   Widget _buildUserDetails(BuildContext context) {
     return Center(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 600),
+        constraints: const BoxConstraints(maxWidth: 900),
         child: Card(
           elevation: 4,
           child: Padding(
@@ -38,14 +41,18 @@ class UsersDetailsScreen extends StatelessWidget {
                       tooltip: 'Go back',
                     ),
                     const SizedBox(width: 8),
-                    Icon(Icons.person_outline, size: 32, color: Colors.blue),
+                    const Icon(
+                      Icons.person_outline,
+                      size: 32,
+                      color: Color(0xFF6A1B9A),
+                    ),
                     const SizedBox(width: 16),
-                    Text(
+                    const Text(
                       'User Information',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: Color(0xFF6A1B9A),
                       ),
                     ),
                   ],
@@ -57,13 +64,14 @@ class UsersDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Profile picture
-                    CustomPictureDesign(
+                    BasePictureCover(
                       base64: user.picture,
                       size: 120,
                       fallbackIcon: Icons.person,
-                      borderColor: Colors.blue,
-                      iconColor: Colors.blue,
+                      borderColor: Color(0xFF6A1B9A),
+                      iconColor: Color(0xFF6A1B9A),
                       backgroundColor: const Color(0xFFE3F2FD),
+                      showShadow: true,
                     ),
                     const SizedBox(width: 24),
 
@@ -90,48 +98,91 @@ class UsersDetailsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
 
-                          // Status indicator
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: user.isActive
-                                  ? Colors.green[100]
-                                  : Colors.red[100],
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: user.isActive
-                                    ? Colors.green
-                                    : Colors.red,
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  user.isActive
-                                      ? Icons.check_circle
-                                      : Icons.cancel,
-                                  color: user.isActive
-                                      ? Colors.green
-                                      : Colors.red,
-                                  size: 16,
+                          // Status and Role together
+                          Row(
+                            children: [
+                              // Status indicator
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
                                 ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  user.isActive ? 'Active' : 'Inactive',
-                                  style: TextStyle(
+                                decoration: BoxDecoration(
+                                  color: user.isActive
+                                      ? Colors.green[100]
+                                      : Colors.red[100],
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
                                     color: user.isActive
-                                        ? Colors.green[700]
-                                        : Colors.red[700],
-                                    fontWeight: FontWeight.w600,
+                                        ? Colors.green
+                                        : Colors.red,
+                                    width: 1,
                                   ),
                                 ),
-                              ],
-                            ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      user.isActive
+                                          ? Icons.check_circle
+                                          : Icons.cancel,
+                                      color: user.isActive
+                                          ? Colors.green
+                                          : Colors.red,
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      user.isActive ? 'Active' : 'Inactive',
+                                      style: TextStyle(
+                                        color: user.isActive
+                                            ? Colors.green[700]
+                                            : Colors.red[700],
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+
+                              // Role badge
+                              if (user.roles.isNotEmpty)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[100],
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.blue,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.shield_outlined,
+                                        color: Colors.blue,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        user.roles
+                                            .map((r) => r.name)
+                                            .join(', '),
+                                        style: TextStyle(
+                                          color: Colors.blue[700],
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
                           ),
                         ],
                       ),
@@ -147,11 +198,6 @@ class UsersDetailsScreen extends StatelessWidget {
                 _buildInfoGrid(),
 
                 const SizedBox(height: 24),
-                const Divider(),
-                const SizedBox(height: 24),
-
-                // Roles section
-                _buildRolesSection(),
               ],
             ),
           ),
@@ -169,7 +215,7 @@ class UsersDetailsScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.blue,
+            color: Color(0xFF6A1B9A)
           ),
         ),
         const SizedBox(height: 16),
@@ -195,9 +241,7 @@ class UsersDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
-
         const SizedBox(height: 16),
-
         Row(
           children: [
             Expanded(
@@ -260,71 +304,6 @@ class UsersDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildRolesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Roles & Permissions',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        if (user.roles.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.info_outline, color: Colors.grey[600], size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  'No roles assigned',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
-            ),
-          )
-        else
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: user.roles.map((role) {
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.blue[100],
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.blue, width: 1),
-                ),
-                child: Text(
-                  role.name,
-                  style: TextStyle(
-                    color: Colors.blue[700],
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-      ],
     );
   }
 }
