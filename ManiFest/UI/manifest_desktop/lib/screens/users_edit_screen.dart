@@ -33,6 +33,8 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
   City? _selectedCity;
   File? _image;
 
+  final double leftColumnWidth = 300;
+
   @override
   void initState() {
     super.initState();
@@ -278,7 +280,7 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
       padding: const EdgeInsets.all(24),
       child: Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 600),
+          constraints: const BoxConstraints(maxWidth: 1100),
           child: Card(
             elevation: 4,
             child: Padding(
@@ -316,215 +318,247 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Profile Picture Section
-                    const Text(
-                      "Profile Picture",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+                    // Measure left column height dynamically by using IntrinsicHeight on the whole row
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Left column: picture + buttons
+                          SizedBox(
+                            width: leftColumnWidth,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  "Profile Picture",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Container(
+                                  width: 200,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child:
+                                      _initialValue['picture'] != null &&
+                                          (_initialValue['picture'] as String)
+                                              .isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          child: Image.memory(
+                                            base64Decode(
+                                              _initialValue['picture'],
+                                            ),
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                                  return _buildImagePlaceholder();
+                                                },
+                                          ),
+                                        )
+                                      : _buildImagePlaceholder(),
+                                ),
+                                const SizedBox(height: 16),
 
-                    // Current/Selected Image Display
-                    Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.grey.withOpacity(0.3),
-                          width: 2,
-                        ),
-                      ),
-                      child:
-                          _initialValue['picture'] != null &&
-                              (_initialValue['picture'] as String).isNotEmpty
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.memory(
-                                base64Decode(_initialValue['picture']),
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return _buildImagePlaceholder();
-                                },
-                              ),
-                            )
-                          : _buildImagePlaceholder(),
-                    ),
-                    const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: _pickImage,
+                                        icon: const Icon(Icons.photo_library),
+                                        label: const Text("Select Image"),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(
+                                            0xFF6A1B9A,
+                                          ),
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          setState(() {
+                                            _image = null;
+                                            _initialValue['picture'] = null;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.clear),
+                                        label: const Text("Clear Image"),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color.fromARGB(
+                                            255,
+                                            162,
+                                            159,
+                                            159,
+                                          ),
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
 
-                    // Image Selection Buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: _pickImage,
-                            icon: const Icon(Icons.photo_library),
-                            label: const Text("Select Image"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF6A1B9A),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                          const SizedBox(width: 24),
+
+                          // Middle column aligned to bottom
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FormBuilderTextField(
+                                    name: "firstName",
+                                    decoration: customTextFieldDecoration(
+                                      "First Name",
+                                      prefixIcon: Icons.person_outline,
+                                    ),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(),
+                                      FormBuilderValidators.match(
+                                        RegExp(r'^[\p{L} ]+$', unicode: true),
+                                        errorText:
+                                            'Only letters (including international), and spaces allowed',
+                                      ),
+                                    ]),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  FormBuilderTextField(
+                                    name: "lastName",
+                                    decoration: customTextFieldDecoration(
+                                      "Last Name",
+                                      prefixIcon: Icons.person_outline,
+                                    ),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(),
+                                      FormBuilderValidators.match(
+                                        RegExp(r'^[\p{L} ]+$', unicode: true),
+                                        errorText:
+                                            'Only letters (including international), and spaces allowed',
+                                      ),
+                                    ]),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  FormBuilderTextField(
+                                    name: "username",
+                                    decoration: customTextFieldDecoration(
+                                      "Username",
+                                      prefixIcon: Icons.alternate_email,
+                                    ),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(),
+                                      FormBuilderValidators.minLength(3),
+                                      FormBuilderValidators.maxLength(50),
+                                    ]),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  FormBuilderTextField(
+                                    name: "email",
+                                    decoration: customTextFieldDecoration(
+                                      "Email",
+                                      prefixIcon: Icons.email,
+                                    ),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(),
+                                      FormBuilderValidators.email(),
+                                    ]),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                _image = null;
-                                _initialValue['picture'] = null;
-                              });
-                            },
-                            icon: const Icon(Icons.clear),
-                            label: const Text("Clear Image"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(
-                                255,
-                                162,
-                                159,
-                                159,
-                              ),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+
+                          const SizedBox(width: 24),
+
+                          // Right column aligned to bottom
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FormBuilderTextField(
+                                    name: "phoneNumber",
+                                    decoration: customTextFieldDecoration(
+                                      "Phone Number (Optional)",
+                                      prefixIcon: Icons.phone,
+                                    ),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.match(
+                                        RegExp(r'^[\d\s\-\+\(\)]+$'),
+                                        errorText:
+                                            'Please enter a valid phone number',
+                                      ),
+                                    ]),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildCityDropdown(),
+                                  const SizedBox(height: 16),
+                                  FormBuilderTextField(
+                                    name: "genderName",
+                                    initialValue: widget.user.genderName,
+                                    enabled: false,
+                                    decoration: customTextFieldDecoration(
+                                      "Gender",
+                                      prefixIcon: Icons.person,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  FormBuilderSwitch(
+                                    name: 'isActive',
+                                    title: const Text('Active Account'),
+                                    initialValue:
+                                        _initialValue['isActive'] as bool? ??
+                                        true,
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 32),
 
-                    // Two-column layout for form fields
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Left column
-                        Expanded(
-                          child: Column(
-                            children: [
-                              FormBuilderTextField(
-                                name: "firstName",
-                                decoration: customTextFieldDecoration(
-                                  "First Name",
-                                  prefixIcon: Icons.person_outline,
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(),
-                                  FormBuilderValidators.match(
-                                    RegExp(r'^[\p{L} ]+$', unicode: true),
-                                    errorText:
-                                        'Only letters (including international), and spaces allowed',
-                                  ),
-                                ]),
-                              ),
-                              const SizedBox(height: 16),
-                              FormBuilderTextField(
-                                name: "lastName",
-                                decoration: customTextFieldDecoration(
-                                  "Last Name",
-                                  prefixIcon: Icons.person_outline,
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(),
-                                  FormBuilderValidators.match(
-                                    RegExp(r'^[\p{L} ]+$', unicode: true),
-                                    errorText:
-                                        'Only letters (including international), and spaces allowed',
-                                  ),
-                                ]),
-                              ),
-                              const SizedBox(height: 16),
-                              FormBuilderTextField(
-                                name: "username",
-                                decoration: customTextFieldDecoration(
-                                  "Username",
-                                  prefixIcon: Icons.alternate_email,
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(),
-                                  FormBuilderValidators.minLength(3),
-                                  FormBuilderValidators.maxLength(50),
-                                ]),
-                              ),
-                              const SizedBox(height: 16),
-                              FormBuilderTextField(
-                                name: "email",
-                                decoration: customTextFieldDecoration(
-                                  "Email",
-                                  prefixIcon: Icons.email,
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(),
-                                  FormBuilderValidators.email(),
-                                ]),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(width: 24),
-
-                        // Right column
-                        Expanded(
-                          child: Column(
-                            children: [
-                              FormBuilderTextField(
-                                name: "phoneNumber",
-                                decoration: customTextFieldDecoration(
-                                  "Phone Number (Optional)",
-                                  prefixIcon: Icons.phone,
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.match(
-                                    RegExp(r'^[\d\s\-\+\(\)]+$'),
-                                    errorText:
-                                        'Please enter a valid phone number',
-                                  ),
-                                ]),
-                              ),
-                              const SizedBox(height: 16),
-                              _buildCityDropdown(),
-                              const SizedBox(height: 16),
-                              FormBuilderTextField(
-                                name: "genderName",
-                                initialValue: widget.user.genderName,
-                                enabled: false,
-                                decoration: customTextFieldDecoration(
-                                  "Gender",
-                                  prefixIcon: Icons.person,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-
-                              FormBuilderSwitch(
-                                name: 'isActive',
-                                title: const Text('Active Account'),
-                                initialValue:
-                                    _initialValue['isActive'] as bool? ?? true,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
                     const SizedBox(height: 50),
 
-                    // Save and Cancel Buttons
                     _buildSaveButton(),
                   ],
                 ),
