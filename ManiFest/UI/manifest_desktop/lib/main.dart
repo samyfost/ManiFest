@@ -4,6 +4,7 @@ import 'package:manifest_desktop/providers/city_provider.dart';
 import 'package:manifest_desktop/providers/country_provider.dart';
 import 'package:manifest_desktop/providers/category_provider.dart';
 import 'package:manifest_desktop/providers/subcategory_provider.dart';
+import 'package:manifest_desktop/providers/user_provider.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,9 @@ void main() async {
         ),
         ChangeNotifierProvider<SubcategoryProvider>(
           create: (context) => SubcategoryProvider(),
+        ),
+        ChangeNotifierProvider<UserProvider>(
+          create: (context) => UserProvider(),
         ),
       ],
       child: const MyApp(),
@@ -316,21 +320,28 @@ class _LoginPageState extends State<LoginPage>
     });
 
     try {
-      AuthProvider.username = usernameController.text;
-      AuthProvider.password = passwordController.text;
+      final username = usernameController.text;
+      final password = passwordController.text;
 
-      print(
-        "Username: ${AuthProvider.username}, Password: ${AuthProvider.password}",
-      );
+      // Set basic auth for subsequent requests
+      AuthProvider.username = username;
+      AuthProvider.password = password;
 
-      var cityProvider = CityProvider();
-      await cityProvider.get();
+      // Authenticate and set current user
+      final userProvider = context.read<UserProvider>();
+      final user = await userProvider.authenticate(username, password);
 
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => CityListScreen()),
-        );
+      if (user != null) {
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CityListScreen()),
+          );
+        }
+      } else {
+        if (mounted) {
+          _showErrorDialog("Invalid username or password.");
+        }
       }
     } on Exception catch (e) {
       if (mounted) {

@@ -10,7 +10,7 @@ class User {
   final String lastName;
   final String email;
   final String username;
-  final String? picture;
+  final String? picture; // Will be base64 string from backend
   final bool isActive;
   final String? phoneNumber;
   final DateTime createdAt;
