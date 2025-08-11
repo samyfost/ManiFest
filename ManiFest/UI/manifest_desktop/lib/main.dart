@@ -3,6 +3,7 @@ import 'package:manifest_desktop/providers/auth_provider.dart';
 import 'package:manifest_desktop/providers/city_provider.dart';
 import 'package:manifest_desktop/providers/country_provider.dart';
 import 'package:manifest_desktop/providers/category_provider.dart';
+import 'package:manifest_desktop/providers/subcategory_provider.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,9 @@ void main() async {
         ),
         ChangeNotifierProvider<CategoryProvider>(
           create: (context) => CategoryProvider(),
+        ),
+        ChangeNotifierProvider<SubcategoryProvider>(
+          create: (context) => SubcategoryProvider(),
         ),
       ],
       child: const MyApp(),
@@ -320,7 +324,7 @@ class _LoginPageState extends State<LoginPage>
       );
 
       var cityProvider = CityProvider();
-      var cities = await cityProvider.get();
+      await cityProvider.get();
 
       if (mounted) {
         Navigator.push(

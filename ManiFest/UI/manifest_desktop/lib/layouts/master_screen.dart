@@ -3,6 +3,7 @@ import 'package:manifest_desktop/main.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/screens/country_list_screen.dart';
 import 'package:manifest_desktop/screens/category_list_screen.dart';
+import 'package:manifest_desktop/screens/subcategory_list_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   const MasterScreen({
@@ -188,10 +189,10 @@ class _MasterScreenState extends State<MasterScreen>
                       width: 2,
                     ),
                   ),
-                  child: const Icon(
-                    Icons.dashboard_rounded,
-                    size: 32,
-                    color: Colors.white,
+                  child: Image.asset(
+                    "assets/images/logo_large.png",
+                    height: 50,
+                    width: 50,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -246,6 +247,14 @@ class _MasterScreenState extends State<MasterScreen>
                       label: 'Categories',
                       screen: CategoryListScreen(),
                     ),
+                    const SizedBox(height: 8),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.view_list_outlined,
+                      activeIcon: Icons.view_list,
+                      label: 'Subcategories',
+                      screen: SubcategoryListScreen(),
+                    ),
                     // Add more tiles here in the future
                   ],
                 ),
@@ -284,25 +293,37 @@ Widget _modernDrawerTile(
   bool isSelected = false;
 
   if (label == 'Cities') {
-    // Cities tile is selected if we're on CityListScreen or CityDetailsScreen
+    // Matches exactly CityListScreen or CityDetailsScreen
     isSelected =
-        currentRoute?.contains('City') == true ||
-        currentRoute?.contains('city') == true ||
+        currentRoute == 'CityListScreen' ||
+        currentRoute == 'CityDetailsScreen' ||
         (currentRoute == null &&
-            screen.runtimeType.toString().contains('City'));
+            (screen.runtimeType.toString() == 'CityListScreen' ||
+                screen.runtimeType.toString() == 'CityDetailsScreen'));
   } else if (label == 'Countries') {
-    // Countries tile is selected if we're on CountryListScreen or CountryDetailsScreen
+    // Matches exactly CountryListScreen or CountryDetailsScreen
     isSelected =
-        currentRoute?.contains('Country') == true ||
-        currentRoute?.contains('country') == true ||
+        currentRoute == 'CountryListScreen' ||
+        currentRoute == 'CountryDetailsScreen' ||
         (currentRoute == null &&
-            screen.runtimeType.toString().contains('Country'));
+            (screen.runtimeType.toString() == 'CountryListScreen' ||
+                screen.runtimeType.toString() == 'CountryDetailsScreen'));
   } else if (label == 'Categories') {
+    // Matches exactly CategoryListScreen or CategoryDetailsScreen
     isSelected =
-        currentRoute?.contains('Category') == true ||
-        currentRoute?.contains('category') == true ||
+        currentRoute == 'CategoryListScreen' ||
+        currentRoute == 'CategoryDetailsScreen' ||
         (currentRoute == null &&
-            screen.runtimeType.toString().contains('Category'));
+            (screen.runtimeType.toString() == 'CategoryListScreen' ||
+                screen.runtimeType.toString() == 'CategoryDetailsScreen'));
+  } else if (label == 'Subcategories') {
+    // Matches exactly SubcategoryListScreen or SubcategoryDetailsScreen
+    isSelected =
+        currentRoute == 'SubcategoryListScreen' ||
+        currentRoute == 'SubcategoryDetailsScreen' ||
+        (currentRoute == null &&
+            (screen.runtimeType.toString() == 'SubcategoryListScreen' ||
+                screen.runtimeType.toString() == 'SubcategoryDetailsScreen'));
   }
 
   return Container(
