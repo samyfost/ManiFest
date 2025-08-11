@@ -16,6 +16,7 @@ class BaseTable extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final String? title;
   final IconData? icon;
+  final List<double>? columnWidths;
 
   const BaseTable({
     super.key,
@@ -34,6 +35,7 @@ class BaseTable extends StatelessWidget {
     this.padding,
     this.title,
     this.icon,
+    this.columnWidths,
   });
 
   @override
@@ -206,11 +208,21 @@ class BaseTable extends StatelessWidget {
     BuildContext context,
     double tableWidth,
   ) {
-    double columnWidth = tableWidth / columns.length;
-    return columns.map((column) {
+    // Use custom column widths if provided, otherwise distribute evenly
+    List<double> widths;
+    if (columnWidths != null && columnWidths!.length == columns.length) {
+      widths = columnWidths!;
+    } else {
+      double columnWidth = tableWidth / columns.length;
+      widths = List.filled(columns.length, columnWidth);
+    }
+
+    return columns.asMap().entries.map((entry) {
+      int index = entry.key;
+      DataColumn column = entry.value;
       return DataColumn(
         label: Container(
-          width: columnWidth,
+          width: widths[index],
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           child: column.label,
         ),
