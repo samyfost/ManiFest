@@ -9,7 +9,7 @@ It supports multiple user roles, automated notifications, and integration with R
 - Create and manage festivals with full CRUD functionality.
 - Role-based access:
   - **Admin** – Full control over all data.
-  - **Regular User** – Can browse and create their own festivals.
+  - **Regular User** – Can browse and buy tickets for festivals.
 - Automatic email notifications via **RabbitMQ** whenever a festival is created.
 - Modern and responsive UI for a smooth user experience.
 
@@ -28,6 +28,6 @@ It supports multiple user roles, automated notifications, and integration with R
 
 The application integrates with **RabbitMQ** to send a test email every time a new festival is created.
 
-| Service  | Email                  | Password          |
-|----------|------------------------|-------------------|
-| RabbitMQ | testmail@example.com   | testmailpassword  |
+| Service  | Email                         | Password          |
+|----------|-------------------------------|-------------------|
+| RabbitMQ | receiver.manifest@gmail.com   | manifesttest123   |
