@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/festival.dart';
-import 'package:manifest_desktop/utils/custom_map_view.dart';
+import 'package:manifest_desktop/utils/base_map.dart';
 
 class FestivalDetailsScreen extends StatefulWidget {
   final Festival festival;
@@ -149,14 +149,15 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
                         'Festival Location',
                         Icons.map,
                         [],
-                        child: CustomMapView(
+                        child: BaseMap(
                           start: festival.location,
-                          end: festival
-                              .location, // Same point for single location
+                          end: festival.location, // Same point for single location
                           height: 400,
                           width: double.infinity,
                           showRouteInfoOverlay: false,
                           showZoomControls: true,
+                          title: 'Festival Location',
+                          accentColor: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ] else ...[

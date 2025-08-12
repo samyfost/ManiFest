@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/festival.dart';
+import 'package:manifest_desktop/model/subcategory.dart';
 import 'package:manifest_desktop/model/search_result.dart';
 import 'package:manifest_desktop/providers/festival_provider.dart';
+import 'package:manifest_desktop/providers/subcategory_provider.dart';
 import 'package:manifest_desktop/screens/festival_details_screen.dart';
 import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_table.dart';
@@ -18,10 +20,12 @@ class FestivalListScreen extends StatefulWidget {
 
 class _FestivalListScreenState extends State<FestivalListScreen> {
   late FestivalProvider festivalProvider;
+  late SubcategoryProvider subcategoryProvider;
+  List<Subcategory> subcategories = [];
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
-  final TextEditingController subcategoryController = TextEditingController();
+  int? selectedSubcategoryId;
 
   SearchResult<Festival>? festivals;
   int _currentPage = 0;
@@ -35,7 +39,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
     final filter = {
       'title': titleController.text,
       'cityName': cityController.text,
-      'subcategoryName': subcategoryController.text,
+      'subcategoryId': selectedSubcategoryId,
       'page': pageToFetch,
       'pageSize': pageSizeToUse,
       'includeTotalCount': true,
@@ -54,8 +58,29 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       festivalProvider = context.read<FestivalProvider>();
+      subcategoryProvider = context.read<SubcategoryProvider>();
+      await _loadSubcategories();
       await _performSearch(page: 0);
     });
+  }
+
+  Future<void> _loadSubcategories() async {
+    try {
+      final result = await subcategoryProvider.get(
+        filter: {
+          'page': 0,
+          'pageSize': 1000, // Get all subcategories
+          'includeTotalCount': false,
+        },
+      );
+      if (result.items != null) {
+        setState(() {
+          subcategories = result.items!;
+        });
+      }
+    } catch (e) {
+      // Handle error silently for now
+    }
   }
 
   @override
@@ -103,13 +128,41 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: TextField(
-                  decoration: customTextFieldDecoration(
-                    'Subcategory',
-                    prefixIcon: Icons.category,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade400),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  controller: subcategoryController,
-                  onSubmitted: (_) => _performSearch(page: 0),
+                  child: DropdownButtonFormField<int>(
+                    value: selectedSubcategoryId,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      border: InputBorder.none,
+                      hintText: 'Select Subcategory',
+                      prefixIcon: Icon(Icons.category),
+                    ),
+                    items: [
+                      const DropdownMenuItem<int>(
+                        value: null,
+                        child: Text('All Subcategories'),
+                      ),
+                      ...subcategories.map(
+                        (subcategory) => DropdownMenuItem<int>(
+                          value: subcategory.id,
+                          child: Text(subcategory.name),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedSubcategoryId = value;
+                      });
+                      _performSearch(page: 0);
+                    },
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -124,7 +177,9 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                     onPressed: () {
                       titleController.clear();
                       cityController.clear();
-                      subcategoryController.clear();
+                      setState(() {
+                        selectedSubcategoryId = null;
+                      });
                       _performSearch(page: 0);
                     },
                     style: ElevatedButton.styleFrom(
@@ -165,7 +220,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
 
               150, // City
               130, // Subcategory
-          
+
               80, // Status
               100, // Actions
             ],
@@ -195,7 +250,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
-     
+
               DataColumn(
                 label: Text(
                   'Status',
@@ -240,7 +295,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                                 style: const TextStyle(fontSize: 15),
                               ),
                             ),
-                      
+
                             DataCell(
                               Icon(
                                 e.isActive ? Icons.check_circle : Icons.cancel,

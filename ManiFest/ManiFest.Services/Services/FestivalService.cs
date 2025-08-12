@@ -29,6 +29,10 @@ namespace ManiFest.Services.Services
             {
                 query = query.Where(f => f.CityId == search.CityId.Value);
             }
+            if (!string.IsNullOrEmpty(search.CityName))
+            {
+                query = query.Where(f => f.City.Name.Contains(search.CityName));
+            }
             if (search.SubcategoryId.HasValue)
             {
                 query = query.Where(f => f.SubcategoryId == search.SubcategoryId.Value);
