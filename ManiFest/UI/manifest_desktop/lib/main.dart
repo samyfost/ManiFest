@@ -8,12 +8,14 @@ import 'package:manifest_desktop/providers/user_provider.dart';
 import 'package:manifest_desktop/providers/organizer_provider.dart';
 import 'package:manifest_desktop/providers/ticket_type_provider.dart';
 import 'package:manifest_desktop/providers/gender_provider.dart';
+import 'package:manifest_desktop/providers/festival_provider.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  //await dotenv.load();
+  await dotenv.load(fileName: ".env");
   runApp(
     MultiProvider(
       providers: [
@@ -40,6 +42,9 @@ void main() async {
         ),
         ChangeNotifierProvider<GenderProvider>(
           create: (context) => GenderProvider(),
+        ),
+        ChangeNotifierProvider<FestivalProvider>(
+          create: (context) => FestivalProvider(),
         ),
       ],
       child: const MyApp(),
