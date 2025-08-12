@@ -8,8 +8,6 @@ namespace ManiFest.Services.Database
     {
         private const string DefaultPhoneNumber = "+387 00 000 000";
         
-        private const string TestMailReceiver = "calltaxi.receiver@gmail.com";
-
         public static void SeedData(this ModelBuilder modelBuilder)
         {
             // Use a fixed date for all timestamps
@@ -58,7 +56,7 @@ namespace ManiFest.Services.Database
                     Id = 2, 
                     FirstName = "Amel", 
                     LastName = "Musić",
-                    Email = TestMailReceiver,
+                    Email = "receiver.manifest@gmail.com",
                     Username = "user", 
                     PasswordHash = "kDPVcZaikiII7vXJbMEw6B0xZ245I29ocaxBjLaoAC0=", 
                     PasswordSalt = "O5R9WmM6IPCCMci/BCG/eg==", 
@@ -99,7 +97,6 @@ namespace ManiFest.Services.Database
                     PhoneNumber = DefaultPhoneNumber,
                     GenderId = 2, // Female
                     CityId = 1, // Sarajevo
-                    //Picture = ImageConversion.ConvertImageToByteArray("Assets", "test.png")
                 }
             );
 

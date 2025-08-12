@@ -1262,7 +1262,7 @@ namespace ManiFest.Services.Migrations
                             Id = 2,
                             CityId = 5,
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "calltaxi.receiver@gmail.com",
+                            Email = "receiver.manifest@gmail.com",
                             FirstName = "Amel",
                             GenderId = 1,
                             IsActive = true,
