@@ -15,9 +15,12 @@ namespace ManiFest.Model.Responses
 
         public int CityId { get; set; }
         public string CityName { get; set; } = string.Empty;
+        public string CountryName { get; set; } = string.Empty;
+
 
         public int SubcategoryId { get; set; }
         public string SubcategoryName { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
 
         public int OrganizerId { get; set; }
         public string OrganizerName { get; set; } = string.Empty;

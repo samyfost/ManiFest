@@ -56,7 +56,9 @@ namespace ManiFest.Services.Services
 
             return query
                 .Include(f => f.City)
+                    .ThenInclude(c => c.Country)
                 .Include(f => f.Subcategory)
+                    .ThenInclude(s => s.Category)
                 .Include(f => f.Organizer)
                 .Include(f => f.Assets);
         }
@@ -65,7 +67,9 @@ namespace ManiFest.Services.Services
         {
             var entity = await _context.Festivals
                 .Include(f => f.City)
+                    .ThenInclude(c => c.Country)
                 .Include(f => f.Subcategory)
+                    .ThenInclude(s => s.Category)
                 .Include(f => f.Organizer)
                 .Include(f => f.Assets)
                 .FirstOrDefaultAsync(f => f.Id == id);
@@ -154,7 +158,9 @@ namespace ManiFest.Services.Services
                 // Load related entities for the festival
                 var festivalWithRelations = await _context.Festivals
                     .Include(f => f.City)
+                        .ThenInclude(c => c.Country)
                     .Include(f => f.Subcategory)
+                        .ThenInclude(s => s.Category)
                     .Include(f => f.Organizer)
                     .FirstOrDefaultAsync(f => f.Id == entity.Id);
 
@@ -199,6 +205,19 @@ namespace ManiFest.Services.Services
             }
         }
 
-        // Use base mapping via Mapster to map entity to response
+        // Override MapToResponse to manually map nested properties
+        protected override FestivalResponse MapToResponse(Festival entity)
+        {
+            var response = base.MapToResponse(entity);
+            
+            // Manually map nested properties that Mapster might not handle properly
+            if (response != null)
+            {
+                response.CountryName = entity.City?.Country?.Name ?? string.Empty;
+                response.CategoryName = entity.Subcategory?.Category?.Name ?? string.Empty;
+            }
+            
+            return response;
+        }
     }
 }

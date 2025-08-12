@@ -13,8 +13,10 @@ class Festival {
   final bool isActive;
   final int cityId;
   final String cityName;
+  final String countryName;
   final int subcategoryId;
   final String subcategoryName;
+  final String categoryName;
   final int organizerId;
   final String organizerName;
   final List<dynamic> assets;
@@ -29,8 +31,10 @@ class Festival {
     this.isActive = true,
     this.cityId = 0,
     this.cityName = '',
+    this.countryName = '',
     this.subcategoryId = 0,
     this.subcategoryName = '',
+    this.categoryName = '',
     this.organizerId = 0,
     this.organizerName = '',
     this.assets = const [],

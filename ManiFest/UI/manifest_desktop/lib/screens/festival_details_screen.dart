@@ -31,7 +31,7 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with festival title
+          // Keep the original header
           Card(
             elevation: 4,
             child: Padding(
@@ -91,15 +91,44 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
 
           const SizedBox(height: 24),
 
-          // Festival information grid
+          // New layout: Map on left, info on right
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left column - Festival details
+              // Left side - Map
+              Expanded(
+                flex: 1,
+                child: _buildInfoCard(
+                  'Festival Location',
+                  Icons.map,
+                  [],
+                  child: coordinates != null
+                      ? BaseMap(
+                          start: festival.location,
+                          end: festival.location,
+                          height: 300,
+                          width: double.infinity,
+                          showRouteInfoOverlay: false,
+                          showZoomControls: true,
+                          title: 'Festival Location',
+                          accentColor: Theme.of(context).colorScheme.primary,
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Location coordinates not available',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                ),
+              ),
+
+              const SizedBox(width: 24),
+
+              // Right side - All information in one card
               Expanded(
                 flex: 2,
-                child: Column(
-                  children: [
+                child:
                     _buildInfoCard('Festival Information', Icons.info_outline, [
                       _buildInfoRow('Title', festival.title),
                       _buildInfoRow('Date Range', festival.dateRange),
@@ -107,81 +136,21 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
                         'Base Price',
                         '\$${festival.basePrice.toStringAsFixed(2)}',
                       ),
-                      _buildInfoRow(
-                        'Status',
-                        festival.isActive ? 'Active' : 'Inactive',
-                      ),
-                    ]),
+                      const SizedBox(height: 7),
+                      const Divider(),
 
-                    const SizedBox(height: 20),
-
-                    _buildInfoCard('Location Details', Icons.location_on, [
                       _buildInfoRow('City', festival.cityName),
-                      _buildInfoRow(
-                        'Country',
-                        'Based on city',
-                      ), // You might want to add country to the model
-                      _buildInfoRow(
-                        'Coordinates',
-                        festival.location ?? 'Not available',
-                      ),
-                    ]),
-
-                    const SizedBox(height: 20),
-
-                    _buildInfoCard('Category Information', Icons.category, [
-                      _buildInfoRow('Subcategory', festival.subcategoryName),
+                      _buildInfoRow('Country', festival.countryName),
                       _buildInfoRow('Organizer', festival.organizerName),
+                      const SizedBox(height: 7),
+                      const Divider(),
+                      _buildInfoRow('Subcategory', festival.subcategoryName),
+                      _buildInfoRow('Category', festival.categoryName),
+                      const SizedBox(height: 7),
                     ]),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: 24),
-
-              // Right column - Map
-              Expanded(
-                flex: 3,
-                child: Column(
-                  children: [
-                    if (coordinates != null) ...[
-                      _buildInfoCard(
-                        'Festival Location',
-                        Icons.map,
-                        [],
-                        child: BaseMap(
-                          start: festival.location,
-                          end: festival.location, // Same point for single location
-                          height: 400,
-                          width: double.infinity,
-                          showRouteInfoOverlay: false,
-                          showZoomControls: true,
-                          title: 'Festival Location',
-                          accentColor: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ] else ...[
-                      _buildInfoCard('Festival Location', Icons.map, [
-                        _buildInfoRow(
-                          'Coordinates',
-                          'Location coordinates not available',
-                        ),
-                      ]),
-                    ],
-                  ],
-                ),
               ),
             ],
           ),
-
-          const SizedBox(height: 24),
-
-          // Assets section (if available)
-          if (festival.assets.isNotEmpty) ...[
-            _buildInfoCard('Festival Assets', Icons.image, [
-              _buildInfoRow('Total Assets', '${festival.assets.length} images'),
-            ]),
-          ],
         ],
       ),
     );
