@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/festival.dart';
@@ -13,6 +16,16 @@ class FestivalDetailsScreen extends StatefulWidget {
 }
 
 class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
+  // Use PageView controller for assets
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MasterScreen(
@@ -31,7 +44,6 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Keep the original header
           Card(
             elevation: 4,
             child: Padding(
@@ -91,13 +103,53 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
 
           const SizedBox(height: 24),
 
-          // New layout: Map on left, info on right
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left side - Map
               Expanded(
-                flex: 1,
+                child:
+                    _buildInfoCard('Festival Information', Icons.info_outline, [
+                      _buildInfoRow('Title', festival.title),
+                      _buildInfoRow('Date Range', festival.dateRange),
+                      _buildInfoRow(
+                        'Base Price',
+                        '\$${festival.basePrice.toStringAsFixed(2)}',
+                      ),
+                      const SizedBox(height: 7),
+                      const Divider(),
+                      _buildInfoRow('City', festival.cityName),
+                      _buildInfoRow('Country', festival.countryName),
+                      _buildInfoRow('Organizer', festival.organizerName),
+                      const SizedBox(height: 7),
+                      const Divider(),
+                      _buildInfoRow('Subcategory', festival.subcategoryName),
+                      _buildInfoRow('Category', festival.categoryName),
+                      const SizedBox(height: 7),
+                    ]),
+              ),
+
+              const SizedBox(width: 16),
+
+              Expanded(
+                child: _buildInfoCard(
+                  'Festival Assets',
+                  Icons.image,
+                  [],
+                  child: festival.assets.isNotEmpty
+                      ? _buildAssetsCarousel(festival.assets)
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'No assets available',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                ),
+              ),
+
+              const SizedBox(width: 16),
+
+              Expanded(
                 child: _buildInfoCard(
                   'Festival Location',
                   Icons.map,
@@ -121,33 +173,6 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
                           ),
                         ),
                 ),
-              ),
-
-              const SizedBox(width: 24),
-
-              // Right side - All information in one card
-              Expanded(
-                flex: 2,
-                child:
-                    _buildInfoCard('Festival Information', Icons.info_outline, [
-                      _buildInfoRow('Title', festival.title),
-                      _buildInfoRow('Date Range', festival.dateRange),
-                      _buildInfoRow(
-                        'Base Price',
-                        '\$${festival.basePrice.toStringAsFixed(2)}',
-                      ),
-                      const SizedBox(height: 7),
-                      const Divider(),
-
-                      _buildInfoRow('City', festival.cityName),
-                      _buildInfoRow('Country', festival.countryName),
-                      _buildInfoRow('Organizer', festival.organizerName),
-                      const SizedBox(height: 7),
-                      const Divider(),
-                      _buildInfoRow('Subcategory', festival.subcategoryName),
-                      _buildInfoRow('Category', festival.categoryName),
-                      const SizedBox(height: 7),
-                    ]),
               ),
             ],
           ),
@@ -213,6 +238,181 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
           ),
           Expanded(child: Text(value, style: const TextStyle(fontSize: 16))),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAssetsCarousel(List<dynamic> assets) {
+    return SizedBox(
+      height: 300,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: assets.length,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              return _buildAssetItem(
+                assets[index],
+              ); // changed to _buildAssetItem without glass effect
+            },
+          ),
+          if (assets.length > 1)
+            Positioned(
+              left: 8,
+              child: _buildArrowButton(Icons.arrow_back_ios, () {
+                int prevPage = _currentPage - 1;
+                if (prevPage < 0) {
+                  prevPage = assets.length - 1; // wrap to last
+                }
+                _pageController.animateToPage(
+                  prevPage,
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOut,
+                );
+              }),
+            ),
+          if (assets.length > 1)
+            Positioned(
+              right: 8,
+              child: _buildArrowButton(Icons.arrow_forward_ios, () {
+                int nextPage = _currentPage + 1;
+                if (nextPage >= assets.length) {
+                  nextPage = 0; // wrap to first
+                }
+                _pageController.animateToPage(
+                  nextPage,
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOut,
+                );
+              }),
+            ),
+          if (assets.length > 1)
+            Positioned(
+              bottom: 16,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  assets.length,
+                  (index) => Container(
+                    width: 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: index == _currentPage
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.grey[300],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // Replace your existing _buildGlassAssetItem with this _buildAssetItem:
+  Widget _buildAssetItem(dynamic asset) {
+    String? base64Content;
+    if (asset is Map<String, dynamic>) {
+      base64Content = asset['base64Content'] as String?;
+    } else {
+      try {
+        base64Content = asset.base64Content;
+      } catch (_) {}
+    }
+    if (base64Content == null || base64Content.isEmpty) {
+      return _buildImageError();
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: Image.memory(base64Decode(base64Content), fit: BoxFit.cover),
+    );
+  }
+
+  Widget _buildArrowButton(IconData icon, VoidCallback onPressed) {
+    return ClipOval(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: InkWell(
+          onTap: onPressed,
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blueAccent.withOpacity(0.6),
+                  blurRadius: 15,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassAssetItem(dynamic asset) {
+    String? base64Content;
+    if (asset is Map<String, dynamic>) {
+      base64Content = asset['base64Content'] as String?;
+    } else {
+      try {
+        base64Content = asset.base64Content;
+      } catch (_) {}
+    }
+    if (base64Content == null || base64Content.isEmpty) {
+      return _buildImageError();
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.memory(base64Decode(base64Content), fit: BoxFit.cover),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.2),
+                  Colors.white.withOpacity(0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(color: Colors.white.withOpacity(0.05)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImageError() {
+    return Container(
+      height: 300,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Center(
+        child: Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
       ),
     );
   }
