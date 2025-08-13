@@ -12,7 +12,7 @@ Asset _$AssetFromJson(Map<String, dynamic> json) => Asset(
   contentType: json['contentType'] as String,
   base64Content: json['base64Content'] as String,
   festivalId: (json['festivalId'] as num).toInt(),
-  festivalTitle: json['festivalTitle'] as String,
+  festivalTitle: json['festivalTitle'] as String?,
 );
 
 Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{

@@ -11,6 +11,7 @@ import 'package:manifest_desktop/screens/ticket_type_list_screen.dart';
 import 'package:manifest_desktop/screens/users_list_screen.dart';
 import 'package:manifest_desktop/screens/festival_list_screen.dart';
 import 'package:manifest_desktop/screens/festival_upsert_screen.dart';
+import 'package:manifest_desktop/screens/review_list_screen.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -498,6 +499,15 @@ class _MasterScreenState extends State<MasterScreen>
                       label: 'Festivals',
                       screen: FestivalListScreen(),
                     ),
+                    const SizedBox(height: 8),
+                    // Reviews
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.rate_review_outlined,
+                      activeIcon: Icons.rate_review,
+                      label: 'Reviews',
+                      screen: ReviewListScreen(),
+                    ),
 
                     // Add more tiles here in the future
                   ],
@@ -569,6 +579,10 @@ Widget _modernDrawerTile(
         currentRoute == 'FestivalListScreen' ||
         currentRoute == 'FestivalDetailsScreen' ||
         currentRoute == 'FestivalUpsertScreen';
+  } else if (label == 'Reviews') {
+    isSelected =
+        currentRoute == 'ReviewListScreen' ||
+        currentRoute == 'ReviewDetailsScreen';
   }
 
   return Container(

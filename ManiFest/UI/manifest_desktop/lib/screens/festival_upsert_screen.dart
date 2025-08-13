@@ -356,9 +356,14 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
             children: [
               _buildBasicInfoCard(),
               const SizedBox(height: 20),
-              _buildLocationCard(),
-              const SizedBox(height: 20),
-              _buildAssetsCard(),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: _buildLocationCard()),
+                  const SizedBox(width: 20),
+                  Expanded(child: _buildAssetsCard()),
+                ],
+              ),
               const SizedBox(height: 30),
               _buildActionButtons(),
             ],

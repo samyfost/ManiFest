@@ -10,6 +10,7 @@ import 'package:manifest_desktop/providers/ticket_type_provider.dart';
 import 'package:manifest_desktop/providers/gender_provider.dart';
 import 'package:manifest_desktop/providers/festival_provider.dart';
 import 'package:manifest_desktop/providers/asset_provider.dart';
+import 'package:manifest_desktop/providers/review_provider.dart';
 import 'package:manifest_desktop/providers/subcategory_provider.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
@@ -50,6 +51,9 @@ void main() async {
         ),
         ChangeNotifierProvider<AssetProvider>(
           create: (context) => AssetProvider(),
+        ),
+        ChangeNotifierProvider<ReviewProvider>(
+          create: (context) => ReviewProvider(),
         ),
         ChangeNotifierProvider<SubcategoryProvider>(
           create: (context) => SubcategoryProvider(),
@@ -229,7 +233,7 @@ class _LoginPageState extends State<LoginPage>
                           // Username field
                           TextField(
                             controller: usernameController,
-                            decoration: flatTextFieldDecoration(
+                            decoration: customTextFieldDecoration(
                               "Username",
                               prefixIcon: Icons.person_outline,
                               hintText: "Enter your username",
@@ -242,7 +246,7 @@ class _LoginPageState extends State<LoginPage>
                             controller: passwordController,
                             obscureText: !_isPasswordVisible,
                             decoration:
-                                flatTextFieldDecoration(
+                                customTextFieldDecoration(
                                   "Password",
                                   prefixIcon: Icons.lock_outline,
                                   hintText: "Enter your password",

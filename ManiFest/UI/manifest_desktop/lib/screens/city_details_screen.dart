@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/city.dart';
 import 'package:manifest_desktop/model/country.dart';
@@ -29,6 +26,7 @@ class _CityDetailsScreenState extends State<CityDetailsScreen> {
   late CountryProvider countryProvider;
   bool isLoading = true;
   bool _isLoadingCountries = true;
+  bool _isSaving = false;
   List<Country> _countries = [];
   Country? _selectedCountry;
 
@@ -164,105 +162,103 @@ class _CityDetailsScreenState extends State<CityDetailsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(Icons.cancel),
-            label: Text("Cancel"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
+        ElevatedButton(
+          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey.shade300,
+            foregroundColor: Colors.black87,
           ),
+          child: const Text('Cancel'),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () async {
-              formKey.currentState?.saveAndValidate();
-              if (formKey.currentState?.validate() ?? false) {
-                if (_selectedCountry == null) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Validation Error'),
-                      content: Text('Please select a country'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text('OK'),
+        const SizedBox(width: 16),
+        ElevatedButton(
+          onPressed: _isSaving
+              ? null
+              : () async {
+                  formKey.currentState?.saveAndValidate();
+                  if (formKey.currentState?.validate() ?? false) {
+                    if (_selectedCountry == null) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Validation Error'),
+                          content: const Text('Please select a country'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('OK'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                  return;
-                }
+                      );
+                      return;
+                    }
 
-                var request = Map.from(formKey.currentState?.value ?? {});
-                request['countryId'] = _selectedCountry!.id;
+                    setState(() => _isSaving = true);
+                    var request = Map.from(formKey.currentState?.value ?? {});
+                    request['countryId'] = _selectedCountry!.id;
 
-                try {
-                  if (widget.city == null) {
-                    await cityProvider.insert(request);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('City created successfully'),
-                        backgroundColor: Colors.green,
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
-                  } else {
-                    await cityProvider.update(widget.city!.id, request);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('City updated successfully'),
-                        backgroundColor: Colors.green,
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
+                    try {
+                      if (widget.city == null) {
+                        await cityProvider.insert(request);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('City created successfully'),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      } else {
+                        await cityProvider.update(widget.city!.id, request);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('City updated successfully'),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      }
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const CityListScreen(),
+                          settings: const RouteSettings(name: 'CityListScreen'),
+                        ),
+                      );
+                    } catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Error'),
+                          content: Text(
+                            e.toString().replaceFirst('Exception: ', ''),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } finally {
+                      if (mounted) setState(() => _isSaving = false);
+                    }
                   }
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const CityListScreen(),
-                      settings: const RouteSettings(name: 'CityListScreen'),
-                    ),
-                  );
-                } catch (e) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Error'),
-                      content: Text(
-                        e.toString().replaceFirst('Exception: ', ''),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              }
-            },
-            icon: Icon(Icons.save),
-            label: Text("Save"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
+                },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Colors.white,
           ),
+          child: _isSaving
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : const Text('Save'),
         ),
       ],
     );

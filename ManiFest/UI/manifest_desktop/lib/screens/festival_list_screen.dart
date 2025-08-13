@@ -129,41 +129,30 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(8),
+                child: DropdownButtonFormField<int>(
+                  decoration: customTextFieldDecoration(
+                    'Subcategory',
+                    prefixIcon: Icons.category,
                   ),
-                  child: DropdownButtonFormField<int>(
-                    value: selectedSubcategoryId,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      border: InputBorder.none,
-                      hintText: 'Select Subcategory',
-                      prefixIcon: Icon(Icons.category),
+                  value: selectedSubcategoryId,
+                  items: [
+                    const DropdownMenuItem<int>(
+                      value: null,
+                      child: Text('All Subcategories'),
                     ),
-                    items: [
-                      const DropdownMenuItem<int>(
-                        value: null,
-                        child: Text('All Subcategories'),
+                    ...subcategories.map(
+                      (subcategory) => DropdownMenuItem<int>(
+                        value: subcategory.id,
+                        child: Text(subcategory.name),
                       ),
-                      ...subcategories.map(
-                        (subcategory) => DropdownMenuItem<int>(
-                          value: subcategory.id,
-                          child: Text(subcategory.name),
-                        ),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedSubcategoryId = value;
-                      });
-                      _performSearch(page: 0);
-                    },
-                  ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedSubcategoryId = value;
+                    });
+                    _performSearch(page: 0);
+                  },
                 ),
               ),
               const SizedBox(width: 10),

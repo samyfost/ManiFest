@@ -27,6 +27,7 @@ class _SubcategoryDetailsScreenState extends State<SubcategoryDetailsScreen> {
   bool _isLoadingCategories = true;
   List<Category> _categories = [];
   Category? _selectedCategory;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -207,120 +208,131 @@ class _SubcategoryDetailsScreenState extends State<SubcategoryDetailsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(Icons.cancel),
-                          label: const Text('Cancel'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
+                      ElevatedButton(
+                        onPressed: _isSaving
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey.shade300,
+                          foregroundColor: Colors.black87,
                         ),
+                        child: const Text('Cancel'),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            formKey.currentState?.saveAndValidate();
-                            if (formKey.currentState?.validate() ?? false) {
-                              if (_selectedCategory == null) {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    title: const Text('Validation Error'),
-                                    content: const Text(
-                                      'Please select a category',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('OK'),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: _isSaving
+                            ? null
+                            : () async {
+                                formKey.currentState?.saveAndValidate();
+                                if (formKey.currentState?.validate() ?? false) {
+                                  if (_selectedCategory == null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title: const Text('Validation Error'),
+                                        content: const Text(
+                                          'Please select a category',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                );
-                                return;
-                              }
-                              final request = Map<String, dynamic>.from(
-                                formKey.currentState?.value ?? {},
-                              );
-                              request['categoryId'] = _selectedCategory!.id;
-                              try {
-                                if (widget.item == null) {
-                                  await subcategoryProvider.insert(request);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Subcategory created successfully',
+                                    );
+                                    return;
+                                  }
+                                  setState(() => _isSaving = true);
+                                  final request = Map<String, dynamic>.from(
+                                    formKey.currentState?.value ?? {},
+                                  );
+                                  request['categoryId'] = _selectedCategory!.id;
+                                  try {
+                                    if (widget.item == null) {
+                                      await subcategoryProvider.insert(request);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Subcategory created successfully',
+                                          ),
+                                          backgroundColor: Colors.green,
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                    } else {
+                                      await subcategoryProvider.update(
+                                        widget.item!.id,
+                                        request,
+                                      );
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Subcategory updated successfully',
+                                          ),
+                                          backgroundColor: Colors.green,
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                    }
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SubcategoryListScreen(),
+                                        settings: const RouteSettings(
+                                          name: 'SubcategoryListScreen',
+                                        ),
                                       ),
-                                      backgroundColor: Colors.green,
-                                      duration: Duration(seconds: 1),
-                                    ),
-                                  );
-                                } else {
-                                  await subcategoryProvider.update(
-                                    widget.item!.id,
-                                    request,
-                                  );
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Subcategory updated successfully',
+                                    );
+                                  } catch (e) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Error'),
+                                        content: Text(
+                                          e.toString().replaceFirst(
+                                            'Exception: ',
+                                            '',
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
                                       ),
-                                      backgroundColor: Colors.green,
-                                      duration: Duration(seconds: 1),
-                                    ),
-                                  );
+                                    );
+                                  } finally {
+                                    if (mounted)
+                                      setState(() => _isSaving = false);
+                                  }
                                 }
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SubcategoryListScreen(),
-                                    settings: const RouteSettings(
-                                      name: 'SubcategoryListScreen',
-                                    ),
-                                  ),
-                                );
-                              } catch (e) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Error'),
-                                    content: Text(
-                                      e.toString().replaceFirst(
-                                        'Exception: ',
-                                        '',
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          icon: const Icon(Icons.save),
-                          label: const Text('Save'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          foregroundColor: Colors.white,
                         ),
+                        child: _isSaving
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : const Text('Save'),
                       ),
                     ],
                   ),

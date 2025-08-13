@@ -1,0 +1,380 @@
+import 'package:flutter/material.dart';
+import 'package:manifest_desktop/layouts/master_screen.dart';
+import 'package:manifest_desktop/model/review.dart';
+import 'package:manifest_desktop/model/festival.dart';
+import 'package:manifest_desktop/model/search_result.dart';
+import 'package:manifest_desktop/providers/review_provider.dart';
+import 'package:manifest_desktop/providers/festival_provider.dart';
+import 'package:manifest_desktop/screens/review_details_screen.dart';
+import 'package:manifest_desktop/utils/base_pagination.dart';
+import 'package:manifest_desktop/utils/base_table.dart';
+import 'package:manifest_desktop/utils/base_textfield.dart';
+import 'package:provider/provider.dart';
+
+class ReviewListScreen extends StatefulWidget {
+  const ReviewListScreen({super.key});
+
+  @override
+  State<ReviewListScreen> createState() => _ReviewListScreenState();
+}
+
+class _ReviewListScreenState extends State<ReviewListScreen> {
+  late ReviewProvider reviewProvider;
+  late FestivalProvider festivalProvider;
+  List<Festival> festivals = [];
+
+  final TextEditingController usernameController = TextEditingController();
+  int? selectedFestivalId;
+  int? selectedRating;
+
+  SearchResult<Review>? reviews;
+  int _currentPage = 0;
+  int _pageSize = 10;
+  final List<int> _pageSizeOptions = [5, 10, 20, 50];
+
+  Future<void> _performSearch({int? page, int? pageSize}) async {
+    final int pageToFetch = page ?? _currentPage;
+    final int pageSizeToUse = pageSize ?? _pageSize;
+
+    final filter = {
+      'username': usernameController.text,
+      'festivalId': selectedFestivalId,
+      'minRating': selectedRating,
+      'maxRating': selectedRating,
+      'page': pageToFetch,
+      'pageSize': pageSizeToUse,
+      'includeTotalCount': true,
+    };
+
+    final result = await reviewProvider.get(filter: filter);
+    setState(() {
+      reviews = result;
+      _currentPage = pageToFetch;
+      _pageSize = pageSizeToUse;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      reviewProvider = context.read<ReviewProvider>();
+      festivalProvider = context.read<FestivalProvider>();
+      await _loadFestivals();
+      await _performSearch(page: 0);
+    });
+  }
+
+  Future<void> _loadFestivals() async {
+    try {
+      final result = await festivalProvider.get(
+        filter: {
+          'page': 0,
+          'pageSize': 1000, // Get all festivals
+          'includeTotalCount': false,
+        },
+      );
+      if (result.items != null) {
+        setState(() {
+          festivals = result.items!;
+        });
+      }
+    } catch (e) {
+      // Handle error silently for now
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MasterScreen(
+      title: 'Reviews',
+      child: Center(
+        child: Column(
+          children: [
+            _buildSearch(),
+            Expanded(child: _buildResultView()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearch() {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              customTextField(
+                label: 'Username',
+                controller: usernameController,
+                prefixIcon: Icons.person,
+                width: 230,
+                onSubmitted: () => _performSearch(page: 0),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: DropdownButtonFormField<int>(
+                  decoration: customTextFieldDecoration(
+                    'Festival',
+                    prefixIcon: Icons.festival,
+                  ),
+                  value: selectedFestivalId,
+                  items: [
+                    const DropdownMenuItem<int>(
+                      value: null,
+                      child: Text('All Festivals'),
+                    ),
+                    ...festivals.map(
+                      (festival) => DropdownMenuItem<int>(
+                        value: festival.id,
+                        child: Text(festival.title),
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFestivalId = value;
+                    });
+                    _performSearch(page: 0);
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: DropdownButtonFormField<int>(
+                  decoration: customTextFieldDecoration(
+                    'Rating',
+                    prefixIcon: Icons.star,
+                  ),
+                  value: selectedRating,
+                  items: [
+                    const DropdownMenuItem<int>(
+                      value: null,
+                      child: Text('All Ratings'),
+                    ),
+                    ...List.generate(5, (index) => index + 1).map(
+                      (rating) => DropdownMenuItem<int>(
+                        value: rating,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min, // Keep row tight
+                          children: [
+                            Flexible(
+                              child: Text('$rating'),
+                            ), // Allow text to wrap or shrink
+                            const SizedBox(width: 4),
+                            ...List.generate(
+                              rating,
+                              (index) => const Icon(
+                                Icons.star,
+                                size: 16,
+                                color: Colors.amber,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedRating = value;
+                    });
+                    _performSearch(page: 0);
+                  },
+                ),
+              ),
+
+              const SizedBox(width: 10),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: _performSearch,
+                    child: const Text('Search'),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      usernameController.clear();
+                      setState(() {
+                        selectedFestivalId = null;
+                        selectedRating = null;
+                      });
+                      _performSearch(page: 0);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.orange,
+                    ),
+                    child: const Text('Clear'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultView() {
+    final isEmpty =
+        reviews == null || reviews!.items == null || reviews!.items!.isEmpty;
+    final int totalCount = reviews?.totalCount ?? 0;
+    final int totalPages = (totalCount / _pageSize).ceil();
+    final bool isFirstPage = _currentPage == 0;
+    final bool isLastPage = _currentPage >= totalPages - 1 || totalPages == 0;
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          BaseTable(
+            icon: Icons.rate_review,
+            title: 'Reviews',
+            width: 1200,
+            height: 423,
+            columnWidths: [
+              200, // Festival
+              150, // Username
+              100, // Rating
+              300, // Comment
+              150, // Date
+              100, // Actions
+            ],
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Festival',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Username',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Rating',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Comment',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Date',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Actions',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+            ],
+            rows: isEmpty
+                ? []
+                : reviews!.items!
+                      .map(
+                        (e) => DataRow(
+                          cells: [
+                            DataCell(
+                              Text(
+                                e.festivalTitle,
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                e.username,
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                            ),
+                            DataCell(
+                              Row(
+                                children: [
+                                  ...List.generate(
+                                    e.rating,
+                                    (index) => const Icon(
+                                      Icons.star,
+                                      size: 16,
+                                      color: Colors.amber,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                e.comment ?? 'No comment',
+                                style: const TextStyle(fontSize: 15),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                '${e.createdAt.day}/${e.createdAt.month}/${e.createdAt.year}',
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                            ),
+                            DataCell(
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ReviewDetailsScreen(review: e),
+                                      settings: const RouteSettings(
+                                        name: 'ReviewDetailsScreen',
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.info_outline,
+                                  color: Colors.blue,
+                                ),
+                                tooltip: 'View Details',
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      .toList(),
+            emptyIcon: Icons.rate_review,
+            emptyText: 'No reviews found.',
+            emptySubtext: 'Try adjusting your search criteria.',
+          ),
+          const SizedBox(height: 30),
+          BasePagination(
+            currentPage: _currentPage,
+            totalPages: totalPages,
+            onPrevious: isFirstPage
+                ? null
+                : () => _performSearch(page: _currentPage - 1),
+            onNext: isLastPage
+                ? null
+                : () => _performSearch(page: _currentPage + 1),
+            showPageSizeSelector: true,
+            pageSize: _pageSize,
+            pageSizeOptions: _pageSizeOptions,
+            onPageSizeChanged: (newSize) {
+              if (newSize != null && newSize != _pageSize) {
+                _performSearch(page: 0, pageSize: newSize);
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
