@@ -12,6 +12,7 @@ class Review {
   final String festivalTitle;
   final int userId;
   final String username;
+  final String userFullName;
 
   const Review({
     this.id = 0,
@@ -22,6 +23,7 @@ class Review {
     this.festivalTitle = '',
     this.userId = 0,
     this.username = '',
+    this.userFullName = '',
   });
 
   factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);

@@ -22,9 +22,17 @@ namespace ManiFest.Services.Services
             {
                 query = query.Where(r => r.FestivalId == search.FestivalId.Value);
             }
+            if (!string.IsNullOrWhiteSpace(search.FestivalTitle))
+            {
+                query = query.Where(r => r.Festival.Title.Contains(search.FestivalTitle));
+            }
             if (search.UserId.HasValue)
             {
                 query = query.Where(r => r.UserId == search.UserId.Value);
+            }
+            if (!string.IsNullOrWhiteSpace(search.UserFullName))
+            {
+                query = query.Where(r => (r.User.FirstName + " " + r.User.LastName).Contains(search.UserFullName));
             }
             if (search.MinRating.HasValue)
             {
@@ -35,6 +43,22 @@ namespace ManiFest.Services.Services
                 query = query.Where(r => r.Rating <= search.MaxRating.Value);
             }
             return query.Include(r => r.Festival).Include(r => r.User);
+        }
+
+        protected override ReviewResponse MapToResponse(Review entity)
+        {
+            return new ReviewResponse
+            {
+                Id = entity.Id,
+                Rating = entity.Rating,
+                Comment = entity.Comment,
+                CreatedAt = entity.CreatedAt,
+                FestivalId = entity.FestivalId,
+                FestivalTitle = entity.Festival?.Title ?? string.Empty,
+                UserId = entity.UserId,
+                UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : string.Empty,
+                Username = entity.User?.Username ?? string.Empty,
+            };
         }
 
         protected override async Task BeforeInsert(Review entity, ReviewUpsertRequest request)

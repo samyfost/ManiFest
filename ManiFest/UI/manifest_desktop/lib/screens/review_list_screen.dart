@@ -24,7 +24,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
   List<Festival> festivals = [];
 
   final TextEditingController usernameController = TextEditingController();
-  int? selectedFestivalId;
+  final TextEditingController festivalTitleController = TextEditingController();
   int? selectedRating;
 
   SearchResult<Review>? reviews;
@@ -37,8 +37,8 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
     final int pageSizeToUse = pageSize ?? _pageSize;
 
     final filter = {
-      'username': usernameController.text,
-      'festivalId': selectedFestivalId,
+      'userFullName': usernameController.text,
+      'festivalTitle': festivalTitleController.text,
       'minRating': selectedRating,
       'maxRating': selectedRating,
       'page': pageToFetch,
@@ -106,39 +106,25 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
         children: [
           Row(
             children: [
-              customTextField(
-                label: 'Username',
-                controller: usernameController,
-                prefixIcon: Icons.person,
-                width: 230,
-                onSubmitted: () => _performSearch(page: 0),
+              Expanded(
+                child: TextField(
+                  decoration: customTextFieldDecoration(
+                    'Full Name',
+                    prefixIcon: Icons.person,
+                  ),
+                  controller: usernameController,
+                  onSubmitted: (_) => _performSearch(page: 0),
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: DropdownButtonFormField<int>(
+                child: TextField(
                   decoration: customTextFieldDecoration(
-                    'Festival',
+                    'Title',
                     prefixIcon: Icons.festival,
                   ),
-                  value: selectedFestivalId,
-                  items: [
-                    const DropdownMenuItem<int>(
-                      value: null,
-                      child: Text('All Festivals'),
-                    ),
-                    ...festivals.map(
-                      (festival) => DropdownMenuItem<int>(
-                        value: festival.id,
-                        child: Text(festival.title),
-                      ),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedFestivalId = value;
-                    });
-                    _performSearch(page: 0);
-                  },
+                  controller: festivalTitleController,
+                  onSubmitted: (_) => _performSearch(page: 0),
                 ),
               ),
               const SizedBox(width: 10),
@@ -198,7 +184,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                     onPressed: () {
                       usernameController.clear();
                       setState(() {
-                        selectedFestivalId = null;
+                        festivalTitleController.clear();
                         selectedRating = null;
                       });
                       _performSearch(page: 0);
@@ -235,7 +221,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
             height: 423,
             columnWidths: [
               200, // Festival
-              150, // Username
+              150, // Full Name
               100, // Rating
               300, // Comment
               150, // Date
@@ -250,7 +236,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
               ),
               DataColumn(
                 label: Text(
-                  'Username',
+                  'Full Name',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
@@ -293,7 +279,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                             ),
                             DataCell(
                               Text(
-                                e.username,
+                                e.userFullName,
                                 style: const TextStyle(fontSize: 15),
                               ),
                             ),

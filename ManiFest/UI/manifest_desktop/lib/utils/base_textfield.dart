@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// ---------------------------
+// Input Decoration Helper
+// ---------------------------
 InputDecoration customTextFieldDecoration(
   String label, {
   IconData? prefixIcon,
@@ -57,7 +60,7 @@ InputDecoration customTextFieldDecoration(
 }
 
 // ---------------------------
-// Main customTextField helper
+// Custom Text Field Helper
 // ---------------------------
 Widget customTextField({
   required String label,
@@ -67,7 +70,7 @@ Widget customTextField({
   String? hintText,
   bool isError = false,
   double? width, // optional fixed width
-  VoidCallback? onSubmitted,
+  VoidCallback? onSubmitted, // Handle Enter key press
   bool enabled = true,
   bool obscureText = false,
   TextInputType? keyboardType,
@@ -83,7 +86,11 @@ Widget customTextField({
       hintText: hintText,
       isError: isError,
     ),
-    onSubmitted: onSubmitted != null ? (_) => onSubmitted() : null,
+    onSubmitted: (_) {
+      if (onSubmitted != null) {
+        onSubmitted();
+      }
+    },
     enabled: enabled,
     obscureText: obscureText,
     keyboardType: keyboardType,
@@ -91,7 +98,7 @@ Widget customTextField({
     maxLength: maxLength,
   );
 
-  // If width is provided, force it even inside Expanded/Flexible
+  // Force width if provided, even inside Expanded/Flexible
   if (width != null) {
     return Align(
       alignment: Alignment.centerLeft,
@@ -103,7 +110,7 @@ Widget customTextField({
 }
 
 // ---------------------------
-// Dropdown helper (optional width)
+// Custom Dropdown Helper
 // ---------------------------
 Widget customDropdownField<T>({
   required String label,
