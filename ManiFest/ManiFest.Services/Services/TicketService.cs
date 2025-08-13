@@ -25,6 +25,10 @@ namespace ManiFest.Services.Services
                 query = query.Where(t => t.FestivalId == search.FestivalId.Value);
             if (search.UserId.HasValue)
                 query = query.Where(t => t.UserId == search.UserId.Value);
+            if (!string.IsNullOrWhiteSpace(search.UserFullName))
+                query = query.Where(t => (t.User.FirstName + " " + t.User.LastName).Contains(search.UserFullName));
+            if (!string.IsNullOrWhiteSpace(search.FestivalTitle))
+                query = query.Where(t => t.Festival.Title.Contains(search.FestivalTitle));
             if (search.TicketTypeId.HasValue)
                 query = query.Where(t => t.TicketTypeId == search.TicketTypeId.Value);
             if (search.IsRedeemed.HasValue)
@@ -83,6 +87,22 @@ namespace ManiFest.Services.Services
             ticket.RedeemedAt = DateTime.Now;
             await _context.SaveChangesAsync();
             return MapToResponse(ticket);
+        }
+
+        protected override TicketResponse MapToResponse(Ticket entity)
+        {
+            var response = base.MapToResponse(entity);
+            
+            // Manually map nested properties that Mapster might not handle properly
+            if (response != null)
+            {
+                response.FestivalTitle = entity.Festival?.Title ?? string.Empty;
+                response.UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : string.Empty;
+                response.Username = entity.User?.Username ?? string.Empty;
+                response.TicketTypeName = entity.TicketType?.Name ?? string.Empty;
+            }
+            
+            return response;
         }
 
         private static string GenerateUniqueCode(int festivalId, int userId, string ticketTypeName)
