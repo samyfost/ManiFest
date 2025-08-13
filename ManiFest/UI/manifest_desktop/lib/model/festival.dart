@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:manifest_desktop/model/asset.dart';
 
 part 'festival.g.dart';
 
@@ -19,7 +20,7 @@ class Festival {
   final String categoryName;
   final int organizerId;
   final String organizerName;
-  final List<dynamic> assets;
+  final List<Asset> assets;
 
   const Festival({
     this.id = 0,

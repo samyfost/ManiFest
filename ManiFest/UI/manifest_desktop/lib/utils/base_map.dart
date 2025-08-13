@@ -16,6 +16,8 @@ class BaseMap extends StatefulWidget {
   final double? routeDistance;
   final String title;
   final Color? accentColor;
+  final Function(LatLng)? onLocationSelected;
+  final bool isSelectable;
 
   const BaseMap({
     Key? key,
@@ -29,6 +31,8 @@ class BaseMap extends StatefulWidget {
     this.routeDistance,
     this.title = 'Location',
     this.accentColor,
+    this.onLocationSelected,
+    this.isSelectable = false,
   }) : super(key: key);
 
   @override
@@ -275,6 +279,13 @@ class _BaseMapState extends State<BaseMap> with TickerProviderStateMixin {
                 _zoom = pos.zoom ?? _zoom;
               });
             },
+            onTap: widget.isSelectable
+                ? (tapPosition, point) {
+                    if (widget.onLocationSelected != null) {
+                      widget.onLocationSelected!(point);
+                    }
+                  }
+                : null,
           ),
           children: [
             TileLayer(
@@ -306,7 +317,7 @@ class _BaseMapState extends State<BaseMap> with TickerProviderStateMixin {
                     _buildMarker(
                       endLatLng,
                       Icons.festival,
-                      Colors.lightBlue,
+                      Colors.red,
                       accentColor,
                     ),
                 ],

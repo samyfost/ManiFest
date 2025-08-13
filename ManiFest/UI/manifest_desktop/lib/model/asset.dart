@@ -8,16 +8,16 @@ class Asset {
   final String fileName;
   final String contentType;
   final String base64Content;
-  final DateTime createdAt;
   final int festivalId;
+  final String? festivalTitle;
 
   Asset({
     required this.id,
     required this.fileName,
     required this.contentType,
     required this.base64Content,
-    required this.createdAt,
     required this.festivalId,
+    this.festivalTitle,
   });
 
   factory Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);

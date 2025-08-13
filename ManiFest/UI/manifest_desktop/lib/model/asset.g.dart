@@ -11,8 +11,8 @@ Asset _$AssetFromJson(Map<String, dynamic> json) => Asset(
   fileName: json['fileName'] as String,
   contentType: json['contentType'] as String,
   base64Content: json['base64Content'] as String,
-  createdAt: DateTime.parse(json['createdAt'] as String),
   festivalId: (json['festivalId'] as num).toInt(),
+  festivalTitle: json['festivalTitle'] as String,
 );
 
 Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{
@@ -20,6 +20,6 @@ Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{
   'fileName': instance.fileName,
   'contentType': instance.contentType,
   'base64Content': instance.base64Content,
-  'createdAt': instance.createdAt.toIso8601String(),
   'festivalId': instance.festivalId,
+  'festivalTitle': instance.festivalTitle,
 };

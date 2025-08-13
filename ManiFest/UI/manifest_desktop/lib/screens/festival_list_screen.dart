@@ -195,8 +195,8 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const FestivalUpsertScreen(),
@@ -205,6 +205,10 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                           ),
                         ),
                       );
+                      // Refresh the list if a festival was created/updated
+                      if (result == true) {
+                        await _performSearch(page: _currentPage);
+                      }
                     },
                     icon: const Icon(Icons.add),
                     label: const Text('New Festival'),
@@ -356,8 +360,8 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                                   ),
                                   const SizedBox(width: 8),
                                   IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
+                                    onPressed: () async {
+                                      final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
@@ -367,6 +371,12 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                                           ),
                                         ),
                                       );
+                                      // Refresh the list if a festival was updated
+                                      if (result == true) {
+                                        await _performSearch(
+                                          page: _currentPage,
+                                        );
+                                      }
                                     },
                                     icon: const Icon(
                                       Icons.edit,

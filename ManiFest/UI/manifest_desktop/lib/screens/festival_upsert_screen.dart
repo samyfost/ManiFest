@@ -15,6 +15,8 @@ import 'package:manifest_desktop/providers/city_provider.dart';
 import 'package:manifest_desktop/providers/subcategory_provider.dart';
 import 'package:manifest_desktop/providers/organizer_provider.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
+import 'package:manifest_desktop/utils/base_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 class FestivalUpsertScreen extends StatefulWidget {
@@ -61,6 +63,11 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
     super.initState();
     _isEditing = widget.festival != null;
     _initializeData();
+
+    // Add listener to location controller to update map preview
+    _locationController.addListener(() {
+      setState(() {});
+    });
   }
 
   Future<void> _initializeData() async {
@@ -132,16 +139,24 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
   Future<void> _loadExistingAssets() async {
     if (widget.festival != null) {
       try {
-        final result = await _assetProvider.get(
-          filter: {'festivalId': widget.festival!.id},
-        );
-        if (result.items != null) {
+        // First try to get assets from the festival object if they're already loaded
+        if (widget.festival!.assets.isNotEmpty) {
           setState(() {
-            _existingAssets = result.items!;
+            _existingAssets = widget.festival!.assets;
           });
+        } else {
+          // If not loaded, fetch them separately
+          final result = await _assetProvider.get(
+            filter: {'festivalId': widget.festival!.id},
+          );
+          if (result.items != null) {
+            setState(() {
+              _existingAssets = result.items!;
+            });
+          }
         }
       } catch (e) {
-        // Handle error
+        print('Error loading existing assets: $e');
       }
     }
   }
@@ -157,6 +172,9 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
     _selectedSubcategoryId = festival.subcategoryId;
     _selectedOrganizerId = festival.organizerId;
     _isActive = festival.isActive;
+
+    // Trigger rebuild to show map if location exists
+    setState(() {});
   }
 
   Future<void> _pickImages() async {
@@ -239,6 +257,16 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
         await _assetProvider.delete(int.parse(assetId));
       }
 
+      // Refresh the festival data to include assets
+      if (_isEditing) {
+        final result = await _festivalProvider.get(
+          filter: {'id': savedFestival.id, 'pageSize': 1},
+        );
+        if (result.items != null && result.items!.isNotEmpty) {
+          savedFestival = result.items!.first;
+        }
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -250,7 +278,8 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context);
+        // Navigate back to list screen and trigger refresh
+        Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
@@ -284,11 +313,32 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
           'contentType': contentType,
           'base64Content': base64String,
           'festivalId': festivalId,
+          'festivalTitle': '', // Add empty string for now
         });
       } catch (e) {
         // Handle individual asset upload error
         print('Error uploading asset: $e');
       }
+    }
+  }
+
+  Future<void> _showMapPicker() async {
+    // Show a dialog with a map for location picking
+    final coordinates = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return _MapPickerDialog(
+          initialLocation: _locationController.text.isNotEmpty
+              ? _locationController.text
+              : '43.8563,18.4131',
+        );
+      },
+    );
+
+    if (coordinates != null) {
+      setState(() {
+        _locationController.text = coordinates;
+      });
     }
   }
 
@@ -459,11 +509,12 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
                 Expanded(
                   child: Row(
                     children: [
-                      Checkbox(
+                      Switch(
                         value: _isActive,
-                        onChanged: (value) =>
-                            setState(() => _isActive = value ?? true),
+                        onChanged: (value) => setState(() => _isActive = value),
+                        activeColor: Theme.of(context).colorScheme.primary,
                       ),
+                      const SizedBox(width: 8),
                       const Text('Active'),
                     ],
                   ),
@@ -492,26 +543,59 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            TextFormField(
-              controller: _locationController,
-              decoration: customTextFieldDecoration(
-                'Coordinates (e.g., 43.8563,18.4131)',
-                prefixIcon: Icons.location_on,
-              ),
-              validator: (value) {
-                if (value != null && value.trim().isNotEmpty) {
-                  final coords = value.trim().split(',');
-                  if (coords.length != 2) {
-                    return 'Please enter coordinates in format: latitude,longitude';
-                  }
-                  if (double.tryParse(coords[0]) == null ||
-                      double.tryParse(coords[1]) == null) {
-                    return 'Please enter valid coordinates';
-                  }
-                }
-                return null;
-              },
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _locationController,
+                    decoration: customTextFieldDecoration(
+                      'Coordinates (e.g., 43.8563,18.4131)',
+                      prefixIcon: Icons.location_on,
+                    ),
+                    validator: (value) {
+                      if (value != null && value.trim().isNotEmpty) {
+                        final coords = value.trim().split(',');
+                        if (coords.length != 2) {
+                          return 'Please enter coordinates in format: latitude,longitude';
+                        }
+                        if (double.tryParse(coords[0]) == null ||
+                            double.tryParse(coords[1]) == null) {
+                          return 'Please enter valid coordinates';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton.icon(
+                  onPressed: _showMapPicker,
+                  icon: const Icon(Icons.map),
+                  label: const Text('Pick on Map'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 20),
+            if (_locationController.text.isNotEmpty)
+              Container(
+                height: 300,
+                width: double.infinity,
+                child: BaseMap(
+                  start: _locationController.text,
+                  end: _locationController.text,
+                  height: 300,
+                  width: double.infinity,
+                  showRouteInfoOverlay: false,
+                  showZoomControls: true,
+                  title: 'Selected Location',
+                  accentColor: Theme.of(context).colorScheme.primary,
+                  isSelectable: false,
+                ),
+              ),
           ],
         ),
       ),
@@ -823,5 +907,97 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
     _basePriceController.dispose();
     _locationController.dispose();
     super.dispose();
+  }
+}
+
+class _MapPickerDialog extends StatefulWidget {
+  final String initialLocation;
+
+  const _MapPickerDialog({required this.initialLocation});
+
+  @override
+  State<_MapPickerDialog> createState() => _MapPickerDialogState();
+}
+
+class _MapPickerDialogState extends State<_MapPickerDialog> {
+  String _selectedLocation = '';
+  late String _currentLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentLocation = widget.initialLocation;
+    _selectedLocation = widget.initialLocation;
+  }
+
+  void _onLocationSelected(LatLng point) {
+    setState(() {
+      _selectedLocation =
+          '${point.latitude.toStringAsFixed(4)},${point.longitude.toStringAsFixed(4)}';
+      _currentLocation = _selectedLocation;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        width: 800,
+        height: 600,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Click on the map to select location',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ),
+            Expanded(
+              child: BaseMap(
+                start: _currentLocation,
+                end: _currentLocation,
+                height: 500,
+                width: 800,
+                showRouteInfoOverlay: false,
+                showZoomControls: true,
+                title: 'Click to select location',
+                accentColor: Theme.of(context).colorScheme.primary,
+                isSelectable: true,
+                onLocationSelected: _onLocationSelected,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Selected: $_selectedLocation',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () =>
+                            Navigator.of(context).pop(_selectedLocation),
+                        child: const Text('Use Selected'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

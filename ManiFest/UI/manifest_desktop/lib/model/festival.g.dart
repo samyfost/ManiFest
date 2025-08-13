@@ -22,7 +22,11 @@ Festival _$FestivalFromJson(Map<String, dynamic> json) => Festival(
   categoryName: json['categoryName'] as String? ?? '',
   organizerId: (json['organizerId'] as num?)?.toInt() ?? 0,
   organizerName: json['organizerName'] as String? ?? '',
-  assets: json['assets'] as List<dynamic>? ?? const [],
+  assets:
+      (json['assets'] as List<dynamic>?)
+          ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$FestivalToJson(Festival instance) => <String, dynamic>{
