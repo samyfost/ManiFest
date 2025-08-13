@@ -97,8 +97,13 @@ class _OrganizerListScreenState extends State<OrganizerListScreen> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
-            child: const Text('Add Organizer'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6A1B9A), // Purple
+              foregroundColor: Colors.white, // white text & icon
+            ),
+            child: const Row(
+              children: [Icon(Icons.add), Text('Add Organizer')],
+            ),
           ),
         ],
       ),

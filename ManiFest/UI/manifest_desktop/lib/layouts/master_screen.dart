@@ -10,6 +10,7 @@ import 'package:manifest_desktop/screens/subcategory_list_screen.dart';
 import 'package:manifest_desktop/screens/ticket_type_list_screen.dart';
 import 'package:manifest_desktop/screens/users_list_screen.dart';
 import 'package:manifest_desktop/screens/festival_list_screen.dart';
+import 'package:manifest_desktop/screens/festival_upsert_screen.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -566,7 +567,8 @@ Widget _modernDrawerTile(
   } else if (label == 'Festivals') {
     isSelected =
         currentRoute == 'FestivalListScreen' ||
-        currentRoute == 'FestivalDetailsScreen';
+        currentRoute == 'FestivalDetailsScreen' ||
+        currentRoute == 'FestivalUpsertScreen';
   }
 
   return Container(

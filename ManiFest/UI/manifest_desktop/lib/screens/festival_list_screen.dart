@@ -6,6 +6,7 @@ import 'package:manifest_desktop/model/search_result.dart';
 import 'package:manifest_desktop/providers/festival_provider.dart';
 import 'package:manifest_desktop/providers/subcategory_provider.dart';
 import 'package:manifest_desktop/screens/festival_details_screen.dart';
+import 'package:manifest_desktop/screens/festival_upsert_screen.dart';
 import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_table.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
@@ -189,6 +190,31 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                   ),
                 ],
               ),
+              const SizedBox(width: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FestivalUpsertScreen(),
+                          settings: const RouteSettings(
+                            name: 'FestivalUpsertScreen',
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('New Festival'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6A1B9A), // Purple
+                      foregroundColor: Colors.white, // white text & icon
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ],
@@ -327,6 +353,26 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                                       color: Colors.blue,
                                     ),
                                     tooltip: 'View Details',
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FestivalUpsertScreen(festival: e),
+                                          settings: const RouteSettings(
+                                            name: 'FestivalUpsertScreen',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.orange,
+                                    ),
+                                    tooltip: 'Edit Festival',
                                   ),
                                 ],
                               ),

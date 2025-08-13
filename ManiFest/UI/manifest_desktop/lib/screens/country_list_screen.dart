@@ -102,8 +102,11 @@ class _CountryListScreenState extends State<CountryListScreen> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
-            child: Text("Add Country"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6A1B9A), // Purple
+              foregroundColor: Colors.white, // white text & icon
+            ),
+            child: const Row(children: [Icon(Icons.add), Text('Add Country')]),
           ),
         ],
       ),

@@ -97,8 +97,13 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
-            child: const Text('Add Category'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6A1B9A), // Purple
+              foregroundColor: Colors.white, // white text & icon
+            ),
+            child: const Row(
+              children: [Icon(Icons.add), Text('Add Category')],
+            ),
           ),
         ],
       ),

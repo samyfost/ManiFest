@@ -176,8 +176,13 @@ class _SubcategoryListScreenState extends State<SubcategoryListScreen> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(foregroundColor: Colors.lightBlue),
-            child: const Text('Add Subcategory'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6A1B9A), // Purple
+              foregroundColor: Colors.white, // white text & icon
+            ),
+            child: const Row(
+              children: [Icon(Icons.add), Text('Add Subcategory')],
+            ),
           ),
         ],
       ),
