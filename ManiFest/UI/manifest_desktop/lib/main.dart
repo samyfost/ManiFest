@@ -11,6 +11,7 @@ import 'package:manifest_desktop/providers/gender_provider.dart';
 import 'package:manifest_desktop/providers/festival_provider.dart';
 import 'package:manifest_desktop/providers/asset_provider.dart';
 import 'package:manifest_desktop/providers/review_provider.dart';
+import 'package:manifest_desktop/providers/ticket_provider.dart';
 import 'package:manifest_desktop/providers/subcategory_provider.dart';
 import 'package:manifest_desktop/screens/city_list_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
@@ -54,6 +55,9 @@ void main() async {
         ),
         ChangeNotifierProvider<ReviewProvider>(
           create: (context) => ReviewProvider(),
+        ),
+        ChangeNotifierProvider<TicketProvider>(
+          create: (context) => TicketProvider(),
         ),
         ChangeNotifierProvider<SubcategoryProvider>(
           create: (context) => SubcategoryProvider(),
