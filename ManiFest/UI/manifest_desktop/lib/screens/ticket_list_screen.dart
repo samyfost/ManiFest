@@ -24,7 +24,7 @@ class _TicketListScreenState extends State<TicketListScreen> {
 
   SearchResult<Ticket>? tickets;
   int _currentPage = 0;
-  int _pageSize = 10;
+  int _pageSize = 5;
   final List<int> _pageSizeOptions = [5, 10, 20, 50];
 
   Future<void> _performSearch({int? page, int? pageSize}) async {
@@ -146,9 +146,9 @@ class _TicketListScreenState extends State<TicketListScreen> {
             columnWidths: [
               200, // Festival
               150, // User Full Name
-              100, // Ticket Type
+              120, // Ticket Type
               100, // Price
-              150, // Generated Code
+              160, // Generated Code
               100, // Status
               100, // Actions
             ],

@@ -29,7 +29,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
 
   SearchResult<Review>? reviews;
   int _currentPage = 0;
-  int _pageSize = 10;
+  int _pageSize = 5;
   final List<int> _pageSizeOptions = [5, 10, 20, 50];
 
   Future<void> _performSearch({int? page, int? pageSize}) async {

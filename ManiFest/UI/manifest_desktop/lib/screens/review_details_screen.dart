@@ -12,196 +12,204 @@ class ReviewDetailsScreen extends StatelessWidget {
     return MasterScreen(
       title: 'Review Details',
       showBackButton: true,
-      child: Center(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.arrow_back),
-                        tooltip: 'Go back',
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        Icons.rate_review,
-                        size: 32,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Review Details',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+      child: _buildReviewDetails(context),
+    );
+  }
+
+  Widget _buildReviewDetails(BuildContext context) {
+    return Builder(
+      builder: (context) => SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Header Card
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.rate_review,
+                          size: 48,
                           color: Theme.of(context).colorScheme.primary,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Festival Information
-                  _buildInfoSection(
-                    'Festival',
-                    review.festivalTitle,
-                    Icons.festival,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // User Information
-                  _buildInfoSection(
-                    'User',
-                    review.username,
-                    Icons.person,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Rating
-                  _buildRatingSection(),
-                  const SizedBox(height: 16),
-
-                  // Comment
-                  if (review.comment != null && review.comment!.isNotEmpty)
-                    _buildInfoSection(
-                      'Comment',
-                      review.comment!,
-                      Icons.comment,
-                      isMultiline: true,
-                    ),
-                  if (review.comment != null && review.comment!.isNotEmpty)
-                    const SizedBox(height: 16),
-
-                  // Date
-                  _buildInfoSection(
-                    'Created',
-                    '${review.createdAt.day}/${review.createdAt.month}/${review.createdAt.year} at ${review.createdAt.hour}:${review.createdAt.minute.toString().padLeft(2, '0')}',
-                    Icons.calendar_today,
-                  ),
-                  const SizedBox(height: 40),
-
-                  // Close button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade300,
-                          foregroundColor: Colors.black87,
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Review by ${review.userFullName}',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                review.festivalTitle,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: const Text('Close'),
-                      ),
-                    ],
+                        // Stars only (header)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: List.generate(
+                            review.rating,
+                            (index) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+
+            const SizedBox(height: 24),
+
+            // Info Card
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: _buildInfoCard(context, 'Details', Icons.info_outline, [
+                  _buildStarRow('Rating', review.rating),
+                  _buildInfoRow('Created At', _formatDate(review.createdAt)),
+                  if (review.comment != null && review.comment!.isNotEmpty) ...[
+                    const SizedBox(height: 7),
+                    const Divider(),
+                    _buildInfoRow('Comment', review.comment!),
+                  ],
+                  const Divider(),
+                  _buildInfoRow('Full Name', review.userFullName),
+                  _buildInfoRow('Username', review.username),
+                  const Divider(),
+                  _buildInfoRow('Festival Title', review.festivalTitle),
+                ]),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoSection(String label, String value, IconData icon, {bool isMultiline = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+  Widget _buildInfoCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    List<Widget> infoRows,
+  ) {
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: Colors.grey.shade600, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
-              ),
+            Row(
+              children: [
+                Icon(
+                  icon,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 16),
+            ...infoRows,
           ],
         ),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: Text(
-            value,
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.grey.shade800,
-            ),
-            maxLines: isMultiline ? null : 1,
-            overflow: isMultiline ? null : TextOverflow.ellipsis,
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _buildRatingSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.star, color: Colors.grey.shade600, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              'Rating',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
           ),
-          child: Row(
-            children: [
-              Text(
-                '${review.rating}/5',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
-                ),
-              ),
-              const SizedBox(width: 12),
-              ...List.generate(5, (index) {
-                return Icon(
-                  index < review.rating ? Icons.star : Icons.star_border,
-                  color: index < review.rating ? Colors.amber : Colors.grey.shade400,
-                  size: 24,
-                );
-              }),
-            ],
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+              maxLines: label == 'Comment' ? null : 1,
+              overflow: label == 'Comment' ? null : TextOverflow.ellipsis,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  /// New method for stars inside Details
+  Widget _buildStarRow(String label, int rating) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+              children: List.generate(
+                rating,
+                (index) =>
+                    const Icon(Icons.star, color: Colors.amber, size: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year} '
+        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
