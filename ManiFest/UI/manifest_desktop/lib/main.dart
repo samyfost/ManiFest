@@ -13,7 +13,8 @@ import 'package:manifest_desktop/providers/asset_provider.dart';
 import 'package:manifest_desktop/providers/review_provider.dart';
 import 'package:manifest_desktop/providers/ticket_provider.dart';
 import 'package:manifest_desktop/providers/subcategory_provider.dart';
-import 'package:manifest_desktop/screens/city_list_screen.dart';
+import 'package:manifest_desktop/providers/business_report_provider.dart';
+import 'package:manifest_desktop/screens/business_report_screen.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -61,6 +62,9 @@ void main() async {
         ),
         ChangeNotifierProvider<SubcategoryProvider>(
           create: (context) => SubcategoryProvider(),
+        ),
+        ChangeNotifierProvider<BusinessReportProvider>(
+          create: (context) => BusinessReportProvider(),
         ),
       ],
       child: const MyApp(),
@@ -378,8 +382,8 @@ class _LoginPageState extends State<LoginPage>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CityListScreen(),
-                settings: const RouteSettings(name: 'CityListScreen'),
+                builder: (context) => const BusinessReportScreen(),
+                settings: const RouteSettings(name: 'BusinessReportScreen'),
               ),
             );
           }

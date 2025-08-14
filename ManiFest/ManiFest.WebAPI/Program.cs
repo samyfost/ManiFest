@@ -26,6 +26,7 @@ builder.Services.AddTransient<IAssetService, AssetService>();
 builder.Services.AddTransient<IReviewService, ReviewService>();
 builder.Services.AddTransient<ITicketTypeService, TicketTypeService>();
 builder.Services.AddTransient<ITicketService, TicketService>();
+builder.Services.AddTransient<IBusinessReportService, BusinessReportService>();
 
 
 // Configure database
