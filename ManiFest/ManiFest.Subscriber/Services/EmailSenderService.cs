@@ -6,8 +6,8 @@ namespace ManiFest.Subscriber.Services
 {
     public class EmailSenderService : IEmailSenderService
     {
-        private readonly string _gmailMail = "calltaxi.sender@gmail.com";
-        private readonly string _gmailPass = "tlkv xshf zbaw oaab";
+        private readonly string _gmailMail = "manifest.festival.info@gmail.com";
+        private readonly string _gmailPass = "tdpo rukk xdqv eydw";
 
         public Task SendEmailAsync(string email, string subject, string message)
         {

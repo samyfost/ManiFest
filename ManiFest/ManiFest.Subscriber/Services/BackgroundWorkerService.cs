@@ -98,7 +98,7 @@ namespace ManiFest.Subscriber.Services
                         $"🎉 Title: {festival.Title}\n" +
                         $"📅 Start Date: {festival.StartDate:dddd, MMMM dd, yyyy}\n" +
                         $"📅 End Date: {festival.EndDate:dddd, MMMM dd, yyyy}\n" +
-                        $"💰 Base Price: {festival.BasePrice:F2} $\n" +
+                        $"💰 Price: {festival.BasePrice:F2} $\n" +
                         $"📍 Location: {festival.CityName}\n" +
                         $"🎪 Category: {festival.SubcategoryName}\n" +
                         $"🏢 Organizer: {festival.OrganizerName}\n\n" +
