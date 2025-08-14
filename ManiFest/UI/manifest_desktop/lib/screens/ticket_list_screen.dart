@@ -7,6 +7,7 @@ import 'package:manifest_desktop/screens/ticket_details_screen.dart';
 import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_table.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
+import 'package:manifest_desktop/widgets/ticket_scanner_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TicketListScreen extends StatefulWidget {
@@ -45,6 +46,82 @@ class _TicketListScreenState extends State<TicketListScreen> {
       _currentPage = pageToFetch;
       _pageSize = pageSizeToUse;
     });
+  }
+
+  Future<void> _showScannerDialog() async {
+    final result = await showDialog<Ticket>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const TicketScannerDialog(),
+    );
+
+    if (result != null) {
+      // Show success dialog and refresh the list
+      if (mounted) {
+        await _showSuccessDialog(result);
+        await _performSearch(page: _currentPage);
+      }
+    }
+  }
+
+  Future<void> _showSuccessDialog(Ticket ticket) async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 28),
+            const SizedBox(width: 12),
+            const Text('Ticket Redeemed!'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Ticket Code: ${ticket.generatedCode}'),
+            const SizedBox(height: 8),
+            Text('Festival: ${ticket.festivalTitle}'),
+            const SizedBox(height: 8),
+            Text('User: ${ticket.userFullName}'),
+            const SizedBox(height: 8),
+            Text('Redeemed At: ${_formatDateTime(ticket.redeemedAt!)}'),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                border: Border.all(color: Colors.green.shade200),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                '✅ Ticket successfully redeemed! User can now enter the festival.',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.day}/${dateTime.month}/${dateTime.year} '
+        '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -117,6 +194,16 @@ class _TicketListScreenState extends State<TicketListScreen> {
                       foregroundColor: Colors.orange,
                     ),
                     child: const Text('Clear'),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton.icon(
+                    onPressed: _showScannerDialog,
+                    icon: const Icon(Icons.qr_code_scanner),
+                    label: const Text('Redeem Ticket'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
                 ],
               ),
