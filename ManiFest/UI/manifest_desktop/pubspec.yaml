@@ -45,6 +45,7 @@ dependencies:
   flutter_dotenv: ^5.1.0
   carousel_slider: 4.1.1 # or the latest version
   qr_flutter: ^4.1.0
+  fl_chart: ^0.70.0
 
 
 

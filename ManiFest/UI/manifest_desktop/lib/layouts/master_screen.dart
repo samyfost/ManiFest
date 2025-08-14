@@ -13,6 +13,7 @@ import 'package:manifest_desktop/screens/festival_list_screen.dart';
 import 'package:manifest_desktop/screens/festival_upsert_screen.dart';
 import 'package:manifest_desktop/screens/review_list_screen.dart';
 import 'package:manifest_desktop/screens/ticket_list_screen.dart';
+import 'package:manifest_desktop/screens/business_report_screen.dart';
 import 'package:manifest_desktop/providers/user_provider.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -435,18 +436,58 @@ class _MasterScreenState extends State<MasterScreen>
                   children: [
                     _modernDrawerTile(
                       context,
-                      icon: Icons.location_city_outlined,
-                      activeIcon: Icons.location_city_rounded,
-                      label: 'Cities',
-                      screen: CityListScreen(),
+                      icon: Icons.analytics_outlined,
+                      activeIcon: Icons.analytics,
+                      label: 'Business Report',
+                      screen: const BusinessReportScreen(),
                     ),
                     const SizedBox(height: 8),
                     _modernDrawerTile(
                       context,
-                      icon: Icons.flag_outlined,
-                      activeIcon: Icons.flag,
-                      label: 'Countries',
-                      screen: CountryListScreen(),
+                      icon: Icons.festival,
+                      activeIcon: Icons.festival,
+                      label: 'Festivals',
+                      screen: FestivalListScreen(),
+                    ),
+                    const SizedBox(height: 8),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.confirmation_number_outlined,
+                      activeIcon: Icons.confirmation_number,
+                      label: 'Tickets',
+                      screen: TicketListScreen(),
+                    ),
+                    const SizedBox(height: 8),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.confirmation_number_outlined,
+                      activeIcon: Icons.confirmation_number,
+                      label: 'Ticket Types',
+                      screen: TicketTypeListScreen(),
+                    ),
+                    const SizedBox(height: 8),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.rate_review_outlined,
+                      activeIcon: Icons.rate_review,
+                      label: 'Reviews',
+                      screen: ReviewListScreen(),
+                    ),
+                    const SizedBox(height: 8),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.people_outlined,
+                      activeIcon: Icons.people,
+                      label: 'Users',
+                      screen: UsersListScreen(),
+                    ),
+                    const SizedBox(height: 8),
+                    _modernDrawerTile(
+                      context,
+                      icon: Icons.business, // Business/company style icon
+                      activeIcon: Icons.apartment, // Active state icon
+                      label: 'Organizers',
+                      screen: OrganizerListScreen(),
                     ),
                     const SizedBox(height: 8),
                     _modernDrawerTile(
@@ -465,58 +506,20 @@ class _MasterScreenState extends State<MasterScreen>
                       screen: SubcategoryListScreen(),
                     ),
                     const SizedBox(height: 8),
-                    // Organizers
                     _modernDrawerTile(
                       context,
-                      icon: Icons.business, // Business/company style icon
-                      activeIcon: Icons.apartment, // Active state icon
-                      label: 'Organizers',
-                      screen: OrganizerListScreen(),
+                      icon: Icons.flag_outlined,
+                      activeIcon: Icons.flag,
+                      label: 'Countries',
+                      screen: CountryListScreen(),
                     ),
                     const SizedBox(height: 8),
-                    // Ticket Types
                     _modernDrawerTile(
                       context,
-                      icon: Icons.confirmation_number_outlined,
-                      activeIcon: Icons.confirmation_number,
-                      label: 'Ticket Types',
-                      screen: TicketTypeListScreen(),
-                    ),
-                    const SizedBox(height: 8),
-                    // Users
-                    _modernDrawerTile(
-                      context,
-                      icon: Icons.people_outlined,
-                      activeIcon: Icons.people,
-                      label: 'Users',
-                      screen: UsersListScreen(),
-                    ),
-
-                    // Festivals
-                    _modernDrawerTile(
-                      context,
-                      icon: Icons.festival,
-                      activeIcon: Icons.festival,
-                      label: 'Festivals',
-                      screen: FestivalListScreen(),
-                    ),
-                    const SizedBox(height: 8),
-                    // Reviews
-                    _modernDrawerTile(
-                      context,
-                      icon: Icons.rate_review_outlined,
-                      activeIcon: Icons.rate_review,
-                      label: 'Reviews',
-                      screen: ReviewListScreen(),
-                    ),
-                    const SizedBox(height: 8),
-                    // Tickets
-                    _modernDrawerTile(
-                      context,
-                      icon: Icons.confirmation_number_outlined,
-                      activeIcon: Icons.confirmation_number,
-                      label: 'Tickets',
-                      screen: TicketListScreen(),
+                      icon: Icons.location_city_outlined,
+                      activeIcon: Icons.location_city_rounded,
+                      label: 'Cities',
+                      screen: CityListScreen(),
                     ),
 
                     // Add more tiles here in the future
@@ -556,7 +559,9 @@ Widget _modernDrawerTile(
   // Get the current screen type from the route
   bool isSelected = false;
 
-  if (label == 'Categories') {
+  if (label == 'Business Report') {
+    isSelected = currentRoute == 'BusinessReportScreen';
+  } else if (label == 'Categories') {
     isSelected =
         currentRoute == 'CategoryListScreen' ||
         currentRoute == 'CategoryDetailsScreen';
