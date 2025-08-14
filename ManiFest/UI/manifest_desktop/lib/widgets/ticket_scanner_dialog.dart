@@ -27,16 +27,16 @@ class _TicketScannerDialogState extends State<TicketScannerDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Enter Ticket Code'),
+        title: const Text('Enter Ticket Redeem Code'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Please enter the ticket code:'),
+            const Text('Please enter the ticket redeem code:'),
             const SizedBox(height: 16),
             TextField(
               controller: codeController,
               decoration: const InputDecoration(
-                labelText: 'Ticket Code',
+                labelText: 'Ticket Redeem Code',
                 border: OutlineInputBorder(),
                 hintText: 'e.g., ABC-123-XYZ',
               ),
@@ -145,7 +145,7 @@ class _TicketScannerDialogState extends State<TicketScannerDialog> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Enter ticket code to redeem',
+                  'Enter ticket redeem code to redeem',
                   style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                   textAlign: TextAlign.center,
                 ),
@@ -196,7 +196,8 @@ class _TicketScannerDialogState extends State<TicketScannerDialog> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'Enter the ticket code manually',
+                    'Enter the ticket redeem code manually\nDesktop application does not support QR code scanning',
+
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                     textAlign: TextAlign.center,
                   ),

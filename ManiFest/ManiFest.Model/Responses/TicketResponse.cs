@@ -13,7 +13,8 @@ namespace ManiFest.Model.Responses
         public int TicketTypeId { get; set; }
         public string TicketTypeName { get; set; } = string.Empty;
         public decimal FinalPrice { get; set; }
-        public string GeneratedCode { get; set; } = string.Empty;
+        public string QrCodeData { get; set; } = string.Empty;
+        public string TextCode { get; set; } = string.Empty;
         public bool IsRedeemed { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? RedeemedAt { get; set; }

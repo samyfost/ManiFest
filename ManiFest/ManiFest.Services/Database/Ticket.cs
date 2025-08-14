@@ -28,8 +28,11 @@ namespace ManiFest.Services.Database
         public decimal FinalPrice { get; set; }
 
         [Required]
+        [MaxLength(500)]
+        public string QrCodeData { get; set; } = string.Empty;
+
         [MaxLength(100)]
-        public string GeneratedCode { get; set; } = string.Empty;
+        public string TextCode { get; set; } = string.Empty;
 
         public bool IsRedeemed { get; set; } = false;
 

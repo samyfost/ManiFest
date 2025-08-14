@@ -13,7 +13,8 @@ class Ticket {
   final int ticketTypeId;
   final String ticketTypeName;
   final double finalPrice;
-  final String generatedCode;
+  final String qrCodeData;
+  final String textCode;
   final bool isRedeemed;
   final DateTime createdAt;
   final DateTime? redeemedAt;
@@ -28,7 +29,8 @@ class Ticket {
     this.ticketTypeId = 0,
     this.ticketTypeName = '',
     this.finalPrice = 0.0,
-    this.generatedCode = '',
+    this.qrCodeData = '',
+    this.textCode = '',
     this.isRedeemed = false,
     required this.createdAt,
     this.redeemedAt,

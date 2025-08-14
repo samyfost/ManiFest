@@ -8,6 +8,7 @@ import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_table.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:manifest_desktop/widgets/ticket_scanner_dialog.dart';
+import 'package:manifest_desktop/utils/qr_generator.dart';
 import 'package:provider/provider.dart';
 
 class TicketListScreen extends StatefulWidget {
@@ -80,14 +81,6 @@ class _TicketListScreenState extends State<TicketListScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Ticket Code: ${ticket.generatedCode}'),
-            const SizedBox(height: 8),
-            Text('Festival: ${ticket.festivalTitle}'),
-            const SizedBox(height: 8),
-            Text('User: ${ticket.userFullName}'),
-            const SizedBox(height: 8),
-            Text('Redeemed At: ${_formatDateTime(ticket.redeemedAt!)}'),
-            const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -235,7 +228,7 @@ class _TicketListScreenState extends State<TicketListScreen> {
               150, // User Full Name
               120, // Ticket Type
               100, // Price
-              160, // Generated Code
+              150, // Text Code
               100, // Status
               100, // Actions
             ],
@@ -264,9 +257,10 @@ class _TicketListScreenState extends State<TicketListScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
+
               DataColumn(
                 label: Text(
-                  'Generated Code',
+                  'Redeem Code',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
@@ -313,9 +307,10 @@ class _TicketListScreenState extends State<TicketListScreen> {
                                 style: const TextStyle(fontSize: 15),
                               ),
                             ),
+
                             DataCell(
                               Text(
-                                e.generatedCode,
+                                e.textCode,
                                 style: const TextStyle(fontSize: 15),
                               ),
                             ),

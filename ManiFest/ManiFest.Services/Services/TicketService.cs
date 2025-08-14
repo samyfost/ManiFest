@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace ManiFest.Services.Services
 {
@@ -34,7 +35,7 @@ namespace ManiFest.Services.Services
             if (search.IsRedeemed.HasValue)
                 query = query.Where(t => t.IsRedeemed == search.IsRedeemed.Value);
             if (!string.IsNullOrEmpty(search.Code))
-                query = query.Where(t => t.GeneratedCode.Contains(search.Code));
+                query = query.Where(t => t.QrCodeData.Contains(search.Code));
 
             return query
                 .Include(t => t.Festival)
@@ -56,9 +57,13 @@ namespace ManiFest.Services.Services
             var finalPrice = Math.Round(festival.BasePrice * (ticketType.PriceMultiplier <= 0 ? 1.0m : ticketType.PriceMultiplier), 2);
             entity.FinalPrice = finalPrice;
 
-            entity.GeneratedCode = string.IsNullOrWhiteSpace(request.GeneratedCode)
-                ? GenerateUniqueCode(request.FestivalId, request.UserId, ticketType.Name)
-                : request.GeneratedCode!;
+            entity.QrCodeData = string.IsNullOrWhiteSpace(request.QrCodeData)
+                ? GenerateQRCodeData(request.FestivalId, request.UserId, ticketType.Name)
+                : request.QrCodeData!;
+
+            entity.TextCode = string.IsNullOrWhiteSpace(request.TextCode)
+                ? GenerateTextCode(request.FestivalId, request.UserId, ticketType.Name)
+                : request.TextCode!;
         }
 
         protected override async Task BeforeUpdate(Ticket entity, TicketUpsertRequest request)
@@ -75,9 +80,12 @@ namespace ManiFest.Services.Services
             }
         }
 
-        public async Task<TicketResponse?> RedeemAsync(string generatedCode)
+        public async Task<TicketResponse?> RedeemAsync(string code)
         {
-            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.GeneratedCode == generatedCode);
+            // Try to redeem by QR code data first, then by text code
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => 
+                t.QrCodeData == code || t.TextCode == code);
+                
             if (ticket == null)
                 return null;
             if (ticket.IsRedeemed)
@@ -86,7 +94,14 @@ namespace ManiFest.Services.Services
             ticket.IsRedeemed = true;
             ticket.RedeemedAt = DateTime.Now;
             await _context.SaveChangesAsync();
-            return MapToResponse(ticket);
+            
+            // Log the redemption for debugging
+            Console.WriteLine($"Ticket {ticket.Id} redeemed at {ticket.RedeemedAt}");
+            
+            var response = MapToResponse(ticket);
+            Console.WriteLine($"Response RedeemedAt: {response?.RedeemedAt}");
+            
+            return response;
         }
 
         protected override TicketResponse MapToResponse(Ticket entity)
@@ -100,12 +115,35 @@ namespace ManiFest.Services.Services
                 response.UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : string.Empty;
                 response.Username = entity.User?.Username ?? string.Empty;
                 response.TicketTypeName = entity.TicketType?.Name ?? string.Empty;
+                
+                // Ensure RedeemedAt is properly mapped
+                response.RedeemedAt = entity.RedeemedAt;
             }
             
             return response;
         }
 
-        private static string GenerateUniqueCode(int festivalId, int userId, string ticketTypeName)
+        private static string GenerateQRCodeData(int festivalId, int userId, string ticketTypeName)
+        {
+            // Create a structured JSON object for the QR code
+            var ticketData = new
+            {
+                festivalId = festivalId,
+                userId = userId,
+                ticketType = ticketTypeName,
+                timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                uniqueId = Guid.NewGuid().ToString("N")
+            };
+
+            // Convert to JSON string
+            var jsonData = JsonSerializer.Serialize(ticketData);
+            
+            // For additional security, you could encrypt this data
+            // For now, we'll use the JSON as-is
+            return jsonData;
+        }
+
+        private static string GenerateTextCode(int festivalId, int userId, string ticketTypeName)
         {
             using var sha256 = SHA256.Create();
             var raw = $"{festivalId}:{userId}:{ticketTypeName}:{Guid.NewGuid()}";
@@ -129,5 +167,6 @@ namespace ManiFest.Services.Services
 
             return $"{part1}-{part2}-{suffix}";
         }
+
     }
 }

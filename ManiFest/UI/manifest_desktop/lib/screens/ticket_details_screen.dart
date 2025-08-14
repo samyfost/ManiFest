@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_desktop/layouts/master_screen.dart';
 import 'package:manifest_desktop/model/ticket.dart';
+import 'package:manifest_desktop/utils/qr_generator.dart';
 
 class TicketDetailsScreen extends StatelessWidget {
   final Ticket ticket;
@@ -33,18 +34,15 @@ class TicketDetailsScreen extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.confirmation_number,
-                        size: 48,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                      // QR Code instead of icon
+                      QRGenerator.generateQRCode(ticket.qrCodeData, size: 80),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Ticket #${ticket.generatedCode}',
+                              'Ticket #${ticket.id}',
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -104,7 +102,6 @@ class TicketDetailsScreen extends StatelessWidget {
                         'Ticket Information',
                         Icons.info_outline,
                         [
-                          _buildInfoRow('Generated Code', ticket.generatedCode),
                           _buildInfoRow('Ticket Type', ticket.ticketTypeName),
                           _buildInfoRow(
                             'Final Price',
@@ -137,6 +134,13 @@ class TicketDetailsScreen extends StatelessWidget {
                         'Festival Information',
                         Icons.festival,
                         [_buildInfoRow('Festival Title', ticket.festivalTitle)],
+                      ),
+                      const SizedBox(height: 16),
+                      _buildInfoSection(
+                        context,
+                        'Ticket Codes',
+                        Icons.qr_code,
+                        [_buildInfoRow('Redeem Code', ticket.textCode)],
                       ),
                     ],
                   ),

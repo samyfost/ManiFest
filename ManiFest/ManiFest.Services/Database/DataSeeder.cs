@@ -270,14 +270,14 @@ namespace ManiFest.Services.Database
             // Seed Tickets for users 4 and 2 (final price precomputed)
             modelBuilder.Entity<Ticket>().HasData(
                 // User 4
-                new Ticket { Id = 1, FestivalId = 1, UserId = 4, TicketTypeId = 1, FinalPrice = 49.99m, GeneratedCode = "F1D-U4S-STD", IsRedeemed = true, CreatedAt = fixedDate },
-                new Ticket { Id = 2, FestivalId = 3, UserId = 4, TicketTypeId = 2, FinalPrice = 148.50m, GeneratedCode = "F3D-T4E-VIP", IsRedeemed = true, CreatedAt = fixedDate },
-                new Ticket { Id = 3, FestivalId = 6, UserId = 4, TicketTypeId = 3, FinalPrice = 36.00m, GeneratedCode = "F6D-U4S-STU", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 1, FestivalId = 1, UserId = 4, TicketTypeId = 1, FinalPrice = 49.99m, QrCodeData = "{\"festivalId\":1,\"userId\":4,\"ticketType\":\"Standard\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample1\"}", TextCode = "F1D-U4S-STD", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 2, FestivalId = 3, UserId = 4, TicketTypeId = 2, FinalPrice = 148.50m, QrCodeData = "{\"festivalId\":3,\"userId\":4,\"ticketType\":\"VIP\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample2\"}", TextCode = "F3D-T4E-VIP", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 3, FestivalId = 6, UserId = 4, TicketTypeId = 3, FinalPrice = 36.00m, QrCodeData = "{\"festivalId\":6,\"userId\":4,\"ticketType\":\"Student\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample3\"}", TextCode = "F6D-U4S-STU", IsRedeemed = true, CreatedAt = fixedDate },
 
                 // User 2 (match their reviews on festivals 1, 3, and 6)
-                new Ticket { Id = 4, FestivalId = 1, UserId = 2, TicketTypeId = 1, FinalPrice = 49.99m, GeneratedCode = "F1D-K2S-STD", IsRedeemed = true, CreatedAt = fixedDate },
-                new Ticket { Id = 5, FestivalId = 3, UserId = 2, TicketTypeId = 2, FinalPrice = 148.50m, GeneratedCode = "F3D-U2E-VIP", IsRedeemed = true, CreatedAt = fixedDate },
-                new Ticket { Id = 6, FestivalId = 6, UserId = 2, TicketTypeId = 3, FinalPrice = 36.00m, GeneratedCode = "F6D-L2S-STU", IsRedeemed = true, CreatedAt = fixedDate }
+                new Ticket { Id = 4, FestivalId = 1, UserId = 2, TicketTypeId = 1, FinalPrice = 49.99m, QrCodeData = "{\"festivalId\":1,\"userId\":2,\"ticketType\":\"Standard\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample4\"}", TextCode = "F1D-K2S-STD", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 5, FestivalId = 3, UserId = 2, TicketTypeId = 2, FinalPrice = 148.50m, QrCodeData = "{\"festivalId\":3,\"userId\":2,\"ticketType\":\"VIP\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample5\"}", TextCode = "F3D-U2E-VIP", IsRedeemed = true, CreatedAt = fixedDate },
+                new Ticket { Id = 6, FestivalId = 6, UserId = 2, TicketTypeId = 3, FinalPrice = 36.00m, QrCodeData = "{\"festivalId\":6,\"userId\":2,\"ticketType\":\"Student\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample6\"}", TextCode = "F6D-L2S-STU", IsRedeemed = true, CreatedAt = fixedDate }
             );
         }
     }

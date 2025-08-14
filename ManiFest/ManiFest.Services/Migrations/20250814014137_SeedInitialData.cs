@@ -286,7 +286,8 @@ namespace ManiFest.Services.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     TicketTypeId = table.Column<int>(type: "int", nullable: false),
                     FinalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    GeneratedCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    QrCodeData = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    TextCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsRedeemed = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RedeemedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -511,15 +512,15 @@ namespace ManiFest.Services.Migrations
 
             migrationBuilder.InsertData(
                 table: "Tickets",
-                columns: new[] { "Id", "CreatedAt", "FestivalId", "FinalPrice", "GeneratedCode", "IsRedeemed", "RedeemedAt", "TicketTypeId", "UserId" },
+                columns: new[] { "Id", "CreatedAt", "FestivalId", "FinalPrice", "IsRedeemed", "QrCodeData", "RedeemedAt", "TextCode", "TicketTypeId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, 49.99m, "F1D-U4S-STD", true, null, 1, 4 },
-                    { 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, 148.50m, "F3D-T4E-VIP", true, null, 2, 4 },
-                    { 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, 36.00m, "F6D-U4S-STU", true, null, 3, 4 },
-                    { 4, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, 49.99m, "F1D-K2S-STD", true, null, 1, 2 },
-                    { 5, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, 148.50m, "F3D-U2E-VIP", true, null, 2, 2 },
-                    { 6, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, 36.00m, "F6D-L2S-STU", true, null, 3, 2 }
+                    { 1, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, 49.99m, true, "{\"festivalId\":1,\"userId\":4,\"ticketType\":\"Standard\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample1\"}", null, "F1D-U4S-STD", 1, 4 },
+                    { 2, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, 148.50m, true, "{\"festivalId\":3,\"userId\":4,\"ticketType\":\"VIP\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample2\"}", null, "F3D-T4E-VIP", 2, 4 },
+                    { 3, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, 36.00m, true, "{\"festivalId\":6,\"userId\":4,\"ticketType\":\"Student\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample3\"}", null, "F6D-U4S-STU", 3, 4 },
+                    { 4, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, 49.99m, true, "{\"festivalId\":1,\"userId\":2,\"ticketType\":\"Standard\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample4\"}", null, "F1D-K2S-STD", 1, 2 },
+                    { 5, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 3, 148.50m, true, "{\"festivalId\":3,\"userId\":2,\"ticketType\":\"VIP\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample5\"}", null, "F3D-U2E-VIP", 2, 2 },
+                    { 6, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 6, 36.00m, true, "{\"festivalId\":6,\"userId\":2,\"ticketType\":\"Student\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample6\"}", null, "F6D-L2S-STU", 3, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -624,12 +625,6 @@ namespace ManiFest.Services.Migrations
                 name: "IX_Tickets_FestivalId",
                 table: "Tickets",
                 column: "FestivalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tickets_GeneratedCode",
-                table: "Tickets",
-                column: "GeneratedCode",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_TicketTypeId",

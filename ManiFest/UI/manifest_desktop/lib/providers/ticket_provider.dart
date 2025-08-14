@@ -11,12 +11,16 @@ class TicketProvider extends BaseProvider<Ticket> {
     return Ticket.fromJson(json as Map<String, dynamic>);
   }
 
-  Future<Ticket> redeemTicket(String generatedCode) async {
-    var url = "${BaseProvider.baseUrl}$endpoint/redeem/$generatedCode";
+  Future<Ticket> redeemTicket(String qrCodeData) async {
+    var url = "${BaseProvider.baseUrl}$endpoint/redeem";
     var uri = Uri.parse(url);
     var headers = createHeaders();
 
-    var response = await http.post(uri, headers: headers);
+    var response = await http.post(
+      uri,
+      headers: headers,
+      body: jsonEncode(qrCodeData),
+    );
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);

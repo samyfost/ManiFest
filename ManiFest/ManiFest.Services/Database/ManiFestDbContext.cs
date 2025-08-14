@@ -182,10 +182,7 @@ namespace ManiFest.Services.Database
                 .HasForeignKey(t => t.TicketTypeId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Ticket>()
-                .HasIndex(t => t.GeneratedCode)
-                .IsUnique();
-
+      
             // Seed initial data
             modelBuilder.SeedData();
         }

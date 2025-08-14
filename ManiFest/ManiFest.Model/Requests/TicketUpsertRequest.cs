@@ -13,8 +13,11 @@ namespace ManiFest.Model.Requests
         [Required]
         public int TicketTypeId { get; set; }
 
-        // Optional for creation: allow client to provide their own code; otherwise server generates
+        // Optional for creation: allow client to provide their own QR code data; otherwise server generates
+        [MaxLength(500)]
+        public string? QrCodeData { get; set; }
+
         [MaxLength(100)]
-        public string? GeneratedCode { get; set; }
+        public string? TextCode { get; set; }
     }
 }

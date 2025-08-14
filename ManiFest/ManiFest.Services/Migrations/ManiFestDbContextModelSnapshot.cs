@@ -1006,16 +1006,21 @@ namespace ManiFest.Services.Migrations
                     b.Property<decimal>("FinalPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("GeneratedCode")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<bool>("IsRedeemed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("QrCodeData")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime?>("RedeemedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("TextCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("TicketTypeId")
                         .HasColumnType("int");
@@ -1026,9 +1031,6 @@ namespace ManiFest.Services.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FestivalId");
-
-                    b.HasIndex("GeneratedCode")
-                        .IsUnique();
 
                     b.HasIndex("TicketTypeId");
 
@@ -1043,8 +1045,9 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 1,
                             FinalPrice = 49.99m,
-                            GeneratedCode = "F1D-U4S-STD",
                             IsRedeemed = true,
+                            QrCodeData = "{\"festivalId\":1,\"userId\":4,\"ticketType\":\"Standard\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample1\"}",
+                            TextCode = "F1D-U4S-STD",
                             TicketTypeId = 1,
                             UserId = 4
                         },
@@ -1054,8 +1057,9 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 3,
                             FinalPrice = 148.50m,
-                            GeneratedCode = "F3D-T4E-VIP",
                             IsRedeemed = true,
+                            QrCodeData = "{\"festivalId\":3,\"userId\":4,\"ticketType\":\"VIP\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample2\"}",
+                            TextCode = "F3D-T4E-VIP",
                             TicketTypeId = 2,
                             UserId = 4
                         },
@@ -1065,8 +1069,9 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 6,
                             FinalPrice = 36.00m,
-                            GeneratedCode = "F6D-U4S-STU",
                             IsRedeemed = true,
+                            QrCodeData = "{\"festivalId\":6,\"userId\":4,\"ticketType\":\"Student\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample3\"}",
+                            TextCode = "F6D-U4S-STU",
                             TicketTypeId = 3,
                             UserId = 4
                         },
@@ -1076,8 +1081,9 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 1,
                             FinalPrice = 49.99m,
-                            GeneratedCode = "F1D-K2S-STD",
                             IsRedeemed = true,
+                            QrCodeData = "{\"festivalId\":1,\"userId\":2,\"ticketType\":\"Standard\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample4\"}",
+                            TextCode = "F1D-K2S-STD",
                             TicketTypeId = 1,
                             UserId = 2
                         },
@@ -1087,8 +1093,9 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 3,
                             FinalPrice = 148.50m,
-                            GeneratedCode = "F3D-U2E-VIP",
                             IsRedeemed = true,
+                            QrCodeData = "{\"festivalId\":3,\"userId\":2,\"ticketType\":\"VIP\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample5\"}",
+                            TextCode = "F3D-U2E-VIP",
                             TicketTypeId = 2,
                             UserId = 2
                         },
@@ -1098,8 +1105,9 @@ namespace ManiFest.Services.Migrations
                             CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             FestivalId = 6,
                             FinalPrice = 36.00m,
-                            GeneratedCode = "F6D-L2S-STU",
                             IsRedeemed = true,
+                            QrCodeData = "{\"festivalId\":6,\"userId\":2,\"ticketType\":\"Student\",\"timestamp\":\"2025-05-05T00:00:00Z\",\"uniqueId\":\"sample6\"}",
+                            TextCode = "F6D-L2S-STU",
                             TicketTypeId = 3,
                             UserId = 2
                         });
