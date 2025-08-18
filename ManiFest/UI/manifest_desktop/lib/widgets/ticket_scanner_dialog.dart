@@ -196,7 +196,7 @@ class _TicketScannerDialogState extends State<TicketScannerDialog> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'Enter the ticket redeem code manually\nDesktop application does not support QR code scanning',
+                    'Enter the ticket redeem code manually\nDesktop application does not support QR code scanning\nFuture for this application will also include QR code scanning via mobile device designed for administration\nThis problem was too complex to solve for me as this moment.',
 
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                     textAlign: TextAlign.center,

@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "manifest_desktop",
+            "cwd": "UI\\manifest_desktop",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "manifest_desktop (profile mode)",
+            "cwd": "UI\\manifest_desktop",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "manifest_desktop (release mode)",
+            "cwd": "UI\\manifest_desktop",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "manifest_mobile_scanner",
+            "cwd": "UI\\manifest_mobile_scanner",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "manifest_mobile_scanner (profile mode)",
+            "cwd": "UI\\manifest_mobile_scanner",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "manifest_mobile_scanner (release mode)",
+            "cwd": "UI\\manifest_mobile_scanner",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

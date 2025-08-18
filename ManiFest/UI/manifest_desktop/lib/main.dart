@@ -322,22 +322,10 @@ class _LoginPageState extends State<LoginPage>
                                     ),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                         
 
                           // Forgot password link
-                          TextButton(
-                            onPressed: () {
-                              // Add forgot password functionality
-                            },
-                            child: Text(
-                              "Forgot Password?",
-                              style: TextStyle(
-                                color: const Color(0xFF6A1B9A),
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
+                        
                         ],
                       ),
                     ),
