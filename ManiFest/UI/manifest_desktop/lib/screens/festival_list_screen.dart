@@ -11,6 +11,8 @@ import 'package:manifest_desktop/utils/base_pagination.dart';
 import 'package:manifest_desktop/utils/base_table.dart';
 import 'package:manifest_desktop/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
+
 
 class FestivalListScreen extends StatefulWidget {
   const FestivalListScreen({super.key});
@@ -234,16 +236,23 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
             width: 1400,
             height: 423,
             columnWidths: [
+              65, // Logo
               250, // Title
-              150, // Date Range
+              120, // Date Range
 
-              150, // City
-              130, // Subcategory
+              130, // City
+              125, // Subcategory
 
-              80, // Status
+              73, // Status
               100, // Actions
             ],
             columns: const [
+              DataColumn(
+                label: Text(
+                  'Logo',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
               DataColumn(
                 label: Text(
                   'Title',
@@ -289,6 +298,51 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                       .map(
                         (e) => DataRow(
                           cells: [
+                             DataCell(
+                            e.logo != null
+                                ? Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: Colors.grey.withOpacity(0.3),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: Image.memory(
+                                        base64Decode(e.logo!),
+                                        fit: BoxFit.fitHeight,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                              return Container(
+                                                color: Colors.grey[200],
+                                                child: Icon(
+                                                  Icons.festival_outlined,
+                                                  color: Colors.grey[400],
+                                                  size: 20,
+                                                ),
+                                              );
+                                            },
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Icon(
+                                      Icons.flag,
+                                      color: Colors.grey[400],
+                                      size: 20,
+                                    ),
+                                  ),
+                          ),
                             DataCell(
                               Text(
                                 e.title,

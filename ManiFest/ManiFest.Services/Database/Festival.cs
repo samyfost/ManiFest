@@ -13,6 +13,8 @@ namespace ManiFest.Services.Database
         [MaxLength(100)]
         public string Title { get; set; } = string.Empty;
 
+        public byte[]? Logo { get; set; }
+
         [Required]
         public DateTime StartDate { get; set; }
 

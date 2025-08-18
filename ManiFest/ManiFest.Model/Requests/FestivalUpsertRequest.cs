@@ -9,6 +9,9 @@ namespace ManiFest.Model.Requests
         [MaxLength(100)]
         public string Title { get; set; } = string.Empty;
 
+        public byte[]? Logo { get; set; }
+
+
         [Required]
         public DateTime StartDate { get; set; }
 

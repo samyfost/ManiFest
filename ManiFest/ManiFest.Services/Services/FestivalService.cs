@@ -131,7 +131,7 @@ namespace ManiFest.Services.Services
         protected override Festival MapInsertToEntity(Festival entity, FestivalUpsertRequest request)
         {
             entity = base.MapInsertToEntity(entity, request);
-            entity.CreatedAt = DateTime.UtcNow;
+            entity.CreatedAt = DateTime.Now;
             return entity;
         }
 
@@ -215,6 +215,7 @@ namespace ManiFest.Services.Services
             {
                 response.CountryName = entity.City?.Country?.Name ?? string.Empty;
                 response.CategoryName = entity.Subcategory?.Category?.Name ?? string.Empty;
+                response.CountryFlag = entity.City?.Country?.Flag ?? null;
             }
             
             return response;

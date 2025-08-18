@@ -7,6 +7,10 @@ namespace ManiFest.Model.Responses
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
+
+        public byte[]? Logo { get; set; }
+        public byte[]? CountryFlag { get; set; }
+
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public decimal BasePrice { get; set; }
