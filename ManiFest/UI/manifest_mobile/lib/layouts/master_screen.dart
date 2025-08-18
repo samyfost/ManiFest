@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manifest_mobile/providers/user_provider.dart';
 import 'package:manifest_mobile/screens/festivals_list_screen.dart';
 import 'package:manifest_mobile/screens/review_list_screen.dart';
+import 'package:manifest_mobile/screens/tickets_list_screen.dart';
 import 'package:manifest_mobile/screens/profile_screen.dart';
 
 class CustomPageViewScrollPhysics extends ScrollPhysics {
@@ -52,7 +53,12 @@ class _MasterScreenState extends State<MasterScreen> {
   int _selectedIndex = 0;
   late PageController _pageController;
 
-  final List<String> _pageTitles = ['Festivals', 'Reviews', 'Profile'];
+  final List<String> _pageTitles = [
+    'Festivals',
+    'Tickets',
+    'Reviews',
+    'Profile',
+  ];
 
   @override
   void initState() {
@@ -197,6 +203,7 @@ class _MasterScreenState extends State<MasterScreen> {
               physics: const AlwaysScrollableScrollPhysics(),
               children: const [
                 FestivalsListScreen(),
+                TicketsListScreen(),
                 ReviewListScreen(),
                 ProfileScreen(),
               ],
@@ -232,10 +239,18 @@ class _MasterScreenState extends State<MasterScreen> {
                         label: 'Festivals',
                       ),
                     ),
-                    // Reviews Tab
+                    // Tickets Tab
                     Expanded(
                       child: _buildNavigationItem(
                         index: 1,
+                        icon: Icons.confirmation_number,
+                        label: 'Tickets',
+                      ),
+                    ),
+                    // Reviews Tab
+                    Expanded(
+                      child: _buildNavigationItem(
+                        index: 2,
                         icon: Icons.rate_review,
                         label: 'Reviews',
                       ),
@@ -243,7 +258,7 @@ class _MasterScreenState extends State<MasterScreen> {
                     // Profile Tab
                     Expanded(
                       child: _buildNavigationItem(
-                        index: 2,
+                        index: 3,
                         icon: Icons.person,
                         label: 'Profile',
                       ),
