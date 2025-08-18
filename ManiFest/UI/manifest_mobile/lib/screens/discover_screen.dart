@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:manifest_mobile/model/festival.dart';
 import 'package:manifest_mobile/providers/festival_provider.dart';
 import 'package:manifest_mobile/providers/user_provider.dart';
+import 'package:manifest_mobile/screens/festival_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverScreen extends StatefulWidget {
@@ -303,31 +304,36 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             ],
           ),
         ),
-        // Buy Tickets Button
-    Positioned(
-  bottom: 16,
-  right: 16,
-  child: SizedBox(
-    width: 150,
-    height: 40,
-    child: FloatingActionButton.extended(
-      onPressed: () {
-        // TODO: Navigate to ticket purchase
-      },
-      backgroundColor: const Color(0xFF6A1B9A),
-      foregroundColor: Colors.white,
-      label: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Text('Discover More'),
-          SizedBox(width: 6),
-          Icon(Icons.arrow_forward_ios_outlined, size: 18),
-        ],
+        // Discover More Button
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: SizedBox(
+            width: 150,
+            height: 40,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        FestivalDetailsScreen(festival: recommended!),
+                  ),
+                );
+              },
+              backgroundColor: const Color(0xFF6A1B9A),
+              foregroundColor: Colors.white,
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text('Discover More'),
+                  SizedBox(width: 6),
+                  Icon(Icons.arrow_forward_ios_outlined, size: 18),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-    ],
+      ],
     );
   }
 
@@ -649,31 +655,36 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             ],
           ),
         ),
-        // Buy Tickets Button for festival cards
-Positioned(
-  bottom: 16,
-  right: 16,
-  child: SizedBox(
-    width: 150,
-    height: 40,
-    child: FloatingActionButton.extended(
-      onPressed: () {
-        // TODO: Navigate to ticket purchase
-      },
-      backgroundColor: const Color(0xFF6A1B9A),
-      foregroundColor: Colors.white,
-      label: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Text('Discover More'),
-          SizedBox(width: 6),
-          Icon(Icons.arrow_forward_ios_outlined, size: 18),
-        ],
+        // Discover More Button for festival cards
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: SizedBox(
+            width: 150,
+            height: 40,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        FestivalDetailsScreen(festival: festival),
+                  ),
+                );
+              },
+              backgroundColor: const Color(0xFF6A1B9A),
+              foregroundColor: Colors.white,
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text('Discover More'),
+                  SizedBox(width: 6),
+                  Icon(Icons.arrow_forward_ios_outlined, size: 18),
+                ],
               ),
+            ),
           ),
         ),
-      ),
-    ],
+      ],
     );
   }
 }

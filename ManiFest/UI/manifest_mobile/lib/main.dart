@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:manifest_mobile/providers/auth_provider.dart';
 import 'package:manifest_mobile/providers/festival_provider.dart';
 import 'package:manifest_mobile/providers/review_provider.dart';
@@ -10,15 +11,14 @@ import 'package:manifest_mobile/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
         ChangeNotifierProvider<TicketProvider>(create: (_) => TicketProvider()),
-        ChangeNotifierProvider<FestivalProvider>(
-          create: (_) => FestivalProvider(),
-        ),
+        ChangeNotifierProvider<FestivalProvider>(create: (_) => FestivalProvider()),
         ChangeNotifierProvider<AssetProvider>(create: (_) => AssetProvider()),
       ],
       child: const MyApp(),
