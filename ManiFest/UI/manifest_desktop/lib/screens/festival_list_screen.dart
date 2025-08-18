@@ -380,13 +380,16 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      final full = await festivalProvider
+                                          .getById(e.id);
+                                      if (!mounted) return;
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               FestivalDetailsScreen(
-                                                festival: e,
+                                                festival: full ?? e,
                                               ),
                                           settings: const RouteSettings(
                                             name: 'FestivalDetailsScreen',
@@ -403,11 +406,16 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                                   const SizedBox(width: 8),
                                   IconButton(
                                     onPressed: () async {
+                                      final full = await festivalProvider
+                                          .getById(e.id);
+                                      if (!mounted) return;
                                       final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              FestivalUpsertScreen(festival: e),
+                                              FestivalUpsertScreen(
+                                                festival: full ?? e,
+                                              ),
                                           settings: const RouteSettings(
                                             name: 'FestivalUpsertScreen',
                                           ),
