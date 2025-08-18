@@ -19,5 +19,22 @@ namespace ManiFest.WebAPI.Controllers
             var typedService = (IFestivalService)_crudService;
             return await typedService.GetWithoutAssetsAsync(search ?? new FestivalSearchObject());
         }
+
+        [HttpGet("recommend/{userId}")]
+        public ActionResult<FestivalResponse> Recommend(int userId)
+        {
+            var typedService = (IFestivalService)_crudService;
+            try
+            {
+                var result = typedService.RecommendForUser(userId);
+                if (result == null)
+                    return NotFound();
+                return Ok(result);
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
     }
 }

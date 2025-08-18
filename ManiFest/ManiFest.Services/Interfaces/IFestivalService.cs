@@ -9,5 +9,6 @@ namespace ManiFest.Services.Interfaces
     public interface IFestivalService : ICRUDService<FestivalResponse, FestivalSearchObject, FestivalUpsertRequest, FestivalUpsertRequest>
     {
         Task<PagedResult<FestivalResponse>> GetWithoutAssetsAsync(FestivalSearchObject search);
+        FestivalResponse RecommendForUser(int userId);
     }
 }

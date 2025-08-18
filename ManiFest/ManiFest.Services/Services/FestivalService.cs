@@ -11,13 +11,30 @@ using System.Threading.Tasks;
 using EasyNetQ;
 using ManiFest.Subscriber.Models;
 using ManiFest.Model;
+using Microsoft.ML;
+using Microsoft.ML.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ManiFest.Services.Services
 {
     public class FestivalService : BaseCRUDService<FestivalResponse, FestivalSearchObject, Festival, FestivalUpsertRequest, FestivalUpsertRequest>, IFestivalService
     {
+        private static MLContext _mlContext = null;
+        private static object _mlLock = new object();
+        private static ITransformer? _model = null;
+
         public FestivalService(ManiFestDbContext context, IMapper mapper) : base(context, mapper)
         {
+            if (_mlContext == null)
+            {
+                lock (_mlLock)
+                {
+                    if (_mlContext == null)
+                    {
+                        _mlContext = new MLContext();
+                    }
+                }
+            }
         }
 
         protected override IQueryable<Festival> ApplyFilter(IQueryable<Festival> query, FestivalSearchObject search)
@@ -69,6 +86,158 @@ namespace ManiFest.Services.Services
                 .Include(f => f.Assets);
         }
 
+        // Train a simple recommender using Matrix Factorization on (User, Festival) implicit feedback
+        public static void TrainRecommenderAtStartup(IServiceProvider serviceProvider)
+        {
+            lock (_mlLock)
+            {
+                if (_mlContext == null)
+                {
+                    _mlContext = new MLContext();
+                }
+                using var scope = serviceProvider.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ManiFestDbContext>();
+
+                // Build implicit feedback dataset combining tickets and positive reviews
+                var positiveEntries =
+                    db.Tickets.Select(t => new FeedbackEntry
+                    {
+                        UserId = (uint)t.UserId,
+                        FestivalId = (uint)t.FestivalId,
+                        Label = 1f
+                    }).ToList();
+
+                var positiveReviewEntries = db.Reviews
+                    .Where(r => r.Rating >= 4)
+                    .Select(r => new FeedbackEntry
+                    {
+                        UserId = (uint)r.UserId,
+                        FestivalId = (uint)r.FestivalId,
+                        Label = 1f
+                    }).ToList();
+
+                positiveEntries.AddRange(positiveReviewEntries);
+
+                if (!positiveEntries.Any())
+                {
+                    _model = null;
+                    return;
+                }
+
+                var trainData = _mlContext.Data.LoadFromEnumerable(positiveEntries);
+                var options = new Microsoft.ML.Trainers.MatrixFactorizationTrainer.Options
+                {
+                    MatrixColumnIndexColumnName = nameof(FeedbackEntry.UserId),
+                    MatrixRowIndexColumnName = nameof(FeedbackEntry.FestivalId),
+                    LabelColumnName = nameof(FeedbackEntry.Label),
+                    LossFunction = Microsoft.ML.Trainers.MatrixFactorizationTrainer.LossFunctionType.SquareLossOneClass,
+                    Alpha = 0.01,
+                    Lambda = 0.025,
+                    NumberOfIterations = 50,
+                    C = 0.00001
+                };
+
+                var estimator = _mlContext.Recommendation().Trainers.MatrixFactorization(options);
+                _model = estimator.Fit(trainData);
+            }
+        }
+
+        public FestivalResponse RecommendForUser(int userId)
+        {
+            if (_model == null)
+            {
+                // Fallback: recommend an active upcoming festival the user hasn't attended, favor same subcategory/organizer
+                return RecommendHeuristic(userId);
+            }
+
+            var predictionEngine = _mlContext.Model.CreatePredictionEngine<FeedbackEntry, FestivalScorePrediction>(_model);
+
+            var attendedFestivalIds = _context.Tickets
+                .Where(t => t.UserId == userId)
+                .Select(t => t.FestivalId)
+                .Distinct()
+                .ToHashSet();
+
+            var candidateFestivals = _context.Festivals
+                .Include(f => f.City)
+                    .ThenInclude(c => c.Country)
+                .Include(f => f.Subcategory)
+                    .ThenInclude(s => s.Category)
+                .Include(f => f.Organizer)
+                .Include(f => f.Assets)
+                .Where(f => f.IsActive && f.EndDate >= DateTime.UtcNow && !attendedFestivalIds.Contains(f.Id))
+                .ToList();
+
+            if (!candidateFestivals.Any())
+            {
+                return RecommendHeuristic(userId);
+            }
+
+            // Score all candidates and pick best
+            var scored = candidateFestivals
+                .Select(f => new
+                {
+                    Festival = f,
+                    Score = predictionEngine.Predict(new FeedbackEntry
+                    {
+                        UserId = (uint)userId,
+                        FestivalId = (uint)f.Id
+                    }).Score
+                })
+                .OrderByDescending(x => x.Score)
+                .First().Festival;
+
+            return MapToResponse(scored);
+        }
+
+        private FestivalResponse RecommendHeuristic(int userId)
+        {
+            var attendedFestivalIds = _context.Tickets
+                .Where(t => t.UserId == userId)
+                .Select(t => t.FestivalId)
+                .Distinct()
+                .ToHashSet();
+
+            var likedSubcategoryIds = _context.Reviews
+                .Where(r => r.UserId == userId && r.Rating >= 4)
+                .Select(r => r.Festival.SubcategoryId)
+                .ToList();
+
+            var attendedOrganizerIds = _context.Tickets
+                .Where(t => t.UserId == userId)
+                .Select(t => t.Festival.OrganizerId)
+                .ToList();
+
+            var candidate = _context.Festivals
+                .Include(f => f.City)
+                    .ThenInclude(c => c.Country)
+                .Include(f => f.Subcategory)
+                    .ThenInclude(s => s.Category)
+                .Include(f => f.Organizer)
+                .Include(f => f.Assets)
+                .Where(f => f.IsActive && f.EndDate >= DateTime.UtcNow && !attendedFestivalIds.Contains(f.Id))
+                .OrderByDescending(f => likedSubcategoryIds.Contains(f.SubcategoryId) ? 2 : 0)
+                .ThenByDescending(f => attendedOrganizerIds.Contains(f.OrganizerId) ? 1 : 0)
+                .ThenBy(f => f.StartDate)
+                .FirstOrDefault();
+
+            if (candidate == null) throw new InvalidOperationException("No suitable festival found for recommendation.");
+            return MapToResponse(candidate);
+        }
+
+        private class FeedbackEntry
+        {
+            [KeyType(count: 100000)]
+            public uint UserId { get; set; }
+            [KeyType(count: 100000)]
+            public uint FestivalId { get; set; }
+            public float Label { get; set; }
+        }
+
+        private class FestivalScorePrediction
+        {
+            public float Score { get; set; }
+        }
         public async Task<PagedResult<FestivalResponse>> GetWithoutAssetsAsync(FestivalSearchObject search)
         {
             var query = _context.Festivals.AsQueryable();

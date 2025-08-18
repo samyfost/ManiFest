@@ -4,6 +4,7 @@ import 'package:manifest_mobile/screens/festivals_list_screen.dart';
 import 'package:manifest_mobile/screens/review_list_screen.dart';
 import 'package:manifest_mobile/screens/tickets_list_screen.dart';
 import 'package:manifest_mobile/screens/profile_screen.dart';
+import 'package:manifest_mobile/screens/discover_screen.dart';
 
 class CustomPageViewScrollPhysics extends ScrollPhysics {
   final int currentIndex;
@@ -54,6 +55,7 @@ class _MasterScreenState extends State<MasterScreen> {
   late PageController _pageController;
 
   final List<String> _pageTitles = [
+    'Discover',
     'Reviews',
     'Tickets',
     'My Festivals',
@@ -140,7 +142,7 @@ class _MasterScreenState extends State<MasterScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                end: Alignment.topRight,
                 colors: [const Color(0xFF6A1B9A), const Color(0xFF8E24AA)],
               ),
               boxShadow: [
@@ -202,6 +204,7 @@ class _MasterScreenState extends State<MasterScreen> {
               },
               physics: const AlwaysScrollableScrollPhysics(),
               children: const [
+                DiscoverScreen(),
                 ReviewListScreen(),
                 TicketsListScreen(),
                 FestivalsListScreen(),
@@ -212,8 +215,10 @@ class _MasterScreenState extends State<MasterScreen> {
 
           // Modern Bottom Navigation
           Container(
+            height: 90,
             decoration: BoxDecoration(
               color: Colors.white,
+
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.2),
@@ -225,16 +230,21 @@ class _MasterScreenState extends State<MasterScreen> {
             ),
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                 child: Row(
                   children: [
-                    // Reviews Tab
+                    // Discover Tab
                     Expanded(
                       child: _buildNavigationItem(
                         index: 0,
+                        icon: Icons.explore,
+                        label: 'Discover',
+                      ),
+                    ),
+                    // Reviews Tab
+                    Expanded(
+                      child: _buildNavigationItem(
+                        index: 1,
                         icon: Icons.rate_review,
                         label: 'Reviews',
                       ),
@@ -242,7 +252,7 @@ class _MasterScreenState extends State<MasterScreen> {
                     // Tickets Tab
                     Expanded(
                       child: _buildNavigationItem(
-                        index: 1,
+                        index: 2,
                         icon: Icons.confirmation_number,
                         label: 'Tickets',
                       ),
@@ -250,7 +260,7 @@ class _MasterScreenState extends State<MasterScreen> {
                     // Festivals Tab
                     Expanded(
                       child: _buildNavigationItem(
-                        index: 2,
+                        index: 3,
                         icon: Icons.festival,
                         label: 'My Festivals',
                       ),
@@ -258,7 +268,7 @@ class _MasterScreenState extends State<MasterScreen> {
                     // Profile Tab
                     Expanded(
                       child: _buildNavigationItem(
-                        index: 3,
+                        index: 4,
                         icon: Icons.person,
                         label: 'Profile',
                       ),
@@ -283,7 +293,7 @@ class _MasterScreenState extends State<MasterScreen> {
     return GestureDetector(
       onTap: () => _onItemTapped(index),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 1),
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF6A1B9A).withOpacity(0.1)

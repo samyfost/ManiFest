@@ -36,4 +36,19 @@ class FestivalProvider extends BaseProvider<Festival> {
       throw Exception("Unknown error");
     }
   }
+
+  Future<Festival?> recommend(int userId) async {
+    var url = "${BaseProvider.baseUrl}$endpoint/recommend/$userId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      if (response.body.isEmpty) return null;
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    } else {
+      throw Exception("Unknown error");
+    }
+  }
 }
