@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manifest_mobile/providers/user_provider.dart';
 import 'package:manifest_mobile/screens/festivals_list_screen.dart';
+import 'package:manifest_mobile/screens/review_list_screen.dart';
 import 'package:manifest_mobile/screens/profile_screen.dart';
 
 class CustomPageViewScrollPhysics extends ScrollPhysics {
@@ -21,8 +22,8 @@ class CustomPageViewScrollPhysics extends ScrollPhysics {
 
   @override
   double applyBoundaryConditions(ScrollMetrics position, double value) {
-    // Prevent swiping from profile (index 1) to logout (index 2)
-    if (currentIndex == 1 && value > position.pixels) {
+    // Prevent swiping from profile (index 2) to logout (index 3)
+    if (currentIndex == 3 && value > position.pixels) {
       return value - position.pixels;
     }
     return super.applyBoundaryConditions(position, value);
@@ -30,8 +31,8 @@ class CustomPageViewScrollPhysics extends ScrollPhysics {
 
   @override
   bool shouldAcceptUserOffset(ScrollMetrics position) {
-    // Prevent swiping from profile (index 1) to logout (index 2)
-    if (currentIndex == 1) {
+    // Prevent swiping from profile (index 2) to logout (index 3)
+    if (currentIndex == 2) {
       return false;
     }
     return super.shouldAcceptUserOffset(position);
@@ -51,7 +52,7 @@ class _MasterScreenState extends State<MasterScreen> {
   int _selectedIndex = 0;
   late PageController _pageController;
 
-  final List<String> _pageTitles = ['Festivals', 'Profile'];
+  final List<String> _pageTitles = ['Festivals', 'Reviews', 'Profile'];
 
   @override
   void initState() {
@@ -194,7 +195,11 @@ class _MasterScreenState extends State<MasterScreen> {
                 _onPageChanged(index);
               },
               physics: const AlwaysScrollableScrollPhysics(),
-              children: const [FestivalsListScreen(), ProfileScreen()],
+              children: const [
+                FestivalsListScreen(),
+                ReviewListScreen(),
+                ProfileScreen(),
+              ],
             ),
           ),
 
@@ -227,10 +232,18 @@ class _MasterScreenState extends State<MasterScreen> {
                         label: 'Festivals',
                       ),
                     ),
-                    // Profile Tab
+                    // Reviews Tab
                     Expanded(
                       child: _buildNavigationItem(
                         index: 1,
+                        icon: Icons.rate_review,
+                        label: 'Reviews',
+                      ),
+                    ),
+                    // Profile Tab
+                    Expanded(
+                      child: _buildNavigationItem(
+                        index: 2,
                         icon: Icons.person,
                         label: 'Profile',
                       ),

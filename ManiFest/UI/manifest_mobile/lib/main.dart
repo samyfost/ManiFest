@@ -1,11 +1,29 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:manifest_mobile/providers/auth_provider.dart';
+import 'package:manifest_mobile/providers/festival_provider.dart';
+import 'package:manifest_mobile/providers/review_provider.dart';
+import 'package:manifest_mobile/providers/ticket_provider.dart';
 import 'package:manifest_mobile/providers/user_provider.dart';
 import 'package:manifest_mobile/layouts/master_screen.dart';
 import 'package:manifest_mobile/utils/base_textfield.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
+        ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider<TicketProvider>(create: (_) => TicketProvider()),
+        ChangeNotifierProvider<FestivalProvider>(
+          create: (_) => FestivalProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,8 +35,8 @@ class MyApp extends StatelessWidget {
       title: 'ManiFest Mobile',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6A1B9A), // Purple
-          primary: const Color(0xFF6A1B9A), // Purple
+          seedColor: const Color(0xFF6A1B9A),
+          primary: const Color(0xFF6A1B9A),
         ),
         useMaterial3: true,
       ),
@@ -68,16 +86,23 @@ class _LoginPageState extends State<LoginPage>
     return Scaffold(
       body: Stack(
         children: [
-          // Background with gradient overlay
+          // Background image
+          SizedBox.expand(
+            child: Image.asset(
+              'assets/images/login_background.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          // Optional gradient overlay for better contrast
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
+                colors: [
+                  Colors.black.withOpacity(0.3),
+                  Colors.black.withOpacity(0.3),
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF6A1B9A).withOpacity(0.1),
-                  const Color(0xFF6A1B9A).withOpacity(0.2),
-                ],
               ),
             ),
           ),
@@ -101,7 +126,7 @@ class _LoginPageState extends State<LoginPage>
                             child: Container(
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Colors.white.withOpacity(0.9),
                                 borderRadius: BorderRadius.circular(24),
                                 boxShadow: [
                                   BoxShadow(
@@ -130,7 +155,7 @@ class _LoginPageState extends State<LoginPage>
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
+                          color: Colors.white,
                           letterSpacing: -0.5,
                         ),
                       ),
@@ -139,7 +164,7 @@ class _LoginPageState extends State<LoginPage>
                         "Sign in to access festivals",
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.grey[600],
+                          color: Colors.white70,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -148,11 +173,11 @@ class _LoginPageState extends State<LoginPage>
                       // Login form card
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Colors.white.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.black.withOpacity(0.1),
                               spreadRadius: 2,
                               blurRadius: 20,
                               offset: const Offset(0, 8),
