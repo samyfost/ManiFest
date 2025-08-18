@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:manifest_mobile/model/review.dart';
 import 'package:manifest_mobile/model/search_result.dart';
@@ -100,25 +102,38 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
               Row(
                 children: [
                   // Festival icon
-                  Container(
-                    padding: const EdgeInsets.all(12),
+                Container(
+                    width: 70,
+                    height: 70,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          const Color(0xFF6A1B9A),
-                          const Color(0xFF8E24AA),
-                        ],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.3),
+                        width: 1,
                       ),
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(
-                      Icons.festival,
-                      color: Colors.white,
-                      size: 24,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: review.festivalLogo != null && review.festivalLogo!.isNotEmpty
+                          ? Image.memory(
+                              base64Decode(review.festivalLogo!),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.festival,
+                                  size: 48,
+                                  color: Theme.of(context).colorScheme.primary,
+                                );
+                              },
+                            )
+                          : Icon(
+                              Icons.festival,
+                              size: 48,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                     ),
                   ),
+            
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(

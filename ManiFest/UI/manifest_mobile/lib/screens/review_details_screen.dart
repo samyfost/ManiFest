@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:manifest_mobile/model/review.dart';
 import 'package:manifest_mobile/model/festival.dart';
@@ -140,7 +142,9 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.review != null ? 'Edit your review' : 'Rate your festival experience',
+          widget.review != null
+              ? 'Edit your review'
+              : 'Rate your festival experience',
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -167,7 +171,9 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
             hintStyle: TextStyle(color: Colors.grey[500]),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: const Color(0xFF6A1B9A).withOpacity(0.3)),
+              borderSide: BorderSide(
+                color: const Color(0xFF6A1B9A).withOpacity(0.3),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
@@ -278,22 +284,41 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(12),
+                              width: 70,
+                              height: 70,
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    const Color(0xFF6A1B9A),
-                                    const Color(0xFF8E24AA),
-                                  ],
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  width: 1,
                                 ),
-                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Icon(
-                                Icons.festival,
-                                color: Colors.white,
-                                size: 24,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child:
+                                    festival.logo != null &&
+                                        festival.logo!.isNotEmpty
+                                    ? Image.memory(
+                                        base64Decode(festival.logo!),
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                              return Icon(
+                                                Icons.festival,
+                                                size: 48,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              );
+                                            },
+                                      )
+                                    : Icon(
+                                        Icons.festival,
+                                        size: 48,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
                               ),
                             ),
                             const SizedBox(width: 16),
