@@ -222,6 +222,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF2D1B69),
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (flagBytes != null) ...[
@@ -281,11 +283,15 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                             color: Color(0xFF6A1B9A),
                           ),
                           const SizedBox(width: 6),
-                          Text(
-                            '${festival.categoryName} • ${festival.subcategoryName}',
-                            style: const TextStyle(
-                              color: Color(0xFF6A1B9A),
-                              fontWeight: FontWeight.w600,
+                          Flexible(
+                            child: Text(
+                              '${festival.categoryName} • ${festival.subcategoryName}',
+                              style: const TextStyle(
+                                color: Color(0xFF6A1B9A),
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -298,21 +304,30 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           ),
         ),
         // Buy Tickets Button
-        Positioned(
-          bottom: 16,
-          right: 16,
-          child: FloatingActionButton.extended(
-            onPressed: () {
-              // TODO: Navigate to ticket purchase
-            },
-            backgroundColor: const Color(0xFF6A1B9A),
-            foregroundColor: Colors.white,
-            icon: const Icon(Icons.confirmation_number),
-            label: const Text('Buy Tickets'),
-            elevation: 4,
+    Positioned(
+  bottom: 16,
+  right: 16,
+  child: SizedBox(
+    width: 150,
+    height: 40,
+    child: FloatingActionButton.extended(
+      onPressed: () {
+        // TODO: Navigate to ticket purchase
+      },
+      backgroundColor: const Color(0xFF6A1B9A),
+      foregroundColor: Colors.white,
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Text('Discover More'),
+          SizedBox(width: 6),
+          Icon(Icons.arrow_forward_ios_outlined, size: 18),
+        ],
           ),
         ),
-      ],
+      ),
+    ),
+    ],
     );
   }
 
@@ -338,26 +353,74 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Widget _buildCategorySelector() {
     if (_categories.isEmpty) return const SizedBox.shrink();
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6A1B9A).withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: _categories.map((category) {
           final isSelected = category == _selectedCategory;
-          return Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: FilterChip(
-              selected: isSelected,
-              label: Text(category),
-              onSelected: (_) => _onCategoryChanged(category),
-              selectedColor: const Color(0xFF6A1B9A),
-              checkmarkColor: Colors.white,
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.white : const Color(0xFF2D1B69),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              ),
-              backgroundColor: Colors.white,
-              side: BorderSide(
-                color: isSelected ? const Color(0xFF6A1B9A) : Colors.grey[300]!,
+
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? const Color(0xFF6A1B9A)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFF6A1B9A).withOpacity(0.3),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20),
+                    onTap: () => _onCategoryChanged(category),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 8,
+                      ),
+                      child: Center(
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            color: isSelected
+                                ? Colors.white
+                                : const Color(0xFF2D1B69),
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           );
@@ -411,7 +474,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: _buildFestivalCard(filteredFestivals[index]),
+                child: SingleChildScrollView(
+                  child: _buildFestivalCard(filteredFestivals[index]),
+                ),
               );
             },
           ),
@@ -450,127 +515,165 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         ? base64Decode(festival.countryFlag!)
         : null;
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF6A1B9A).withOpacity(0.12),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF6A1B9A).withOpacity(0.12),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header image
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-            child: Container(
-              height: 150,
-              width: double.infinity,
-              color: Colors.grey[200],
-              child: imageBytes != null
-                  ? Image.memory(imageBytes, fit: BoxFit.cover)
-                  : const Icon(
-                      Icons.festival,
-                      size: 64,
-                      color: Color(0xFF6A1B9A),
-                    ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header image
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+                child: Container(
+                  height: 150,
+                  width: double.infinity,
+                  color: Colors.grey[200],
+                  child: imageBytes != null
+                      ? Image.memory(imageBytes, fit: BoxFit.cover)
+                      : const Icon(
+                          Icons.festival,
+                          size: 64,
+                          color: Color(0xFF6A1B9A),
+                        ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        festival.title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D1B69),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            festival.title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2D1B69),
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
+                        if (flagBytes != null) ...[
+                          const SizedBox(width: 8),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: Image.memory(
+                              flagBytes,
+                              width: 28,
+                              height: 18,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            '${festival.cityName}, ${festival.countryName}',
+                            style: TextStyle(color: Colors.grey[700]),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      festival.dateRange,
+                      style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6A1B9A).withOpacity(0.06),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.category,
+                            size: 16,
+                            color: Color(0xFF6A1B9A),
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              '${festival.categoryName} • ${festival.subcategoryName}',
+                              style: const TextStyle(
+                                color: Color(0xFF6A1B9A),
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    if (flagBytes != null) ...[
-                      const SizedBox(width: 8),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.memory(
-                          flagBytes,
-                          width: 28,
-                          height: 18,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        '${festival.cityName}, ${festival.countryName}',
-                        style: TextStyle(color: Colors.grey[700]),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  festival.dateRange,
-                  style: TextStyle(color: Colors.grey[700], fontSize: 13),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6A1B9A).withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.category,
-                        size: 16,
-                        color: Color(0xFF6A1B9A),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '${festival.categoryName} • ${festival.subcategoryName}',
-                        style: const TextStyle(
-                          color: Color(0xFF6A1B9A),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
+        // Buy Tickets Button for festival cards
+Positioned(
+  bottom: 16,
+  right: 16,
+  child: SizedBox(
+    width: 150,
+    height: 40,
+    child: FloatingActionButton.extended(
+      onPressed: () {
+        // TODO: Navigate to ticket purchase
+      },
+      backgroundColor: const Color(0xFF6A1B9A),
+      foregroundColor: Colors.white,
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Text('Discover More'),
+          SizedBox(width: 6),
+          Icon(Icons.arrow_forward_ios_outlined, size: 18),
         ],
+              ),
+          ),
+        ),
       ),
+    ],
     );
   }
 }
