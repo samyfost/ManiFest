@@ -9,6 +9,7 @@ namespace ManiFest.Model.SearchObjects
         public string? CityName { get; set; }
         public int? SubcategoryId { get; set; }
         public int? OrganizerId { get; set; }
+        public int? UserIdAttended { get; set; }
         public DateTime? StartDateFrom { get; set; }
         public DateTime? StartDateTo { get; set; }
         public bool? IsActive { get; set; }

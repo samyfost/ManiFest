@@ -38,6 +38,11 @@ namespace ManiFest.Services.Services
             {
                 query = query.Where(f => f.SubcategoryId == search.SubcategoryId.Value);
             }
+            if (search.UserIdAttended.HasValue)
+            {
+                var userId = search.UserIdAttended.Value;
+                query = query.Where(f => _context.Tickets.Any(t => t.FestivalId == f.Id && t.UserId == userId));
+            }
             if (search.OrganizerId.HasValue)
             {
                 query = query.Where(f => f.OrganizerId == search.OrganizerId.Value);
@@ -83,6 +88,11 @@ namespace ManiFest.Services.Services
             if (search.SubcategoryId.HasValue)
             {
                 query = query.Where(f => f.SubcategoryId == search.SubcategoryId.Value);
+            }
+            if (search.UserIdAttended.HasValue)
+            {
+                var userId = search.UserIdAttended.Value;
+                query = query.Where(f => _context.Tickets.Any(t => t.FestivalId == f.Id && t.UserId == userId));
             }
             if (search.OrganizerId.HasValue)
             {
