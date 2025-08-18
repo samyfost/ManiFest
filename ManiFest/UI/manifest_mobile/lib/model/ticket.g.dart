@@ -12,6 +12,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket(
   festivalTitle: json['festivalTitle'] as String? ?? '',
   userId: (json['userId'] as num?)?.toInt() ?? 0,
   username: json['username'] as String? ?? '',
+  festivalLogo: json['festivalLogo'] as String?,
   userFullName: json['userFullName'] as String? ?? '',
   ticketTypeId: (json['ticketTypeId'] as num?)?.toInt() ?? 0,
   ticketTypeName: json['ticketTypeName'] as String? ?? '',
@@ -40,4 +41,5 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
   'isRedeemed': instance.isRedeemed,
   'createdAt': instance.createdAt.toIso8601String(),
   'redeemedAt': instance.redeemedAt?.toIso8601String(),
+  'festivalLogo' : instance.festivalLogo
 };

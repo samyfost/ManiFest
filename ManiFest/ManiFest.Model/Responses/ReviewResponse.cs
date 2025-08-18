@@ -8,6 +8,7 @@ namespace ManiFest.Model.Responses
         public int Rating { get; set; }
         public string? Comment { get; set; }
         public DateTime CreatedAt { get; set; }
+        public byte[]? FestivalLogo { get; set; }
 
         public int FestivalId { get; set; }
         public string FestivalTitle { get; set; } = string.Empty;

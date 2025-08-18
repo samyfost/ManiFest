@@ -10,6 +10,7 @@ Review _$ReviewFromJson(Map<String, dynamic> json) => Review(
   id: (json['id'] as num?)?.toInt() ?? 0,
   rating: (json['rating'] as num?)?.toInt() ?? 0,
   comment: json['comment'] as String?,
+  festivalLogo: json['festivalLogo'] as String?,
   createdAt: DateTime.parse(json['createdAt'] as String),
   festivalId: (json['festivalId'] as num?)?.toInt() ?? 0,
   festivalTitle: json['festivalTitle'] as String? ?? '',
@@ -28,4 +29,5 @@ Map<String, dynamic> _$ReviewToJson(Review instance) => <String, dynamic>{
   'userId': instance.userId,
   'username': instance.username,
   'userFullName': instance.userFullName,
+  'festivalLogo' : instance.festivalLogo
 };

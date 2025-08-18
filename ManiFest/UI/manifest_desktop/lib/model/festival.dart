@@ -8,6 +8,7 @@ class Festival {
   final int id;
   final String title;
   final String? logo;
+  final String? countryFlag;
   final DateTime startDate;
   final DateTime endDate;
   final double basePrice;
@@ -27,6 +28,7 @@ class Festival {
     this.id = 0,
     this.title = '',
     this.logo,
+    this.countryFlag,
     required this.startDate,
     required this.endDate,
     this.basePrice = 0.0,

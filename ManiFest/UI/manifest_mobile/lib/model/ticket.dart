@@ -18,6 +18,7 @@ class Ticket {
   final bool isRedeemed;
   final DateTime createdAt;
   final DateTime? redeemedAt;
+  final String? festivalLogo;
 
   const Ticket({
     this.id = 0,
@@ -34,6 +35,7 @@ class Ticket {
     this.isRedeemed = false,
     required this.createdAt,
     this.redeemedAt,
+    this.festivalLogo
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) => _$TicketFromJson(json);

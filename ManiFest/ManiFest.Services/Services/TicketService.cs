@@ -112,6 +112,7 @@ namespace ManiFest.Services.Services
             if (response != null)
             {
                 response.FestivalTitle = entity.Festival?.Title ?? string.Empty;
+                response.FestivalLogo = entity.Festival?.Logo;
                 response.UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : string.Empty;
                 response.Username = entity.User?.Username ?? string.Empty;
                 response.TicketTypeName = entity.TicketType?.Name ?? string.Empty;

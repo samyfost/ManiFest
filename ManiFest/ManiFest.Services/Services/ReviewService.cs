@@ -58,6 +58,7 @@ namespace ManiFest.Services.Services
                 UserId = entity.UserId,
                 UserFullName = entity.User != null ? $"{entity.User.FirstName} {entity.User.LastName}" : string.Empty,
                 Username = entity.User?.Username ?? string.Empty,
+                FestivalLogo = entity.Festival?.Logo,
             };
         }
 

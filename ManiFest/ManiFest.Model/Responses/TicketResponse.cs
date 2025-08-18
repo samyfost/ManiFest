@@ -7,6 +7,8 @@ namespace ManiFest.Model.Responses
         public int Id { get; set; }
         public int FestivalId { get; set; }
         public string FestivalTitle { get; set; } = string.Empty;
+        public byte[]? FestivalLogo { get; set; }
+
         public int UserId { get; set; }
         public string Username { get; set; } = string.Empty;
         public string UserFullName { get; set; } = string.Empty;

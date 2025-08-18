@@ -9,6 +9,8 @@ part of 'festival.dart';
 Festival _$FestivalFromJson(Map<String, dynamic> json) => Festival(
   id: (json['id'] as num?)?.toInt() ?? 0,
   title: json['title'] as String? ?? '',
+  logo: json['logo'] as String?,
+  countryFlag: json['countryFlag'] as String?,
   startDate: DateTime.parse(json['startDate'] as String),
   endDate: DateTime.parse(json['endDate'] as String),
   basePrice: (json['basePrice'] as num?)?.toDouble() ?? 0.0,
@@ -32,6 +34,8 @@ Festival _$FestivalFromJson(Map<String, dynamic> json) => Festival(
 Map<String, dynamic> _$FestivalToJson(Festival instance) => <String, dynamic>{
   'id': instance.id,
   'title': instance.title,
+  'logo': instance.logo,
+  'countryFlag': instance.countryFlag,
   'startDate': instance.startDate.toIso8601String(),
   'endDate': instance.endDate.toIso8601String(),
   'basePrice': instance.basePrice,

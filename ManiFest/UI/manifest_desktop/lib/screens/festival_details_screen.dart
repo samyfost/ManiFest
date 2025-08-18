@@ -49,7 +49,47 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Row(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Align children at the top
                 children: [
+                  // Country flag (smaller, stays at the top)
+                  Container(
+                    width: 28,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child:
+                          festival.countryFlag != null &&
+                              festival.countryFlag!.isNotEmpty
+                          ? Image.memory(
+                              base64Decode(festival.countryFlag!),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.flag,
+                                  size: 16, // smaller to match container
+                                  color: Theme.of(context).colorScheme.primary,
+                                );
+                              },
+                            )
+                          : Icon(
+                              Icons.flag,
+                              size: 16,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 10),
+
+                  // Festival logo (bigger, stays aligned below flag naturally)
                   Container(
                     width: 75,
                     height: 75,
