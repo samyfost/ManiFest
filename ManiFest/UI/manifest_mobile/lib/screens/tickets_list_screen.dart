@@ -27,6 +27,7 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
       return;
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
@@ -41,11 +42,13 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
         },
       );
 
+      if (!mounted) return;
       setState(() {
         tickets = result;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

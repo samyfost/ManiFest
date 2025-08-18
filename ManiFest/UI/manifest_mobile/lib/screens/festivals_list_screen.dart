@@ -25,6 +25,7 @@ class _FestivalsListScreenState extends State<FestivalsListScreen> {
   Future<void> _loadFestivals() async {
     if (UserProvider.currentUser == null) return;
 
+    if (!mounted) return;
     setState(() => _isLoading = true);
     try {
       final result = await _festivalProvider.getWithoutAssets(
@@ -36,11 +37,13 @@ class _FestivalsListScreenState extends State<FestivalsListScreen> {
           if (_searchText.isNotEmpty) 'title': _searchText,
         },
       );
+      if (!mounted) return;
       setState(() {
         _festivals = result;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

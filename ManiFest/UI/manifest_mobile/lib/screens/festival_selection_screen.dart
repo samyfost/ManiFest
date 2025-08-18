@@ -34,6 +34,7 @@ class _FestivalSelectionScreenState extends State<FestivalSelectionScreen> {
       return;
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
@@ -49,6 +50,7 @@ class _FestivalSelectionScreenState extends State<FestivalSelectionScreen> {
       List<Ticket> userTickets = ticketsResult.items ?? [];
 
       if (userTickets.isEmpty) {
+        if (!mounted) return;
         setState(() {
           availableTickets = [];
           _isLoading = false;
@@ -99,12 +101,14 @@ class _FestivalSelectionScreenState extends State<FestivalSelectionScreen> {
             .toList();
       }
 
+      if (!mounted) return;
       setState(() {
         availableTickets = filteredTickets;
         _isLoading = false;
       });
     } catch (e) {
       print("Error loading available tickets: $e");
+      if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

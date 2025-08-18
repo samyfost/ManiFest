@@ -29,6 +29,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
       return;
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
@@ -41,12 +42,14 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
       };
 
       var result = await reviewProvider.get(filter: filter);
+      if (!mounted) return;
       setState(() {
         reviews = result;
         _isLoading = false;
       });
     } catch (e) {
       print("Error fetching reviews: $e");
+      if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -102,7 +105,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
               Row(
                 children: [
                   // Festival icon
-                Container(
+                  Container(
                     width: 70,
                     height: 70,
                     decoration: BoxDecoration(
@@ -114,7 +117,9 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: review.festivalLogo != null && review.festivalLogo!.isNotEmpty
+                      child:
+                          review.festivalLogo != null &&
+                              review.festivalLogo!.isNotEmpty
                           ? Image.memory(
                               base64Decode(review.festivalLogo!),
                               fit: BoxFit.cover,
@@ -133,7 +138,7 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                             ),
                     ),
                   ),
-            
+
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(

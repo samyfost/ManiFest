@@ -27,73 +27,129 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6A1B9A).withOpacity(0.05),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF2D1B69)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'Festival Details',
-          style: TextStyle(
-            color: const Color(0xFF2D1B69),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildAssetsCarousel(),
-            _buildFestivalInfo(),
-            _buildLocationSection(),
-            const SizedBox(height: 100), // Space for bottom button
+      body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFF6A1B9A).withOpacity(0.1),
+            const Color(0xFF6A1B9A).withOpacity(0.05),
           ],
         ),
       ),
-      bottomSheet: _buildBuyTicketButton(),
-    );
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF2D1B69)),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: Text(
+            'Festival Details',
+            style: TextStyle(
+              color: const Color(0xFF2D1B69),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildAssetsCarousel(),
+              _buildFestivalInfo(),
+              _buildLocationSection(),
+              const SizedBox(height: 100), // Space for bottom button
+            ],
+          ),
+        ),
+        bottomSheet: _buildBuyTicketButton(),
+      ),
+    ));
   }
 
   Widget _buildAssetsCarousel() {
     final assets = widget.festival.assets;
-    if (assets.isEmpty) {
-      return Container(
-        height: 250,
-        width: double.infinity,
-        color: Colors.grey[200],
-        child: const Center(
-          child: Icon(Icons.festival, size: 64, color: Color(0xFF6A1B9A)),
-        ),
-      );
-    }
+    final festival = widget.festival;
+    final imageBytes = (festival.logo != null && festival.logo!.isNotEmpty)
+        ? base64Decode(festival.logo!)
+        : null;
 
     return Container(
       height: 250,
       width: double.infinity,
       child: Stack(
         children: [
-          PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-              });
-            },
-            itemCount: assets.length,
-            itemBuilder: (context, index) {
-              final asset = assets[index];
-              final imageBytes = base64Decode(asset.base64Content);
-              return Image.memory(
-                imageBytes,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              );
-            },
-          ),
+          // Background image or placeholder
+          if (assets.isNotEmpty)
+            PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemCount: assets.length,
+              itemBuilder: (context, index) {
+                final asset = assets[index];
+                final assetImageBytes = base64Decode(asset.base64Content);
+                return Image.memory(
+                  assetImageBytes,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                );
+              },
+            )
+          else
+            Container(
+              height: 250,
+              width: double.infinity,
+              color: Colors.grey[200],
+              child: const Center(
+                child: Icon(Icons.festival, size: 64, color: Color(0xFF6A1B9A)),
+              ),
+            ),
+
+          if (imageBytes != null)
+            Positioned(
+              top: 16,
+              left: 16,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 10,
+                    sigmaY: 10,
+                  ), // blur amount
+                  child: Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(
+                        0.2,
+                      ), // translucent overlay
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.memory(imageBytes, fit: BoxFit.cover),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
           // Page indicator
           if (assets.length > 1)
             Positioned(
@@ -125,9 +181,6 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
 
   Widget _buildFestivalInfo() {
     final festival = widget.festival;
-    final imageBytes = (festival.logo != null && festival.logo!.isNotEmpty)
-        ? base64Decode(festival.logo!)
-        : null;
     final flagBytes =
         (festival.countryFlag != null && festival.countryFlag!.isNotEmpty)
         ? base64Decode(festival.countryFlag!)
@@ -150,58 +203,27 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with logo, flag, and title
-          Row(
+          // Title with flag and date
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Logo
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: imageBytes != null
-                      ? Image.memory(imageBytes, fit: BoxFit.cover)
-                      : const Icon(
-                          Icons.festival,
-                          size: 32,
-                          color: Color(0xFF6A1B9A),
-                        ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Flag
-              if (flagBytes != null) ...[
-                Container(
-                  width: 40,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: Colors.grey.withOpacity(0.3),
-                      width: 1,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (flagBytes != null) ...[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: Image.memory(
+                        flagBytes,
+                        width: 35,
+                        height: 25,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Image.memory(flagBytes, fit: BoxFit.cover),
-                  ),
-                ),
-                const SizedBox(width: 12),
-              ],
-              // Title and date
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+                    const SizedBox(width: 8),
+                  ],
+                  Expanded(
+                    child: Text(
                       festival.title,
                       style: const TextStyle(
                         fontSize: 24,
@@ -211,16 +233,16 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      festival.dateRange,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                festival.dateRange,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

@@ -312,11 +312,22 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             width: 150,
             height: 40,
             child: FloatingActionButton.extended(
+              heroTag: "recommended_festival_button",
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
                         FestivalDetailsScreen(festival: recommended!),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          return SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(1.0, 0.0),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
+                          );
+                        },
                   ),
                 );
               },
@@ -663,11 +674,22 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             width: 150,
             height: 40,
             child: FloatingActionButton.extended(
+              heroTag: "festival_card_button_${festival.id}",
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
                         FestivalDetailsScreen(festival: festival),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          return SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(1.0, 0.0),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
+                          );
+                        },
                   ),
                 );
               },
