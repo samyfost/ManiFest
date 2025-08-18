@@ -50,10 +50,36 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
               padding: const EdgeInsets.all(24),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.festival,
-                    size: 48,
-                    color: Theme.of(context).colorScheme.primary,
+                  Container(
+                    width: 75,
+                    height: 75,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: festival.logo != null && festival.logo!.isNotEmpty
+                          ? Image.memory(
+                              base64Decode(festival.logo!),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.festival,
+                                  size: 48,
+                                  color: Theme.of(context).colorScheme.primary,
+                                );
+                              },
+                            )
+                          : Icon(
+                              Icons.festival,
+                              size: 48,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                    ),
                   ),
                   const SizedBox(width: 20),
                   Expanded(

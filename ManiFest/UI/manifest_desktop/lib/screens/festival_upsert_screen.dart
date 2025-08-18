@@ -45,6 +45,10 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
   List<File> _newImages = [];
   List<String> _assetsToDelete = [];
 
+  // Festival logo state (base64 like country flag)
+  String? _logoBase64;
+  File? _logoFile;
+
   late FestivalProvider _festivalProvider;
   late AssetProvider _assetProvider;
   late CityProvider _cityProvider;
@@ -172,6 +176,7 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
     _selectedSubcategoryId = festival.subcategoryId;
     _selectedOrganizerId = festival.organizerId;
     _isActive = festival.isActive;
+    _logoBase64 = festival.logo; // preload existing logo if any
 
     // Trigger rebuild to show map if location exists
     setState(() {});
@@ -195,6 +200,25 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
       }
     } catch (e) {
       // Handle error
+    }
+  }
+
+  Future<void> _pickLogo() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        final bytes = await file.readAsBytes();
+        setState(() {
+          _logoFile = file;
+          _logoBase64 = base64Encode(bytes);
+        });
+      }
+    } catch (e) {
+      // Handle error silently
     }
   }
 
@@ -237,6 +261,7 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
         'subcategoryId': _selectedSubcategoryId!,
         'organizerId': _selectedOrganizerId!,
         'isActive': _isActive,
+        'logo': _logoBase64,
       };
 
       Festival savedFestival;
@@ -359,6 +384,8 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Expanded(child: _buildLogoCard()),
+                  const SizedBox(width: 20),
                   Expanded(child: _buildLocationCard()),
                   const SizedBox(width: 20),
                   Expanded(child: _buildAssetsCard()),
@@ -370,6 +397,108 @@ class _FestivalUpsertScreenState extends State<FestivalUpsertScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLogoCard() {
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Festival Logo',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              height: 300,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.grey.withOpacity(0.3),
+                  width: 2,
+                ),
+              ),
+              child: _logoBase64 != null && _logoBase64!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.memory(
+                        base64Decode(_logoBase64!),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildLogoPlaceholder();
+                        },
+                      ),
+                    )
+                  : _buildLogoPlaceholder(),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _pickLogo,
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text('Select Logo'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _logoFile = null;
+                        _logoBase64 = null;
+                      });
+                    },
+                    icon: const Icon(Icons.clear),
+                    label: const Text('Clear Logo'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 162, 159, 159),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogoPlaceholder() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.festival, size: 64, color: Colors.grey[400]),
+        const SizedBox(height: 8),
+        Text(
+          'No logo selected',
+          style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "Click 'Select Logo' to upload",
+          style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+        ),
+      ],
     );
   }
 
