@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyNetQ;
 using ManiFest.Subscriber.Models;
+using ManiFest.Model;
 
 namespace ManiFest.Services.Services
 {
@@ -61,6 +62,86 @@ namespace ManiFest.Services.Services
                     .ThenInclude(s => s.Category)
                 .Include(f => f.Organizer)
                 .Include(f => f.Assets);
+        }
+
+        public async Task<PagedResult<FestivalResponse>> GetWithoutAssetsAsync(FestivalSearchObject search)
+        {
+            var query = _context.Festivals.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search.Title))
+            {
+                query = query.Where(f => f.Title.Contains(search.Title));
+            }
+            if (search.CityId.HasValue)
+            {
+                query = query.Where(f => f.CityId == search.CityId.Value);
+            }
+            if (!string.IsNullOrEmpty(search.CityName))
+            {
+                query = query.Where(f => f.City.Name.Contains(search.CityName));
+            }
+            if (search.SubcategoryId.HasValue)
+            {
+                query = query.Where(f => f.SubcategoryId == search.SubcategoryId.Value);
+            }
+            if (search.OrganizerId.HasValue)
+            {
+                query = query.Where(f => f.OrganizerId == search.OrganizerId.Value);
+            }
+            if (search.StartDateFrom.HasValue)
+            {
+                query = query.Where(f => f.StartDate >= search.StartDateFrom.Value);
+            }
+            if (search.StartDateTo.HasValue)
+            {
+                query = query.Where(f => f.StartDate <= search.StartDateTo.Value);
+            }
+            if (search.IsActive.HasValue)
+            {
+                query = query.Where(f => f.IsActive == search.IsActive.Value);
+            }
+
+            query = query
+                .Include(f => f.City)
+                    .ThenInclude(c => c.Country)
+                .Include(f => f.Subcategory)
+                    .ThenInclude(s => s.Category)
+                .Include(f => f.Organizer);
+
+            int? totalCount = null;
+            if (search.IncludeTotalCount)
+            {
+                totalCount = await query.CountAsync();
+            }
+
+            if (!search.RetrieveAll)
+            {
+                if (search.Page.HasValue)
+                {
+                    query = query.Skip(search.Page.Value * search.PageSize.Value);
+                }
+                if (search.PageSize.HasValue)
+                {
+                    query = query.Take(search.PageSize.Value);
+                }
+            }
+
+            var entities = await query.ToListAsync();
+            var items = entities.Select(entity =>
+            {
+                var response = MapToResponse(entity);
+                if (response != null)
+                {
+                    response.Assets = null;
+                }
+                return response;
+            }).ToList();
+
+            return new PagedResult<FestivalResponse>
+            {
+                Items = items,
+                TotalCount = totalCount
+            };
         }
 
         public override async Task<FestivalResponse?> GetByIdAsync(int id)

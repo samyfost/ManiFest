@@ -6,7 +6,6 @@ import 'package:http/http.dart';
 import 'package:manifest_desktop/model/search_result.dart';
 import 'package:manifest_desktop/providers/auth_provider.dart';
 
-
 abstract class BaseProvider<T> with ChangeNotifier {
   // Change to protected
   static String? baseUrl;
@@ -19,6 +18,21 @@ abstract class BaseProvider<T> with ChangeNotifier {
       "baseUrl",
       defaultValue: "http://localhost:5130/",
     );
+  }
+
+  Future<T?> getById(int id) async {
+    var url = "$baseUrl$endpoint/$id";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      if (response.body.isEmpty) return null;
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    } else {
+      throw Exception("Unknown error");
+    }
   }
 
   Future<SearchResult<T>> get({dynamic filter}) async {
