@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:manifest_mobile/model/review.dart';
 import 'package:manifest_mobile/model/festival.dart';
+import 'package:manifest_mobile/providers/festival_provider.dart';
 import 'package:manifest_mobile/providers/review_provider.dart';
 import 'package:manifest_mobile/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -25,15 +26,18 @@ class ReviewDetailsScreen extends StatefulWidget {
 
 class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
   late ReviewProvider reviewProvider;
+  late FestivalProvider festivalProvider;
   int _rating = 0;
   final TextEditingController _commentController = TextEditingController();
   bool _isSubmitting = false;
+  Festival? _festival; // ensure we can show details in both create/edit
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
+      festivalProvider = Provider.of<FestivalProvider>(context, listen: false);
 
       // If viewing existing review, populate the form
       if (widget.review != null) {
@@ -41,6 +45,23 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
           _rating = widget.review!.rating;
           _commentController.text = widget.review!.comment ?? '';
         });
+
+        // Load festival for edit view (to show details)
+        try {
+          final fetched = await festivalProvider.getById(
+            widget.review!.festivalId,
+          );
+          if (mounted) setState(() => _festival = fetched);
+        } catch (_) {}
+      } else if (widget.festival != null) {
+        // Creating new review, ensure we have full festival with logo
+        _festival = widget.festival;
+        if ((_festival!.logo == null || _festival!.logo!.isEmpty)) {
+          try {
+            final fetched = await festivalProvider.getById(_festival!.id);
+            if (mounted && fetched != null) setState(() => _festival = fetched);
+          } catch (_) {}
+        }
       }
     });
   }
@@ -223,20 +244,8 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // When editing, we might not have festival, so we need to handle that
-    final festival = widget.festival;
+    // Use resolved festival if available; otherwise fallback to review's basic info
     final isEditing = widget.review != null;
-
-    if (festival == null && !isEditing) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Review Details'),
-          backgroundColor: const Color(0xFF6A1B9A),
-          foregroundColor: Colors.white,
-        ),
-        body: const Center(child: Text('No festival information available')),
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -261,8 +270,8 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Festival information (only show if we have festival)
-              if (festival != null)
+              // Festival information (show on create and edit; fallback to review data)
+              if (_festival != null || widget.review != null)
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -295,30 +304,34 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child:
-                                    festival.logo != null &&
-                                        festival.logo!.isNotEmpty
-                                    ? Image.memory(
-                                        base64Decode(festival.logo!),
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                              return Icon(
-                                                Icons.festival,
-                                                size: 48,
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.primary,
-                                              );
-                                            },
-                                      )
-                                    : Icon(
-                                        Icons.festival,
-                                        size: 48,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                      ),
+                                child: (() {
+                                  final logo =
+                                      _festival?.logo ??
+                                      widget.review?.festivalLogo;
+                                  if (logo != null && logo.isNotEmpty) {
+                                    return Image.memory(
+                                      base64Decode(logo),
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return Icon(
+                                              Icons.festival,
+                                              size: 48,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                            );
+                                          },
+                                    );
+                                  }
+                                  return Icon(
+                                    Icons.festival,
+                                    size: 48,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                  );
+                                })(),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -327,7 +340,9 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    festival.title,
+                                    _festival?.title ??
+                                        widget.review?.festivalTitle ??
+                                        '',
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -335,21 +350,23 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  Text(
-                                    festival.dateRange,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  if (festival.location != null)
+                                  if (_festival != null) ...[
                                     Text(
-                                      festival.location!,
+                                      _festival!.dateRange,
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey[600],
                                       ),
                                     ),
+                                    if (_festival!.location != null)
+                                      Text(
+                                        _festival!.location!,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -359,7 +376,8 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
                     ),
                   ),
                 ),
-              if (festival != null) const SizedBox(height: 24),
+              if (_festival != null || widget.review != null)
+                const SizedBox(height: 24),
 
               // Review section
               Container(
