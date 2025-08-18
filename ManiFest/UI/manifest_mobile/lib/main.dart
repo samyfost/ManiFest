@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:manifest_mobile/providers/auth_provider.dart';
 import 'package:manifest_mobile/providers/festival_provider.dart';
 import 'package:manifest_mobile/providers/review_provider.dart';
+import 'package:manifest_mobile/providers/asset_provider.dart';
 import 'package:manifest_mobile/providers/ticket_provider.dart';
 import 'package:manifest_mobile/providers/user_provider.dart';
 import 'package:manifest_mobile/layouts/master_screen.dart';
@@ -20,6 +19,7 @@ void main() async {
         ChangeNotifierProvider<FestivalProvider>(
           create: (_) => FestivalProvider(),
         ),
+        ChangeNotifierProvider<AssetProvider>(create: (_) => AssetProvider()),
       ],
       child: const MyApp(),
     ),

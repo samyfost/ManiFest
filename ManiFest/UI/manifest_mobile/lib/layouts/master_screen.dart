@@ -54,9 +54,9 @@ class _MasterScreenState extends State<MasterScreen> {
   late PageController _pageController;
 
   final List<String> _pageTitles = [
-    'Festivals',
-    'Tickets',
     'Reviews',
+    'Tickets',
+    'My Festivals',
     'Profile',
   ];
 
@@ -202,9 +202,9 @@ class _MasterScreenState extends State<MasterScreen> {
               },
               physics: const AlwaysScrollableScrollPhysics(),
               children: const [
-                FestivalsListScreen(),
-                TicketsListScreen(),
                 ReviewListScreen(),
+                TicketsListScreen(),
+                FestivalsListScreen(),
                 ProfileScreen(),
               ],
             ),
@@ -231,12 +231,12 @@ class _MasterScreenState extends State<MasterScreen> {
                 ),
                 child: Row(
                   children: [
-                    // Festivals Tab
+                    // Reviews Tab
                     Expanded(
                       child: _buildNavigationItem(
                         index: 0,
-                        icon: Icons.festival,
-                        label: 'Festivals',
+                        icon: Icons.rate_review,
+                        label: 'Reviews',
                       ),
                     ),
                     // Tickets Tab
@@ -247,12 +247,12 @@ class _MasterScreenState extends State<MasterScreen> {
                         label: 'Tickets',
                       ),
                     ),
-                    // Reviews Tab
+                    // Festivals Tab
                     Expanded(
                       child: _buildNavigationItem(
                         index: 2,
-                        icon: Icons.rate_review,
-                        label: 'Reviews',
+                        icon: Icons.festival,
+                        label: 'My Festivals',
                       ),
                     ),
                     // Profile Tab
