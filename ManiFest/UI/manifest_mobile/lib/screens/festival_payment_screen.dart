@@ -436,14 +436,13 @@ class _FestivalPaymentScreenState extends State<FestivalPaymentScreen> {
         onPressed: _selectedTicketType == null
             ? null
             : () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) => StripePaymentScreen(
-                    festival: widget.festival,
-                    ticketType: _selectedTicketType!,
-                    finalPrice: _finalPrice,
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StripePaymentScreen(
+                      festival: widget.festival,
+                      ticketType: _selectedTicketType!,
+                      finalPrice: _finalPrice,
+                    ),
                   ),
                 );
               },
