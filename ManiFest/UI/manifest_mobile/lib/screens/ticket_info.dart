@@ -175,12 +175,7 @@ class TicketInfoScreen extends StatelessWidget {
                                         'Final price',
                                         ticket.finalPrice.toStringAsFixed(2),
                                       ),
-                                      _kv(
-                                        'Status',
-                                        ticket.isRedeemed
-                                            ? 'Redeemed'
-                                            : 'Not redeemed',
-                                      ),
+
                                       _kv(
                                         'Purchased',
                                         '${ticket.createdAt.day}/${ticket.createdAt.month}/${ticket.createdAt.year}',
@@ -219,12 +214,14 @@ class TicketInfoScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  SelectableText(
-                                    ticket.textCode,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 2,
+                                  Center(
+                                    child: SelectableText(
+                                      ticket.textCode,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 2,
+                                      ),
                                     ),
                                   ),
                                 ],

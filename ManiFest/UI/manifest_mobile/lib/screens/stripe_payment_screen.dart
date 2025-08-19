@@ -213,12 +213,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
             height: 56,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => const DiscoverScreen(),
-                  ),
-                  (route) => false,
-                );
+                Navigator.of(context).popUntil((route) => route.isFirst);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF6A1B9A),
@@ -538,71 +533,162 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
 
   Widget _buildAmountCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6A1B9A).withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: const Color(0xFF6A1B9A).withOpacity(0.08),
+            blurRadius: 20,
+            spreadRadius: 2,
+            offset: const Offset(0, 8),
           ),
         ],
+        border: Border.all(
+          color: const Color(0xFF6A1B9A).withOpacity(0.1),
+          width: 1,
+        ),
       ),
       child: Column(
         children: [
+          // Header with festival logo and title
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF6A1B9A).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+              // Festival logo
+              if (widget.festival.logo != null &&
+                  widget.festival.logo!.isNotEmpty)
+                Container(
+                  width: 40,
+                  height: 40,
+                  margin: const EdgeInsets.only(right: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFF6A1B9A).withOpacity(0.2),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6A1B9A).withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.memory(
+                      base64Decode(widget.festival.logo!),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  width: 40,
+                  height: 40,
+                  margin: const EdgeInsets.only(right: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6A1B9A).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFF6A1B9A).withOpacity(0.2),
+                      width: 2,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.festival,
+                    color: Color(0xFF6A1B9A),
+                    size: 24,
+                  ),
                 ),
-                child: Icon(
-                  Icons.festival,
-                  color: const Color(0xFF6A1B9A),
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
               Text(
                 'Payment Amount',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 20,
                   color: const Color(0xFF2D1B69),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            '\$${widget.finalPrice.toStringAsFixed(2)}',
-            style: TextStyle(
-              color: const Color(0xFF2D1B69),
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 20),
+
+          // Amount display with gradient background
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
             decoration: BoxDecoration(
-              color: const Color(0xFF6A1B9A).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              '${widget.ticketType.name} Ticket',
-              style: TextStyle(
-                color: const Color(0xFF6A1B9A),
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFF6A1B9A).withOpacity(0.05),
+                  const Color(0xFF6A1B9A).withOpacity(0.02),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(0xFF6A1B9A).withOpacity(0.1),
+                width: 1,
               ),
             ),
+            child: Column(
+              children: [
+                Text(
+                  '\$${widget.finalPrice.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    color: const Color(0xFF2D1B69),
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6A1B9A),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6A1B9A).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    '${widget.ticketType.name} Ticket',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Festival name
+          Text(
+            widget.festival.title,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
