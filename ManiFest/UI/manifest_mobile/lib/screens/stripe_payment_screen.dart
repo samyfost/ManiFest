@@ -10,6 +10,7 @@ import 'package:manifest_mobile/providers/ticket_provider.dart';
 import 'package:manifest_mobile/providers/user_provider.dart';
 import 'package:manifest_mobile/screens/discover_screen.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class StripePaymentScreen extends StatefulWidget {
   final Festival festival;
@@ -917,12 +918,17 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     required String country,
   }) async {
     try {
+      // Get the secret key from environment variables
+      final secretKey = dotenv.env['STRIPE_SECRET_KEY'];
+      if (secretKey == null) {
+        throw Exception('STRIPE_SECRET_KEY not found in environment variables');
+      }
+
       // First, create a customer
       final customerResponse = await http.post(
         Uri.parse('https://api.stripe.com/v1/customers'),
         headers: {
-          'Authorization':
-              'Bearer sk_test_51Q39sMBeXPnhF0hOvSAgJz8QSD5CxoTfQCfAEpMT7QJwYW0LfpgrsSLe2W7H4SnlKRDY6HPnqX2t8pXVDBtzPcW200okymr8j7',
+          'Authorization': 'Bearer $secretKey',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
@@ -946,8 +952,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
       final ephemeralKeyResponse = await http.post(
         Uri.parse('https://api.stripe.com/v1/ephemeral_keys'),
         headers: {
-          'Authorization':
-              'Bearer sk_test_51Q39sMBeXPnhF0hOvSAgJz8QSD5CxoTfQCfAEpMT7QJwYW0LfpgrsSLe2W7H4SnlKRDY6HPnqX2t8pXVDBtzPcW200okymr8j7',
+          'Authorization': 'Bearer $secretKey',
           'Content-Type': 'application/x-www-form-urlencoded',
           'Stripe-Version': '2023-10-16',
         },
@@ -966,8 +971,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
       final paymentIntentResponse = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
         headers: {
-          'Authorization':
-              'Bearer sk_test_51Q39sMBeXPnhF0hOvSAgJz8QSD5CxoTfQCfAEpMT7QJwYW0LfpgrsSLe2W7H4SnlKRDY6HPnqX2t8pXVDBtzPcW200okymr8j7',
+          'Authorization': 'Bearer $secretKey',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
