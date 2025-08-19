@@ -9,16 +9,27 @@ import 'package:manifest_mobile/providers/user_provider.dart';
 import 'package:manifest_mobile/layouts/master_screen.dart';
 import 'package:manifest_mobile/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await dotenv.load(fileName: ".env");
+
+  stripe.Stripe.publishableKey = dotenv.env["STRIPE_PUBLISHABLE_KEY"] ?? "";
+  stripe.Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
+  stripe.Stripe.urlScheme = 'flutterstripe';
+  await stripe.Stripe.instance.applySettings();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (_) => ReviewProvider()),
         ChangeNotifierProvider<TicketProvider>(create: (_) => TicketProvider()),
-        ChangeNotifierProvider<FestivalProvider>(create: (_) => FestivalProvider()),
+        ChangeNotifierProvider<FestivalProvider>(
+          create: (_) => FestivalProvider(),
+        ),
         ChangeNotifierProvider<AssetProvider>(create: (_) => AssetProvider()),
       ],
       child: const MyApp(),

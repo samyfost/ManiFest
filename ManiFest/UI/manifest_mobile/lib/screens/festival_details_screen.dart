@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:manifest_mobile/model/festival.dart';
 import 'package:manifest_mobile/utils/base_map.dart';
+import 'package:manifest_mobile/screens/festival_payment_screen.dart';
 
 class FestivalDetailsScreen extends StatefulWidget {
   final Festival festival;
@@ -28,47 +29,48 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            const Color(0xFF6A1B9A).withOpacity(0.1),
-            const Color(0xFF6A1B9A).withOpacity(0.05),
-          ],
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF2D1B69)),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            'Festival Details',
-            style: TextStyle(
-              color: const Color(0xFF2D1B69),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildAssetsCarousel(),
-              _buildFestivalInfo(),
-              _buildLocationSection(),
-              const SizedBox(height: 100), // Space for bottom button
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              const Color(0xFF6A1B9A).withOpacity(0.1),
+              const Color(0xFF6A1B9A).withOpacity(0.05),
             ],
           ),
         ),
-        bottomSheet: _buildBuyTicketButton(),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF2D1B69)),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: Text(
+              'Festival Details',
+              style: TextStyle(
+                color: const Color(0xFF2D1B69),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildAssetsCarousel(),
+                _buildFestivalInfo(),
+                _buildLocationSection(),
+                const SizedBox(height: 100), // Space for bottom button
+              ],
+            ),
+          ),
+          bottomSheet: _buildBuyTicketButton(),
+        ),
       ),
-    ));
+    );
   }
 
   Widget _buildAssetsCarousel() {
@@ -458,7 +460,12 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
           height: 56,
           child: ElevatedButton(
             onPressed: () {
-              // TODO: Navigate to ticket purchase
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      FestivalPaymentScreen(festival: widget.festival),
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF6A1B9A),
