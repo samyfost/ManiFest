@@ -215,10 +215,9 @@ class _MasterScreenState extends State<MasterScreen> {
 
           // Modern Bottom Navigation
           Container(
-            height: 90,
+            height: 85,
             decoration: BoxDecoration(
               color: Colors.white,
-
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.2),
@@ -228,53 +227,51 @@ class _MasterScreenState extends State<MasterScreen> {
                 ),
               ],
             ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                child: Row(
-                  children: [
-                    // Discover Tab
-                    Expanded(
-                      child: _buildNavigationItem(
-                        index: 0,
-                        icon: Icons.explore,
-                        label: 'Discover',
-                      ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 8),
+              child: Row(
+                children: [
+                  // Discover Tab
+                  Expanded(
+                    child: _buildNavigationItem(
+                      index: 0,
+                      icon: Icons.explore,
+                      label: 'Discover',
                     ),
-                    // Reviews Tab
-                    Expanded(
-                      child: _buildNavigationItem(
-                        index: 1,
-                        icon: Icons.rate_review,
-                        label: 'Reviews',
-                      ),
+                  ),
+                  // Reviews Tab
+                  Expanded(
+                    child: _buildNavigationItem(
+                      index: 1,
+                      icon: Icons.rate_review,
+                      label: 'Reviews',
                     ),
-                    // Tickets Tab
-                    Expanded(
-                      child: _buildNavigationItem(
-                        index: 2,
-                        icon: Icons.confirmation_number,
-                        label: 'Tickets',
-                      ),
+                  ),
+                  // Tickets Tab
+                  Expanded(
+                    child: _buildNavigationItem(
+                      index: 2,
+                      icon: Icons.confirmation_number,
+                      label: 'Tickets',
                     ),
-                    // Festivals Tab
-                    Expanded(
-                      child: _buildNavigationItem(
-                        index: 3,
-                        icon: Icons.festival,
-                        label: 'My Festivals',
-                      ),
+                  ),
+                  // Festivals Tab
+                  Expanded(
+                    child: _buildNavigationItem(
+                      index: 3,
+                      icon: Icons.festival,
+                      label: 'My Festivals',
                     ),
-                    // Profile Tab
-                    Expanded(
-                      child: _buildNavigationItem(
-                        index: 4,
-                        icon: Icons.person,
-                        label: 'Profile',
-                      ),
+                  ),
+                  // Profile Tab
+                  Expanded(
+                    child: _buildNavigationItem(
+                      index: 4,
+                      icon: Icons.person,
+                      label: 'Profile',
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -302,13 +299,14 @@ class _MasterScreenState extends State<MasterScreen> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
               color: isSelected ? const Color(0xFF6A1B9A) : Colors.grey[600],
               size: 24,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
