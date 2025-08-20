@@ -2,6 +2,7 @@ using ManiFest.Model.Requests;
 using ManiFest.Model.Responses;
 using ManiFest.Model.SearchObjects;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using ManiFest.Services.Interfaces;
 using ManiFest.Services.Services;
@@ -37,6 +38,7 @@ namespace ManiFest.WebAPI.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<UserResponse>> Create(UserUpsertRequest request)
         {
             var createdUser = await _userService.CreateAsync(request);
@@ -66,6 +68,7 @@ namespace ManiFest.WebAPI.Controllers
         }
 
         [HttpPost("authenticate")]
+        [AllowAnonymous]
         public async Task<ActionResult<UserResponse>> Authenticate([FromBody] UserLoginRequest request)
         {
             var user = await _userService.AuthenticateAsync(request);

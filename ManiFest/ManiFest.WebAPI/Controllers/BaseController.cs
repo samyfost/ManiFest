@@ -21,6 +21,8 @@ namespace ManiFest.WebAPI.Controllers
         }
 
         [HttpGet("")]
+        [AllowAnonymous]
+
         public virtual async Task<PagedResult<T>> Get([FromQuery]TSearch? search = null)
         {
             return await _service.GetAsync(search ?? new TSearch());

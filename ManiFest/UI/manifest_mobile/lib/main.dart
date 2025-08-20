@@ -6,7 +6,10 @@ import 'package:manifest_mobile/providers/review_provider.dart';
 import 'package:manifest_mobile/providers/asset_provider.dart';
 import 'package:manifest_mobile/providers/ticket_provider.dart';
 import 'package:manifest_mobile/providers/user_provider.dart';
+import 'package:manifest_mobile/providers/city_provider.dart';
+import 'package:manifest_mobile/providers/gender_provider.dart';
 import 'package:manifest_mobile/layouts/master_screen.dart';
+import 'package:manifest_mobile/screens/register_screen.dart';
 import 'package:manifest_mobile/utils/base_textfield.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
@@ -31,6 +34,8 @@ void main() async {
           create: (_) => FestivalProvider(),
         ),
         ChangeNotifierProvider<AssetProvider>(create: (_) => AssetProvider()),
+        ChangeNotifierProvider<CityProvider>(create: (_) => CityProvider()),
+        ChangeNotifierProvider<GenderProvider>(create: (_) => GenderProvider()),
       ],
       child: const MyApp(),
     ),
@@ -277,6 +282,76 @@ class _LoginPageState extends State<LoginPage>
                                           letterSpacing: 0.5,
                                         ),
                                       ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Registration section
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    thickness: 1,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Text(
+                                    "or",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    thickness: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Register button
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const RegisterScreen(),
+                                    ),
+                                  );
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: const Color(0xFF6A1B9A),
+                                  side: const BorderSide(
+                                    color: Color(0xFF6A1B9A),
+                                    width: 2,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 18,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Create Account",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
