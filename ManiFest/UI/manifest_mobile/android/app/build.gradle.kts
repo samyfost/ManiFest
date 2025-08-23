@@ -35,6 +35,9 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isShrinkResources = false
+            // proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
@@ -45,4 +48,10 @@ flutter {
 
 dependencies {
     implementation("com.google.android.material:material:1.11.0")
+    
+    // Stripe specific dependencies to ensure compatibility
+    implementation("com.stripe:stripe-android:20.36.1")
+    
+    // Google Play Core for deferred components
+    implementation("com.google.android.play:core:1.10.3")
 }
