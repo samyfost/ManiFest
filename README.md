@@ -31,3 +31,9 @@ The application integrates with **RabbitMQ** to send a test email every time a n
 | Service  | Email                         | Password          |
 |----------|-------------------------------|-------------------|
 | RabbitMQ | receiver.manifest@gmail.com   | manifesttest123   |
+
+##🎯 Recommender System
+
+ManiFest includes a festival recommender system that suggests events to users based on their past activity.
+It uses **Collaborative Filtering** (Matrix Factorization) to learn hidden patterns from tickets and positive reviews, and then predicts which upcoming festivals a user is most likely to enjoy.
+If there’s not enough data to train the model, a fallback heuristic approach recommends festivals from similar categories or organizers the user already liked.
